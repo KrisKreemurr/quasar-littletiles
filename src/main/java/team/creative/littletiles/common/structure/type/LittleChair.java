@@ -39,7 +39,7 @@ public class LittleChair extends LittleStructure {
     @Override
     protected void loadExtra(CompoundTag nbt, HolderLookup.Provider provider) {
         if (nbt.contains("sit"))
-            sitUUID = UUID.fromString(nbt.getString("sit"));
+            sitUUID = UUID.fromString(nbt.getStringOr("sit", ""));
         else
             sitUUID = null;
     }
@@ -116,7 +116,7 @@ public class LittleChair extends LittleStructure {
     
     @Override
     public InteractionResult use(Level level, LittleTileContext context, BlockPos pos, Player player, BlockHitResult result) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             if (this.player != null)
                 return InteractionResult.SUCCESS;
             try {

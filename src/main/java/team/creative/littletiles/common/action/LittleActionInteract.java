@@ -88,7 +88,7 @@ public abstract class LittleActionInteract<T> extends LittleAction<T> {
         }
         
         if (uuid != null) {
-            LittleEntity animation = LittleTiles.ANIMATION_HANDLERS.find(level.isClientSide, uuid);
+            LittleEntity animation = LittleTiles.ANIMATION_HANDLERS.find(level.isClientSide(), uuid);
             if (animation == null)
                 onEntityNotFound();
             

@@ -150,7 +150,7 @@ public class LittleInventory implements Iterable<ItemStack> {
             if (player == null || !allowDrop)
                 throw new NotEnoughSpaceException(new StackIngredient(toDrop));
             
-            if (!simulate && !player.level().isClientSide)
+            if (!simulate && !player.level().isClientSide())
                 LevelUtils.dropItem(player, toDrop);
         }
     }

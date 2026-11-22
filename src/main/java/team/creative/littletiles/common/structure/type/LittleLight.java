@@ -27,8 +27,8 @@ public class LittleLight extends LittleStructure {
     
     @Override
     protected void loadExtra(CompoundTag nbt, HolderLookup.Provider provider) {
-        level = nbt.getInt("level");
-        allowRightClick = nbt.getBoolean("right");
+        level = nbt.getIntOr("level", 0);
+        allowRightClick = nbt.getBooleanOr("right", false);
     }
     
     @Override
@@ -49,7 +49,7 @@ public class LittleLight extends LittleStructure {
     
     @Override
     public InteractionResult use(Level level, LittleTileContext context, BlockPos pos, Player player, BlockHitResult result) {
-        if (!level.isClientSide && allowRightClick)
+        if (!level.isClientSide() && allowRightClick)
             getOutput(0).toggle();
         return InteractionResult.SUCCESS;
     }

@@ -24,9 +24,9 @@ public class LittleBlankOMatic extends LittleStructurePremade {
     
     @Override
     protected void loadExtra(CompoundTag nbt, HolderLookup.Provider provider) {
-        inventory = InventoryUtils.load(getStructureLevel().registryAccess(), nbt.getCompound("inv"), 1);
+        inventory = InventoryUtils.load(getStructureLevel().registryAccess(), nbt.getCompoundOrEmpty("inv"), 1);
         inventory.addListener(x -> markDirty());
-        whiteColor = nbt.getInt("white");
+        whiteColor = nbt.getIntOr("white", 0);
     }
     
     @Override
@@ -42,7 +42,7 @@ public class LittleBlankOMatic extends LittleStructurePremade {
     
     @Override
     public InteractionResult use(Level level, LittleTileContext context, BlockPos pos, Player player, BlockHitResult result) {
-        if (!level.isClientSide)
+        if (!level.isClientSide())
             LittleTilesGuiRegistry.BLANKOMATIC.open(player, this);
         return InteractionResult.SUCCESS;
     }

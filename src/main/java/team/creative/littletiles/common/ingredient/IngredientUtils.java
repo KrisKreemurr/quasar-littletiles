@@ -33,7 +33,7 @@ public class IngredientUtils {
             return null;
         LittleBlock block = LittleBlockRegistry.get(nbt.getString("block"));
         if (nbt.getDouble("volume") > 0)
-            return new BlockIngredientEntry(block, nbt.getDouble("volume"));
+            return new BlockIngredientEntry(block, nbt.getDoubleOr("volume", 0D));
         return null;
     }
 }

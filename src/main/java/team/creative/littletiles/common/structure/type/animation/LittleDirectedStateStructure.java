@@ -83,7 +83,7 @@ public class LittleDirectedStateStructure extends LittleStateStructure<Animation
     protected void loadExtra(CompoundTag nbt, HolderLookup.Provider provider) {
         super.loadExtra(nbt, provider);
         
-        currentTransition = nbt.getInt("cT");
+        currentTransition = nbt.getIntOr("cT", 0);
         if (currentTransition > 0 && currentTransition >= transitions.size())
             throw new RuntimeException("Invalid state structure! Transition " + currentTransition + " not found. Only got " + transitions.size() + " transitions");
     }

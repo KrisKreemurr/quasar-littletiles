@@ -45,7 +45,7 @@ public abstract class ParentCollection extends LittleCollectionSafe implements I
     
     public void load(CompoundTag nbt, HolderLookup.Provider provider) {
         this.clear();
-        LittleCollection.loadExtended(this, nbt.getCompound("tiles"));
+        LittleCollection.loadExtended(this, nbt.getCompoundOrEmpty("tiles"));
         loadExtra(nbt, provider);
     }
     

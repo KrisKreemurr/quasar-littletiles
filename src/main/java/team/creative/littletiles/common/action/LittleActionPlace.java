@@ -93,7 +93,7 @@ public class LittleActionPlace extends LittleAction<Boolean> {
                 return false;
             PlacementResult tiles = placeTile(source, stack, preview);
             
-            if (!level.isClientSide)
+            if (!level.isClientSide())
                 source.broadcastChanges();
             return tiles != null;
         }
@@ -106,12 +106,12 @@ public class LittleActionPlace extends LittleAction<Boolean> {
             if (result != null) {
                 drainIngredientsAfterPlacing(source, inventory, result, preview.previews);
                 
-                if (!level.isClientSide) {
+                if (!level.isClientSide()) {
                     checkAndGive(source, inventory, getIngredients(source.getActionRegistry(), placement.unplaceableTiles));
                     checkAndGive(source, inventory, placement.overflow());
                 }
                 
-                if (!placement.removedTiles.isEmpty() && level.isClientSide)
+                if (!placement.removedTiles.isEmpty() && level.isClientSide())
                     destroyed = placement.removedTiles.copy();
                 
                 if (toVanilla)
@@ -155,7 +155,7 @@ public class LittleActionPlace extends LittleAction<Boolean> {
                 }
             }
             
-            if (!placement.removedTiles.isEmpty() && source.getActionLevel().isClientSide)
+            if (!placement.removedTiles.isEmpty() && source.getActionLevel().isClientSide())
                 destroyed = placement.removedTiles.copy();
         }
         return result;

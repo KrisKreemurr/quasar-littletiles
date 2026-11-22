@@ -45,28 +45,28 @@ public class LittleInteractionHandlerServer {
     }
     
     public void interactEntity(EntityInteract event) {
-        if (!event.getLevel().isClientSide && interactions.containsKey(event.getEntity())) {
+        if (!event.getLevel().isClientSide() && interactions.containsKey(event.getEntity())) {
             event.setCanceled(true);
             event.setCancellationResult(InteractionResult.SUCCESS);
         }
     }
     
     public void interactBlock(RightClickBlock event) {
-        if (!event.getLevel().isClientSide && interactions.containsKey(event.getEntity())) {
+        if (!event.getLevel().isClientSide() && interactions.containsKey(event.getEntity())) {
             event.setCanceled(true);
             event.setCancellationResult(InteractionResult.SUCCESS);
         }
     }
     
     public void interactItem(RightClickItem event) {
-        if (!event.getLevel().isClientSide && interactions.containsKey(event.getEntity())) {
+        if (!event.getLevel().isClientSide() && interactions.containsKey(event.getEntity())) {
             event.setCanceled(true);
             event.setCancellationResult(InteractionResult.SUCCESS);
         }
     }
     
     public void clickBlock(LeftClickBlock event) {
-        if (!event.getLevel().isClientSide && interactions.containsKey(event.getEntity()))
+        if (!event.getLevel().isClientSide() && interactions.containsKey(event.getEntity()))
             event.setCanceled(true);
     }
     

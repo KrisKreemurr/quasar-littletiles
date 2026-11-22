@@ -42,10 +42,10 @@ public class GuiBlueprintSelection extends GuiConfigure {
     public final GuiSyncLocal<CompoundTag> SAVE_SELECTION = getSyncHolder().register("save_selection", nbt -> {
         
         try {
-            SelectionMode mode = SelectionMode.REGISTRY.get(nbt.getString("mode"));
-            SelectionParameters selection = new SelectionParameters(nbt.getBoolean("includeVanilla"), nbt.getBoolean("includeCB"), nbt.getBoolean("includeLT"), nbt.getBoolean(
+            SelectionMode mode = SelectionMode.REGISTRY.get(nbt.getStringOr("mode", ""));
+            SelectionParameters selection = new SelectionParameters(nbt.getBooleanOr("includeVanilla", false), nbt.getBooleanOr("includeCB", false), nbt.getBooleanOr("includeLT", false), nbt.getBoolean(
                 "remember_structure"));
-            SelectionComponent component = SelectionComponent.of(mode, nbt.getCompound("sel_config"));
+            SelectionComponent component = SelectionComponent.of(mode, nbt.getCompoundOrEmpty("sel_config"));
             tool.get().set(LittleTilesRegistry.SELECTION, component);
             LittleGroup previews = mode.select(getPlayer().level(), (LittleActionSource) getPlayer(), selection, tool.get(), component);
             if (nbt.contains("grid")) {

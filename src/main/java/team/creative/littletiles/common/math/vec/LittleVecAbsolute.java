@@ -20,7 +20,7 @@ public class LittleVecAbsolute implements IGridBased {
     protected LittleVecGrid gridVec;
     
     public LittleVecAbsolute(String name, CompoundTag nbt) {
-        int[] array = nbt.getIntArray(name);
+        int[] array = nbt.getIntArray(name).orElseGet(() -> new int[0]);
         if (array.length == 7) {
             this.pos = new BlockPos(array[0], array[1], array[2]);
             this.gridVec = new LittleVecGrid(new LittleVec(array[4], array[5], array[6]), LittleGrid.get(array[3]));

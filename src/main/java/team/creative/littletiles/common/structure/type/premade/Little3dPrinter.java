@@ -144,7 +144,7 @@ public class Little3dPrinter extends LittleStructurePremade {
     @Override
     public void loadExtra(CompoundTag nbt, Provider provider) {
         if (nbt.contains("errors")) {
-            var list = nbt.getList("errors", Tag.TAG_LIST);
+            var list = nbt.getListOrEmpty("errors");
             errors = new ArrayList<>(list.size());
             for (int i = 0; i < list.size(); i++) {
                 var errorList = list.getList(i);
@@ -156,16 +156,16 @@ public class Little3dPrinter extends LittleStructurePremade {
         } else
             errors = null;
         if (nbt.contains("tracker"))
-            tracker = new PlacementTracker(nbt.getCompound("location"));
+            tracker = new PlacementTracker(nbt.getCompoundOrEmpty("location"));
         else
             tracker = null;
         
-        ticks = nbt.getInt("ticks");
-        index = nbt.getInt("index");
+        ticks = nbt.getIntOr("ticks", 0);
+        index = nbt.getIntOr("index", 0);
         amountPerTick = nbt.contains("amount") ? nbt.getInt("amount") : 1;
         ticksToSkip = nbt.contains("skip") ? nbt.getInt("skip") : 10;
-        rememberStructures = nbt.getBoolean("structures");
-        continueOnError = nbt.getBoolean("continue");
+        rememberStructures = nbt.getBooleanOr("structures", false);
+        continueOnError = nbt.getBooleanOr("continue", false);
         
         if (nbt.contains("inventory")) {
             var invNBT = nbt.getCompound("inventory");
@@ -269,7 +269,7 @@ public class Little3dPrinter extends LittleStructurePremade {
     
     @Override
     public InteractionResult use(Level level, LittleTileContext context, BlockPos pos, Player player, BlockHitResult result) {
-        if (!level.isClientSide)
+        if (!level.isClientSide())
             LittleTilesGuiRegistry.PRINTER3D.open(player, this);
         return InteractionResult.SUCCESS;
     }
@@ -406,20 +406,20 @@ public class Little3dPrinter extends LittleStructurePremade {
         public PlacementTracker(CompoundTag nbt) {
             if (nbt.contains("location")) {
                 location = new StructureLocation(nbt.getCompound("location"));
-                structureNBT = nbt.getCompound("structure");
+                structureNBT = nbt.getCompoundOrEmpty("structure");
             }
-            doneSelf = nbt.getInt("self");
-            doneAll = nbt.getInt("all");
+            doneSelf = nbt.getIntOr("self", 0);
+            doneAll = nbt.getIntOr("all", 0);
             
             if (nbt.contains("children")) {
-                ListTag list = nbt.getList("children", Tag.TAG_COMPOUND);
+                ListTag list = nbt.getListOrEmpty("children");
                 for (int i = 0; i < list.size(); i++)
-                    children.add(new PlacementTracker(list.getCompound(i)));
+                    children.add(new PlacementTracker(list.getCompoundOrEmpty(i)));
             }
             if (nbt.contains("extensions")) {
-                CompoundTag ex = nbt.getCompound("ex");
+                CompoundTag ex = nbt.getCompoundOrEmpty("ex");
                 for (String key : ex.getAllKeys())
-                    extensions.put(key, new PlacementTracker(ex.getCompound(key)));
+                    extensions.put(key, new PlacementTracker(ex.getCompoundOrEmpty(key)));
             }
         }
         

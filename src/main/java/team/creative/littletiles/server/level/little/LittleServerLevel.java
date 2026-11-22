@@ -89,7 +89,7 @@ public abstract class LittleServerLevel extends ServerLevel implements LittleLev
     public void neighborChanged(BlockPos pos, Block block, BlockPos fromPos) {
         if (preventNeighborUpdate)
             return;
-        if (this.isClientSide) {
+        if (this.isClientSide()) {
             BlockState blockstate = this.getBlockState(pos);
             
             try {

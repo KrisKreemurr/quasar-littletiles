@@ -37,10 +37,10 @@ public class GuiBuilder extends GuiLayer {
     public LittleStructureBuilder builder;
     public final GuiSyncLocal<CompoundTag> CRAFT = getSyncHolder().register("craft", nbt -> {
         if ((getPlayer().isCreative() && builder.inventory.getItem(0).isEmpty()) || builder.inventory.getItem(0).getItem() instanceof ItemLittleBlueprint) {
-            int width = nbt.getInt("width");
-            int height = nbt.getInt("height");
-            int thickness = nbt.getInt("thickness");
-            Block block = BuiltInRegistries.BLOCK.get(Identifier.parse(nbt.getString("block")));
+            int width = nbt.getIntOr("width", 0);
+            int height = nbt.getIntOr("height", 0);
+            int thickness = nbt.getIntOr("thickness", 0);
+            Block block = BuiltInRegistries.BLOCK.get(Identifier.parse(nbt.getStringOr("block", "")));
             LittleGrid grid = LittleGrid.get(nbt.getInt("grid"));
             
             builder.lastBlockState = block.defaultBlockState();
@@ -48,7 +48,7 @@ public class GuiBuilder extends GuiLayer {
             builder.lastSizeY = height;
             builder.lastThickness = thickness;
             builder.lastGrid = grid.count;
-            builder.lastStructureType = nbt.getString("type");
+            builder.lastStructureType = nbt.getStringOr("type", "");
             builder.updateStructure();
             
             LittleStructureBuilderType type = LittleStructureBuilder.REGISTRY.get(builder.lastStructureType);

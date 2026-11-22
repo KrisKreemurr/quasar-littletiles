@@ -30,7 +30,7 @@ import team.creative.littletiles.common.math.vec.LittleHitResult;
 public abstract class LittleAnimationHandler extends LevelHandler {
     
     public static boolean isRemotePlayer(Entity entity) {
-        if (entity.level().isClientSide)
+        if (entity.level().isClientSide())
             return isRemotePlayerClient(entity);
         return false;
     }

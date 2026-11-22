@@ -120,7 +120,7 @@ public interface ILittleLevelContext {
     };
     
     public static ILittleLevelContext of(Level level, String id) throws LittleActionException {
-        LittleEntity animation = LittleTiles.ANIMATION_HANDLERS.find(level.isClientSide, UUID.fromString(id));
+        LittleEntity animation = LittleTiles.ANIMATION_HANDLERS.find(level.isClientSide(), UUID.fromString(id));
         if (animation == null)
             throw new LittleActionException.EntityNotFoundException();
         return animation.getSubLevel();

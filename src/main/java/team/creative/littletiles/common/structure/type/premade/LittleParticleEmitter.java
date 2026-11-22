@@ -75,14 +75,14 @@ public class LittleParticleEmitter extends LittleStructurePremade {
     
     @Override
     public boolean wrenchInteract(Player player) {
-        if (!player.level().isClientSide)
+        if (!player.level().isClientSide())
             LittleTilesGuiRegistry.PARTICLE.open(player, this);
         return true;
     }
     
     @Override
     public InteractionResult use(Level level, LittleTileContext context, BlockPos pos, Player player, BlockHitResult result) {
-        if (!level.isClientSide && !locked)
+        if (!level.isClientSide() && !locked)
             LittleTilesGuiRegistry.PARTICLE.open(player, this);
         return InteractionResult.SUCCESS;
     }
@@ -152,12 +152,12 @@ public class LittleParticleEmitter extends LittleStructurePremade {
     public void loadSettings(CompoundTag nbt) {
         spread = loadSpread(nbt);
         if (nbt.contains("tickDelay"))
-            delay = nbt.getInt("tickDelay");
+            delay = nbt.getIntOr("tickDelay", 0);
         else
             delay = 10;
-        ticker = nbt.getInt("ticker");
+        ticker = nbt.getIntOr("ticker", 0);
         if (nbt.contains("tickCount"))
-            count = nbt.getInt("tickCount");
+            count = nbt.getIntOr("tickCount", 0);
         else
             count = 1;
         
@@ -166,10 +166,10 @@ public class LittleParticleEmitter extends LittleStructurePremade {
             count = (int) (LittleTiles.CONFIG.general.maxParticlesPerSecond * (delay + 1) / 20); // Set count to the highest number possible
             
         if (nbt.contains("settings"))
-            settings = new ParticleSettings(nbt.getCompound("settings"));
+            settings = new ParticleSettings(nbt.getCompoundOrEmpty("settings"));
         else
             settings = LittleParticlePresets.SMOKE.settings.copy();
-        locked = nbt.getBoolean("locked");
+        locked = nbt.getBooleanOr("locked", false);
     }
     
     @Override
@@ -218,16 +218,16 @@ public class LittleParticleEmitter extends LittleStructurePremade {
         }
         
         public ParticleSettings(CompoundTag nbt) {
-            gravity = nbt.getFloat("gravity");
-            color = nbt.getInt("color");
-            lifetime = nbt.getInt("lifetime");
-            lifetimeDeviation = nbt.getInt("lifetimeDeviation");
-            startSize = nbt.getFloat("startSize");
-            endSize = nbt.getFloat("endSize");
-            sizeDeviation = nbt.getFloat("sizeDeviation");
-            randomColor = nbt.getBoolean("randomColor");
-            collision = nbt.getBoolean("collision");
-            texture = LittleParticleTexture.get(nbt.getString("texture"));
+            gravity = nbt.getFloatOr("gravity", 0F);
+            color = nbt.getIntOr("color", 0);
+            lifetime = nbt.getIntOr("lifetime", 0);
+            lifetimeDeviation = nbt.getIntOr("lifetimeDeviation", 0);
+            startSize = nbt.getFloatOr("startSize", 0F);
+            endSize = nbt.getFloatOr("endSize", 0F);
+            sizeDeviation = nbt.getFloatOr("sizeDeviation", 0F);
+            randomColor = nbt.getBooleanOr("randomColor", false);
+            collision = nbt.getBooleanOr("collision", false);
+            texture = LittleParticleTexture.get(nbt.getStringOr("texture", ""));
         }
         
         public void write(CompoundTag nbt) {
@@ -257,8 +257,8 @@ public class LittleParticleEmitter extends LittleStructurePremade {
         }
         if (spread == null)
             spread = new ParticleSpreadRandom();
-        spread.speedY = nbt.getFloat("speedY");
-        spread.spread = nbt.getFloat("spread");
+        spread.speedY = nbt.getFloatOr("speedY", 0F);
+        spread.spread = nbt.getFloatOr("spread", 0F);
         return spread;
     }
     
@@ -272,8 +272,8 @@ public class LittleParticleEmitter extends LittleStructurePremade {
         registerParticleSpreadParser((x) -> {
             ParticleSpreadRandom spread = new ParticleSpreadRandom();
             
-            spread.speedX = x.getFloat("speedX");
-            spread.speedZ = x.getFloat("speedZ");
+            spread.speedX = x.getFloatOr("speedX", 0F);
+            spread.speedZ = x.getFloatOr("speedZ", 0F);
             return spread;
         });
         registerParticleSpreadParser((x) -> {
@@ -281,9 +281,9 @@ public class LittleParticleEmitter extends LittleStructurePremade {
                 return null;
             
             ParticleSpreadCircular spread = new ParticleSpreadCircular();
-            spread.radius = x.getFloat("radius");
-            spread.angle = x.getFloat("angle");
-            spread.steps = x.getInt("steps");
+            spread.radius = x.getFloatOr("radius", 0F);
+            spread.angle = x.getFloatOr("angle", 0F);
+            spread.steps = x.getIntOr("steps", 0);
             return spread;
         });
     }

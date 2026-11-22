@@ -32,7 +32,7 @@ public class GuiStorage extends GuiLayer {
         if (size.expanded)
             setDim(size.guiWidth, size.guiHeight);
         this.storage = storage;
-        if (!player.level().isClientSide)
+        if (!player.level().isClientSide())
             this.storage.openContainer(this);
     }
     

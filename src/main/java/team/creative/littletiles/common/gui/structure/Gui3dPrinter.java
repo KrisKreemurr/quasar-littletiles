@@ -83,8 +83,8 @@ public class Gui3dPrinter extends GuiLayer {
         printer.ticksToSkip = Math.max(0, nbt.getInt("skip"));
         printer.amountPerTick = Math.max(1, nbt.getInt("amount"));
         
-        printer.continueOnError = nbt.getBoolean("continue");
-        printer.rememberStructures = nbt.getBoolean("remember");
+        printer.continueOnError = nbt.getBooleanOr("continue", false);
+        printer.rememberStructures = nbt.getBooleanOr("remember", false);
         
     });
     

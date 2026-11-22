@@ -30,7 +30,7 @@ public class LittleImporter extends LittleStructurePremade {
     
     @Override
     public InteractionResult use(Level level, LittleTileContext context, BlockPos pos, Player player, BlockHitResult result) {
-        if (!level.isClientSide)
+        if (!level.isClientSide())
             LittleTilesGuiRegistry.IMPORTER.open(player);
         return InteractionResult.SUCCESS;
     }

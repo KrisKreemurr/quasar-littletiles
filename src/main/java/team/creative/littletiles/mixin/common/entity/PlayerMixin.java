@@ -70,7 +70,7 @@ public class PlayerMixin implements LittleActionSource {
     
     @Override
     public boolean isClient() {
-        return asPlayer().level().isClientSide;
+        return asPlayer().level().isClientSide();
     }
     
     @Override

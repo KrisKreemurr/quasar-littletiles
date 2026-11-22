@@ -209,11 +209,11 @@ public abstract class LittleStateStructure<T extends AnimationState> extends Lit
     
     @Override
     protected void loadExtra(CompoundTag nbt, HolderLookup.Provider provider) {
-        currentState = nbt.getInt("cS");
+        currentState = nbt.getIntOr("cS", 0);
         //if (currentState < 0 || currentState >= states.size())
         //throw new RuntimeException("Invalid state structure! State " + currentState + " not found. Only got " + states.size() + " states");
         
-        aimedState = nbt.getInt("aS");
+        aimedState = nbt.getIntOr("aS", 0);
         if (aimedState >= states.size())
             throw new RuntimeException("Invalid state structure! Aimed State " + aimedState + " not found. Only got " + states.size() + " states");
         
@@ -223,11 +223,11 @@ public abstract class LittleStateStructure<T extends AnimationState> extends Lit
             timeline = null;
         
         if (nbt.contains("cP"))
-            physical = new PhysicalState(nbt.getCompound("cP"));
+            physical = new PhysicalState(nbt.getCompoundOrEmpty("cP"));
         else
             physical = null;
         
-        this.stayAnimated = nbt.getBoolean("stay");
+        this.stayAnimated = nbt.getBooleanOr("stay", false);
         
     }
     

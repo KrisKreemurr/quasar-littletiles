@@ -37,11 +37,11 @@ public class BlockParentCollection extends ParentCollection {
     
     @Override
     protected void loadExtra(CompoundTag nbt, HolderLookup.Provider provider) {
-        ListTag list = nbt.getList("children", Tag.TAG_COMPOUND);
+        ListTag list = nbt.getListOrEmpty("children");
         HashMap<Integer, StructureParentCollection> previous = new HashMap<>(structures);
         structures.clear();
         for (int i = 0; i < list.size(); i++) {
-            CompoundTag childNBT = list.getCompound(i);
+            CompoundTag childNBT = list.getCompoundOrEmpty(i);
             StructureParentCollection child = previous.remove(childNBT.getInt("index"));
             if (child == null)
                 child = new StructureParentCollection(this, childNBT, provider);

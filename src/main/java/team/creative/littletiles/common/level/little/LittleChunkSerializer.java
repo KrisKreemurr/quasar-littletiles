@@ -57,9 +57,9 @@ public class LittleChunkSerializer {
     private static final Logger LOGGER = LogUtils.getLogger();
     
     public static LevelChunk read(LittleLevel level, CompoundTag nbt) {
-        ChunkPos chunkpos = new ChunkPos(nbt.getInt("xPos"), nbt.getInt("zPos"));
+        ChunkPos chunkpos = new ChunkPos(nbt.getIntOr("xPos", 0), nbt.getIntOr("zPos", 0));
         
-        ListTag listtag = nbt.getList("sections", 10);
+        ListTag listtag = nbt.getListOrEmpty("sections");
         int i = level.getSectionsCount();
         LevelChunkSection[] alevelchunksection = new LevelChunkSection[i];
         boolean chunkSkyLight = level.dimensionType().hasSkyLight();
@@ -69,8 +69,8 @@ public class LittleChunkSerializer {
         boolean retained = false;
         
         for (int j = 0; j < listtag.size(); ++j) {
-            CompoundTag compoundtag = listtag.getCompound(j);
-            int y = compoundtag.getByte("Y");
+            CompoundTag compoundtag = listtag.getCompoundOrEmpty(j);
+            int y = compoundtag.getByteOr("Y", (byte) 0);
             int l = level.getSectionIndexFromSectionY(y);
             if (l >= 0 && l < alevelchunksection.length) {
                 PalettedContainer<BlockState> states;
@@ -102,39 +102,39 @@ public class LittleChunkSerializer {
             }
         }
         
-        LevelChunkTicks<Block> blockTicks = LevelChunkTicks.load(nbt.getList("block_ticks", 10), (x) -> BuiltInRegistries.BLOCK.getOptional(Identifier.tryParse(x)),
+        LevelChunkTicks<Block> blockTicks = LevelChunkTicks.load(nbt.getListOrEmpty("block_ticks"), (x) -> BuiltInRegistries.BLOCK.getOptional(Identifier.tryParse(x)),
             chunkpos);
-        LevelChunkTicks<Fluid> fluidTicks = LevelChunkTicks.load(nbt.getList("fluid_ticks", 10), (x) -> BuiltInRegistries.FLUID.getOptional(Identifier.tryParse(x)),
+        LevelChunkTicks<Fluid> fluidTicks = LevelChunkTicks.load(nbt.getListOrEmpty("fluid_ticks"), (x) -> BuiltInRegistries.FLUID.getOptional(Identifier.tryParse(x)),
             chunkpos);
         
-        LevelChunk chunk = new LevelChunk(level.asLevel(), chunkpos, UpgradeData.EMPTY, blockTicks, fluidTicks, nbt.getLong("InhabitedTime"), alevelchunksection, postLoadChunk(
+        LevelChunk chunk = new LevelChunk(level.asLevel(), chunkpos, UpgradeData.EMPTY, blockTicks, fluidTicks, nbt.getLongOr("InhabitedTime", 0L), alevelchunksection, postLoadChunk(
             level, nbt), null);
         
         if (nbt.contains(AttachmentHolder.ATTACHMENTS_NBT_KEY, Tag.TAG_COMPOUND))
-            chunk.readAttachmentsFromNBT(level.registryAccess(), nbt.getCompound(AttachmentHolder.ATTACHMENTS_NBT_KEY));
+            chunk.readAttachmentsFromNBT(level.registryAccess(), nbt.getCompoundOrEmpty(AttachmentHolder.ATTACHMENTS_NBT_KEY));
         
-        chunk.setLightCorrect(nbt.getBoolean("isLightOn"));
+        chunk.setLightCorrect(nbt.getBooleanOr("isLightOn", false));
         
-        CompoundTag heightmaps = nbt.getCompound("Heightmaps");
+        CompoundTag heightmaps = nbt.getCompoundOrEmpty("Heightmaps");
         EnumSet<Heightmap.Types> enumset = EnumSet.noneOf(Heightmap.Types.class);
         
         for (Heightmap.Types type : chunk.getPersistedStatus().heightmapsAfter()) {
             String s = type.getSerializationKey();
             if (heightmaps.contains(s, 12))
-                chunk.setHeightmap(type, heightmaps.getLongArray(s));
+                chunk.setHeightmap(type, heightmaps.getLongArray(s).orElseGet(() -> new long[0]));
             else
                 enumset.add(type);
         }
         
         Heightmap.primeHeightmaps(chunk, enumset);
         
-        if (nbt.getBoolean("shouldSave"))
+        if (nbt.getBooleanOr("shouldSave", false))
             chunk.setUnsaved(true);
         
-        ListTag blockEntities = nbt.getList("block_entities", 10);
+        ListTag blockEntities = nbt.getListOrEmpty("block_entities");
         
         for (int j = 0; j < blockEntities.size(); ++j)
-            chunk.setBlockEntityNbt(blockEntities.getCompound(j));
+            chunk.setBlockEntityNbt(blockEntities.getCompoundOrEmpty(j));
         
         NeoForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, nbt, ChunkType.LEVELCHUNK));
         return chunk;
@@ -231,8 +231,8 @@ public class LittleChunkSerializer {
             
             if (blockEntities != null)
                 for (int i = 0; i < blockEntities.size(); ++i) {
-                    CompoundTag blockTag = blockEntities.getCompound(i);
-                    if (blockTag.getBoolean("keepPacked"))
+                    CompoundTag blockTag = blockEntities.getCompoundOrEmpty(i);
+                    if (blockTag.getBooleanOr("keepPacked", false))
                         x.setBlockEntityNbt(blockTag);
                     else {
                         BlockPos blockpos = BlockEntity.getPosFromTag(blockTag);
@@ -246,7 +246,7 @@ public class LittleChunkSerializer {
     
     @Nullable
     private static ListTag getListOfCompoundsOrNull(CompoundTag nbt, String key) {
-        ListTag listtag = nbt.getList(key, 10);
+        ListTag listtag = nbt.getListOrEmpty(key);
         return listtag.isEmpty() ? null : listtag;
     }
 }

@@ -43,12 +43,12 @@ public abstract class LittleBoxes implements IGridBased {
     }
     
     public LittleBoxes(CompoundTag nbt) {
-        int[] posArray = nbt.getIntArray("p");
+        int[] posArray = nbt.getIntArray("p").orElseGet(() -> new int[0]);
         this.pos = new BlockPos(posArray[0], posArray[1], posArray[2]);
         this.grid = LittleGrid.get(nbt);
-        ListTag list = nbt.getList("b", Tag.TAG_INT_ARRAY);
+        ListTag list = nbt.getListOrEmpty("b");
         for (int i = 0; i < list.size(); i++)
-            add(LittleBox.create(list.getIntArray(i)));
+            add(LittleBox.create(list.getIntArray(i).orElseGet(() -> new int[0])));
     }
     
     public CompoundTag save(CompoundTag nbt) {

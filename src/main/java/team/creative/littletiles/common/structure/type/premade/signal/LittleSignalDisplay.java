@@ -68,7 +68,7 @@ public class LittleSignalDisplay extends LittleStructurePremade {
     @Override
     protected void loadExtra(CompoundTag nbt, HolderLookup.Provider provider) {
         if (nbt.contains("color"))
-            color = nbt.getInt("color");
+            color = nbt.getIntOr("color", 0);
         else
             color = ColorUtils.WHITE;
     }

@@ -25,7 +25,7 @@ public class LittleAnimationHandlers extends LevelHandlers<LittleAnimationHandle
     
     public LittleAnimationHandlers() {
         super(level -> {
-            if (level.isClientSide)
+            if (level.isClientSide())
                 return createClient(level);
             return new LittleAnimationHandlerServer(level);
         });

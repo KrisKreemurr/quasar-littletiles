@@ -36,7 +36,7 @@ public class LittleTicker extends LevelHandler implements Iterable<LittleTickTic
     
     public LittleTicker(Level level) {
         super(level);
-        this.client = level.isClientSide;
+        this.client = level.isClientSide();
     }
     
     protected LittleTickTicket pollUnused() {

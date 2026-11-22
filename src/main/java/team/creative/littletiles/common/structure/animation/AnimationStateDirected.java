@@ -16,10 +16,10 @@ public class AnimationStateDirected extends AnimationState {
     public AnimationStateDirected(CompoundTag nbt) {
         super(nbt);
         this.rightClickTransition = nbt.contains("right") ? nbt.getInt("right") : -1;
-        ListTag list = nbt.getList("trigger", Tag.TAG_COMPOUND);
+        ListTag list = nbt.getListOrEmpty("trigger");
         this.triggers = new ArrayList<>(list.size());
         for (int i = 0; i < list.size(); i++)
-            triggers.add(new AnimationSignalTrigger(list.getCompound(i)));
+            triggers.add(new AnimationSignalTrigger(list.getCompoundOrEmpty(i)));
     }
     
     public AnimationStateDirected(String name) {

@@ -63,7 +63,7 @@ public abstract class LittleActionBoxes extends LittleAction<Boolean> {
         
         Level level = source.getActionLevel();
         if (levelUUID != null) {
-            LittleEntity animation = LittleTiles.ANIMATION_HANDLERS.find(level.isClientSide, levelUUID);
+            LittleEntity animation = LittleTiles.ANIMATION_HANDLERS.find(level.isClientSide(), levelUUID);
             if (animation == null)
                 throw new MissingAnimationException(levelUUID);
             
@@ -105,7 +105,7 @@ public abstract class LittleActionBoxes extends LittleAction<Boolean> {
             BlockPos pos = entry.getKey();
             BlockState state = level.getBlockState(pos);
             if (!isAllowedToInteract(level, source, pos, false, Facing.EAST)) {
-                if (!level.isClientSide)
+                if (!level.isClientSide())
                     sendBlockResetToClient(level, source, pos);
                 continue;
             }

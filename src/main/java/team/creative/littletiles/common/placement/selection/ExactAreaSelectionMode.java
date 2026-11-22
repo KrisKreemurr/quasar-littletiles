@@ -77,11 +77,11 @@ public class ExactAreaSelectionMode extends SelectionMode {
     public SelectionComponent keyPressed(LittleActionSource source, ItemStack stack, SelectionComponent config, LittleGrid positionGrid, boolean secondMode, KeyMapping key) {
         var nbt = config.getConfig();
         if (key == LittleTilesClient.KEY_MARK) {
-            int marked = nbt.getInt("marked");
+            int marked = nbt.getIntOr("marked", 0);
             nbt.putInt("marked", (marked + 1) % 3);
             return config.withConfig(nbt);
         }
-        int marked = nbt.getInt("marked");
+        int marked = nbt.getIntOr("marked", 0);
         if (marked > 0) {
             var facing = LittleTilesClient.facingFromKeybind(source.asPlayer(), key);
             if (facing != null) {
@@ -149,7 +149,7 @@ public class ExactAreaSelectionMode extends SelectionMode {
     @OnlyIn(Dist.CLIENT)
     public void buildRender(Level level, ItemStack stack, SelectionComponent config, SelectionRenderQueue queue) {
         var nbt = config.getConfig();
-        int marked = nbt.getInt("marked");
+        int marked = nbt.getIntOr("marked", 0);
         
         LittleBoxLevel pos1 = LittleBoxLevel.tryOf(level, nbt.get("pos1"));
         LittleBoxLevel pos2 = LittleBoxLevel.tryOf(level, nbt.get("pos2"));

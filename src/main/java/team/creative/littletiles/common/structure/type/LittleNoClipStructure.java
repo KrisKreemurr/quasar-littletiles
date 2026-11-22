@@ -30,7 +30,7 @@ public class LittleNoClipStructure extends LittleStructure {
     
     @Override
     protected void loadExtra(CompoundTag nbt, HolderLookup.Provider provider) {
-        web = nbt.getBoolean("web");
+        web = nbt.getBooleanOr("web", false);
     }
     
     @Override
@@ -42,7 +42,7 @@ public class LittleNoClipStructure extends LittleStructure {
     public void onEntityCollidedWithBlock(Level level, IStructureParentCollection parent, BlockPos pos, Entity entityIn) {
         if (web)
             entityIn.makeStuckInBlock(Blocks.COBWEB.defaultBlockState(), new Vec3(0.25D, 0.05F, 0.25D));
-        if (level.isClientSide)
+        if (level.isClientSide())
             return;
         
         var bb = entityIn.getBoundingBox();

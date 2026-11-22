@@ -10,8 +10,8 @@ public class AnimationState extends PhysicalState {
     
     public AnimationState(CompoundTag nbt) {
         super(nbt);
-        this.name = nbt.getString("n");
-        this.backToBlockform = nbt.getBoolean("b");
+        this.name = nbt.getStringOr("n", "");
+        this.backToBlockform = nbt.getBooleanOr("b", false);
     }
     
     public AnimationState(String name) {

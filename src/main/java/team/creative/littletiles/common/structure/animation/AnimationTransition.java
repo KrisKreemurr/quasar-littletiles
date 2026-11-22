@@ -17,9 +17,9 @@ public class AnimationTransition {
     }
     
     public AnimationTransition(CompoundTag nbt) {
-        this.name = nbt.getString("n");
-        this.start = nbt.getInt("f");
-        this.end = nbt.getInt("t");
+        this.name = nbt.getStringOr("n", "");
+        this.start = nbt.getIntOr("f", 0);
+        this.end = nbt.getIntOr("t", 0);
         this.timeline = new AnimationTimeline(nbt.getCompound("a"));
     }
     

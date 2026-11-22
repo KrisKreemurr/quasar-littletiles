@@ -45,11 +45,11 @@ public class StructureChildConnection implements IStructureConnection {
     public StructureChildConnection(ILevelPositionProvider parent, boolean isChild, CompoundTag nbt) {
         this.parent = parent;
         this.isChild = isChild;
-        this.childId = nbt.getInt("child");
-        this.attribute = nbt.getInt("type");
-        this.structureIndex = nbt.getInt("index");
-        this.extension = nbt.getBoolean("extension");
-        int[] array = nbt.getIntArray("coord");
+        this.childId = nbt.getIntOr("child", 0);
+        this.attribute = nbt.getIntOr("type", 0);
+        this.structureIndex = nbt.getIntOr("index", 0);
+        this.extension = nbt.getBooleanOr("extension", false);
+        int[] array = nbt.getIntArray("coord").orElseGet(() -> new int[0]);
         if (array.length == 3)
             relativePos = new BlockPos(array[0], array[1], array[2]);
         else
@@ -154,7 +154,7 @@ public class StructureChildConnection implements IStructureConnection {
     public static StructureChildConnection load(ILevelPositionProvider structure, CompoundTag nbt, boolean isChild) {
         if (nbt.contains("entity"))
             return new StructureChildToSubLevelConnection(structure, nbt);
-        else if (nbt.getBoolean("subWorld"))
+        else if (nbt.getBooleanOr("subWorld", false))
             return new StructureChildFromSubLevelConnection(structure, nbt);
         return new StructureChildConnection(structure, isChild, nbt);
     }

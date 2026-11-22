@@ -20,9 +20,9 @@ public class PlaySoundEvent extends AnimationEvent<CompoundTag> {
     public float pitch;
     
     public PlaySoundEvent(CompoundTag nbt) {
-        sound = get(Identifier.parse(nbt.getString("s")));
-        volume = nbt.getFloat("v");
-        pitch = nbt.getFloat("p");
+        sound = get(Identifier.parse(nbt.getStringOr("s", "")));
+        volume = nbt.getFloatOr("v", 0F);
+        pitch = nbt.getFloatOr("p", 0F);
     }
     
     public PlaySoundEvent(SoundEvent event, float volume, float pitch) {

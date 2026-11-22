@@ -57,17 +57,17 @@ public class TileLocation implements IGridBased {
     }
     
     public TileLocation(CompoundTag nbt) {
-        int[] posArray = nbt.getIntArray("pos");
+        int[] posArray = nbt.getIntArray("pos").orElseGet(() -> new int[0]);
         if (posArray.length != 3)
             throw new IllegalArgumentException("Invalid pos array length " + Arrays.toString(posArray));
         
         pos = new BlockPos(posArray[0], posArray[1], posArray[2]);
         isStructure = nbt.contains("index");
-        index = nbt.getInt("index");
+        index = nbt.getIntOr("index", 0);
         grid = LittleGrid.get(nbt);
-        box = LittleBox.create(nbt.getIntArray("box"));
+        box = LittleBox.create(nbt.getIntArray("box").orElseGet(() -> new int[0]));
         if (nbt.contains("world"))
-            levelUUID = UUID.fromString(nbt.getString("world"));
+            levelUUID = UUID.fromString(nbt.getStringOr("world", ""));
         else
             levelUUID = null;
     }

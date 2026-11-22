@@ -20,7 +20,7 @@ public class PlacementPlayerSetting {
     }
     
     public static LittleGrid grid(Player player) {
-        if (player.level().isClientSide)
+        if (player.level().isClientSide())
             return gridClient();
         CompoundTag nbt = player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getCompound(PlacementPlayerSetting.SETTING_KEY);
         return LittleTiles.CONFIG.build.get(player).getOrDefault(nbt.contains(LittleGrid.GRID_KEY) ? nbt.getInt(LittleGrid.GRID_KEY) : -1);
@@ -32,10 +32,10 @@ public class PlacementPlayerSetting {
     }
     
     public static PlacementMode placementMode(Player player) {
-        if (player.level().isClientSide)
+        if (player.level().isClientSide())
             return placementModeClient();
         CompoundTag nbt = player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getCompound(PlacementPlayerSetting.SETTING_KEY);
-        return PlacementMode.getMode(nbt.getString("mode"));
+        return PlacementMode.getMode(nbt.getStringOr("mode", ""));
     }
     
     protected PlacementMode mode;
@@ -48,7 +48,7 @@ public class PlacementPlayerSetting {
     }
     
     public PlacementPlayerSetting(CompoundTag nbt) {
-        mode = PlacementMode.getMode(nbt.getString("mode"));
+        mode = PlacementMode.getMode(nbt.getStringOr("mode", ""));
         configuredGrid = nbt.contains(LittleGrid.GRID_KEY) ? nbt.getInt(LittleGrid.GRID_KEY) : -1;
     }
     

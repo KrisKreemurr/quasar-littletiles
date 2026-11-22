@@ -41,7 +41,7 @@ public class ItemLittleBag extends Item implements ILittleIngredientInventory, I
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         if (hand != InteractionHand.MAIN_HAND)
             return InteractionResultHolder.fail(player.getItemInHand(hand));
-        if (!level.isClientSide)
+        if (!level.isClientSide())
             GuiCreator.ITEM_OPENER.open(player, hand);
         return InteractionResultHolder.success(player.getItemInHand(hand));
     }
@@ -60,17 +60,17 @@ public class ItemLittleBag extends Item implements ILittleIngredientInventory, I
         };
         BlockIngredient blocks = new BlockIngredient().setLimits(LittleTiles.CONFIG.general.bag.inventorySize, Item.DEFAULT_MAX_STACK_SIZE);
         
-        ListTag list = nbt.getList("inv", Tag.TAG_COMPOUND);
+        ListTag list = nbt.getListOrEmpty("inv");
         int size = Math.min(LittleTiles.CONFIG.general.bag.inventorySize, list.size());
         for (int i = 0; i < size; i++) {
-            CompoundTag blockNBT = list.getCompound(i);
+            CompoundTag blockNBT = list.getCompoundOrEmpty(i);
             BlockIngredientEntry ingredient = IngredientUtils.loadBlockIngredient(blockNBT);
             if (ingredient != null && ingredient.value >= LittleGrid.getMax().pixelVolume)
                 blocks.add(ingredient);
         }
         ingredients.set(blocks.getClass(), blocks);
         
-        ColorIngredient color = new ColorIngredient(nbt.getInt("black"), nbt.getInt("cyan"), nbt.getInt("magenta"), nbt.getInt("yellow"), nbt.getInt("alpha"));
+        ColorIngredient color = new ColorIngredient(nbt.getIntOr("black", 0), nbt.getIntOr("cyan", 0), nbt.getIntOr("magenta", 0), nbt.getIntOr("yellow", 0), nbt.getIntOr("alpha", 0));
         color.setLimit(LittleTiles.CONFIG.general.bag.colorStorage);
         ingredients.set(color.getClass(), color);
         return ingredients;

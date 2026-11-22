@@ -69,7 +69,7 @@ public class BETiles extends BlockEntityCreative implements IGridBased, ILittleB
     
     public static void tick(Level level, BlockPos pos, BlockState state, BlockEntity blockEntity) {
         if (blockEntity instanceof BETiles be) {
-            if (!be.tiles.hasTicking() && !be.level.isClientSide) {
+            if (!be.tiles.hasTicking() && !be.level.isClientSide()) {
                 be.customTilesUpdate();
                 LittleTiles.LOGGER.warn("Ticking tileentity which shouldn't " + be.getBlockPos());
                 return;
@@ -141,7 +141,7 @@ public class BETiles extends BlockEntityCreative implements IGridBased, ILittleB
     @Override
     public synchronized void convertTo(LittleGrid to) { // Synchronized to make sure the box creation and grid converation do not happen at the same time
         boolean rendering = false;
-        if (level != null && level.isClientSide)
+        if (level != null && level.isClientSide())
             rendering = render.getAndSetBlocked();
         
         for (Pair<IParentCollection, LittleTile> pair : tiles.allTiles())
@@ -149,7 +149,7 @@ public class BETiles extends BlockEntityCreative implements IGridBased, ILittleB
         
         this.grid = to;
         
-        if (level != null && level.isClientSide) {
+        if (level != null && level.isClientSide()) {
             render.unsetBlocked();
             if (rendering) // Fixes incorrect rendering when receiving an update while render cache is building
                 render.queue(true, false, 0);
@@ -237,7 +237,7 @@ public class BETiles extends BlockEntityCreative implements IGridBased, ILittleB
     }
     
     protected void customTilesUpdate() {
-        if (level.isClientSide)
+        if (level.isClientSide())
             return;
         
         if (tiles.isCompletelyEmpty()) {
@@ -466,7 +466,7 @@ public class BETiles extends BlockEntityCreative implements IGridBased, ILittleB
             init();
         
         boolean rendering = false;
-        if (level != null && level.isClientSide)
+        if (level != null && level.isClientSide())
             rendering = render.getAndSetBlocked();
         
         grid = LittleGrid.getOrThrow(nbt);
@@ -474,12 +474,12 @@ public class BETiles extends BlockEntityCreative implements IGridBased, ILittleB
         tiles.load(nbt.getCompound("content"), provider);
         sideCache.load(nbt);
         
-        if (level != null && !level.isClientSide) {
+        if (level != null && !level.isClientSide()) {
             level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
             customTilesUpdate();
         }
         
-        if (level != null && level.isClientSide) {
+        if (level != null && level.isClientSide()) {
             render.unsetBlocked();
             if (rendering) // Fixes incorrect rendering when receiving an update while render cache is building
                 render.queue(true, false, 0);
@@ -692,7 +692,7 @@ public class BETiles extends BlockEntityCreative implements IGridBased, ILittleB
         unloaded = true;
         super.onChunkUnloaded();
         tiles.unload();
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             tiles = null;
             render.chunkUnload();
         }
@@ -930,13 +930,13 @@ public class BETiles extends BlockEntityCreative implements IGridBased, ILittleB
         public SideSolidCache() {}
         
         public void load(CompoundTag nbt) {
-            EAST = nbt.contains("east") ? SideState.values()[nbt.getInt("east")] : null;
-            WEST = nbt.contains("west") ? SideState.values()[nbt.getInt("west")] : null;
-            UP = nbt.contains("up") ? SideState.values()[nbt.getInt("up")] : null;
-            DOWN = nbt.contains("down") ? SideState.values()[nbt.getInt("down")] : null;
-            SOUTH = nbt.contains("south") ? SideState.values()[nbt.getInt("south")] : null;
-            NORTH = nbt.contains("north") ? SideState.values()[nbt.getInt("north")] : null;
-            YAXIS = nbt.contains("y_axis") ? SideState.values()[nbt.getInt("y_axis")] : null;
+            EAST = nbt.contains("east") ? SideState.values()[nbt.getIntOr("east", 0)] : null;
+            WEST = nbt.contains("west") ? SideState.values()[nbt.getIntOr("west", 0)] : null;
+            UP = nbt.contains("up") ? SideState.values()[nbt.getIntOr("up", 0)] : null;
+            DOWN = nbt.contains("down") ? SideState.values()[nbt.getIntOr("down", 0)] : null;
+            SOUTH = nbt.contains("south") ? SideState.values()[nbt.getIntOr("south", 0)] : null;
+            NORTH = nbt.contains("north") ? SideState.values()[nbt.getIntOr("north", 0)] : null;
+            YAXIS = nbt.contains("y_axis") ? SideState.values()[nbt.getIntOr("y_axis", 0)] : null;
         }
         
         public void write(CompoundTag nbt) {

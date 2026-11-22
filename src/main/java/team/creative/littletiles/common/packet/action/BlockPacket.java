@@ -73,7 +73,7 @@ public class BlockPacket extends CreativePacket {
                     return;
                 LittleGroup previews;
                 if (context.parent.isStructure()) {
-                    if (nbt.getBoolean("secondMode"))
+                    if (nbt.getBooleanOr("secondMode", false))
                         try {
                             previews = context.parent.getStructure().getPreviews(pos);
                         } catch (CorruptedConnectionException | NotYetConnectedException e) {
@@ -87,7 +87,7 @@ public class BlockPacket extends CreativePacket {
                         }
                 } else {
                     previews = new LittleGroup();
-                    if (nbt.getBoolean("secondMode"))
+                    if (nbt.getBooleanOr("secondMode", false))
                         for (IParentCollection collection : be.groups())
                             previews.addAll(be.getGrid(), new FunctionIterator<>(collection, x -> x.copy()));
                     else

@@ -56,12 +56,12 @@ public class BlockUpdateLevelSystem {
     
     public void load(CompoundTag nbt) {
         clearAllEdges();
-        if (nbt.getBoolean("empty")) {
+        if (nbt.getBooleanOr("empty", false)) {
             rescanEntireLevel();
             return;
         }
         
-        int[] bounds = nbt.getIntArray("bounds");
+        int[] bounds = nbt.getIntArray("bounds").orElseGet(() -> new int[0]);
         if (bounds.length != 6) {
             rescanEntireLevel();
             return;
@@ -75,12 +75,12 @@ public class BlockUpdateLevelSystem {
         maxZ = bounds[5];
         
         emptyLevel = false;
-        east.load(nbt.getCompound("e"));
-        west.load(nbt.getCompound("w"));
-        up.load(nbt.getCompound("u"));
-        down.load(nbt.getCompound("d"));
-        south.load(nbt.getCompound("s"));
-        north.load(nbt.getCompound("n"));
+        east.load(nbt.getCompoundOrEmpty("e"));
+        west.load(nbt.getCompoundOrEmpty("w"));
+        up.load(nbt.getCompoundOrEmpty("u"));
+        down.load(nbt.getCompoundOrEmpty("d"));
+        south.load(nbt.getCompoundOrEmpty("s"));
+        north.load(nbt.getCompoundOrEmpty("n"));
     }
     
     public CompoundTag save() {
@@ -190,7 +190,7 @@ public class BlockUpdateLevelSystem {
         
         if (needsUpdate) {
             levelBoundListeners.forEach(x -> x.afterChangesApplied(this));
-            if (!entity.level().isClientSide)
+            if (!entity.level().isClientSide())
                 LittleTiles.NETWORK.sendToClientTracking(new LittleEntityPhysicPacket(entity), entity);
         }
     }

@@ -53,7 +53,7 @@ public class LittleTilesGuiRegistry {
     
     public static final GuiCreatorBasic OPEN_CONFIG = GuiCreator.register("configure", new GuiCreatorBasic((nbt, player) -> {
         if (player.getMainHandItem().getItem() instanceof ILittleTool tool)
-            return tool.getConfigure(player, ContainerSlotView.mainHand(player), nbt.getBoolean("second"));
+            return tool.getConfigure(player, ContainerSlotView.mainHand(player), nbt.getBooleanOr("second", false));
         return null;
     }));
     

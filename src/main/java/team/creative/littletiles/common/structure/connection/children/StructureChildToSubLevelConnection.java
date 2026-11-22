@@ -23,7 +23,7 @@ public class StructureChildToSubLevelConnection extends StructureChildConnection
     
     public StructureChildToSubLevelConnection(ILevelPositionProvider parent, CompoundTag nbt) {
         super(parent, false, nbt);
-        this.entityUUID = UUID.fromString(nbt.getString("entity"));
+        this.entityUUID = UUID.fromString(nbt.getStringOr("entity", ""));
     }
     
     @Override

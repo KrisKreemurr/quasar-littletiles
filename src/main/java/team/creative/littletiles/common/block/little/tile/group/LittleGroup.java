@@ -80,7 +80,7 @@ public class LittleGroup implements Bunch<LittleTile>, IGridBased {
     }
     
     public static boolean shouldRenderInHand(CompoundTag nbt) {
-        int count = nbt.getInt(BOXES_COUNT_KEY);
+        int count = nbt.getIntOr(BOXES_COUNT_KEY, 0);
         return count > 0 && count < LittleTiles.CONFIG.building.lowResolutionBoxCount;
     }
     
@@ -98,21 +98,21 @@ public class LittleGroup implements Bunch<LittleTile>, IGridBased {
     }
     
     public static LittleGroup load(CompoundTag nbt) {
-        ListTag list = nbt.getList(CHILDREN_KEY, Tag.TAG_COMPOUND);
+        ListTag list = nbt.getListOrEmpty(CHILDREN_KEY);
         List<LittleGroup> children = new ArrayList<>(list.size());
         for (int i = 0; i < list.size(); i++)
-            children.add(load(list.getCompound(i)));
+            children.add(load(list.getCompoundOrEmpty(i)));
         
-        CompoundTag structure = nbt.getCompound(STRUCTURE_KEY);
+        CompoundTag structure = nbt.getCompoundOrEmpty(STRUCTURE_KEY);
         if (structure.isEmpty())
             structure = null;
         LittleGroup group = new LittleGroup(structure, children);
         group.convertTo(LittleGrid.get(nbt));
-        LittleCollection.load(group.content, nbt.getCompound(TILES_KEY));
+        LittleCollection.load(group.content, nbt.getCompoundOrEmpty(TILES_KEY));
         
-        CompoundTag extensions = nbt.getCompound(EXTENSION_KEY);
+        CompoundTag extensions = nbt.getCompoundOrEmpty(EXTENSION_KEY);
         for (String id : extensions.getAllKeys())
-            group.children.addExtension(id, load(extensions.getCompound(id)));
+            group.children.addExtension(id, load(extensions.getCompoundOrEmpty(id)));
         return group;
     }
     
@@ -262,13 +262,13 @@ public class LittleGroup implements Bunch<LittleTile>, IGridBased {
     
     public String getStructureId() {
         if (hasStructure())
-            return structure.getString("id");
+            return structure.getStringOr("id", "");
         return null;
     }
     
     public LittleStructureType getStructureType() {
         if (hasStructure())
-            return LittleStructureRegistry.REGISTRY.get(structure.getString("id"));
+            return LittleStructureRegistry.REGISTRY.get(structure.getStringOr("id", ""));
         return null;
     }
     

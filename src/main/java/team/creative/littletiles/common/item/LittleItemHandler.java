@@ -29,7 +29,7 @@ public class LittleItemHandler {
     
     @SubscribeEvent
     public void onLeftClick(LeftClickBlock event) {
-        if (!event.getLevel().isClientSide && event.getItemStack().getItem() instanceof ILittleTool) {
+        if (!event.getLevel().isClientSide() && event.getItemStack().getItem() instanceof ILittleTool) {
             event.setCanceled(true);
             return;
         }

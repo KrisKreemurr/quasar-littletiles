@@ -266,7 +266,7 @@ public class PreviewManager implements LevelAwareHandler {
     
     @SubscribeEvent
     protected void onLeftClickAir(LeftClickEmpty event) {
-        if (!event.getLevel().isClientSide || tool == null)
+        if (!event.getLevel().isClientSide() || tool == null)
             return;
         
         var hit = blockHit();
@@ -275,7 +275,7 @@ public class PreviewManager implements LevelAwareHandler {
     
     @SubscribeEvent
     protected void onLeftClickBlock(LeftClickBlock event) {
-        if (!event.getLevel().isClientSide || tool == null || event.getAction() != Action.START)
+        if (!event.getLevel().isClientSide() || tool == null || event.getAction() != Action.START)
             return;
         
         var hit = blockHit();
@@ -285,7 +285,7 @@ public class PreviewManager implements LevelAwareHandler {
     
     @SubscribeEvent
     protected void onRightClickAir(RightClickEmpty event) {
-        if (!event.getLevel().isClientSide || tool == null)
+        if (!event.getLevel().isClientSide() || tool == null)
             return;
         var hit = blockHit();
         tool.onRightClick(renderer, blockHitLevel(), hit);
@@ -293,7 +293,7 @@ public class PreviewManager implements LevelAwareHandler {
     
     @SubscribeEvent
     protected void onRightClickBlock(RightClickBlock event) {
-        if (event.getHand() != InteractionHand.MAIN_HAND || !event.getLevel().isClientSide || tool == null)
+        if (event.getHand() != InteractionHand.MAIN_HAND || !event.getLevel().isClientSide() || tool == null)
             return;
         
         var hit = blockHit();

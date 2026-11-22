@@ -21,7 +21,7 @@ public class LittleSlidingDoor extends LittleDoor {
     @Override
     protected void loadExtra(CompoundTag nbt, HolderLookup.Provider provider) {
         super.loadExtra(nbt, provider);
-        distance = nbt.getInt("dis");
+        distance = nbt.getIntOr("dis", 0);
         grid = LittleGrid.get(nbt.getInt("disG"));
     }
     

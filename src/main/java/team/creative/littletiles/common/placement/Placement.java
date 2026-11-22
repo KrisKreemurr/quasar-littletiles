@@ -177,7 +177,7 @@ public class Placement {
         if (blocks.isEmpty())
             return null;
         
-        if (source != null && !level.isClientSide) {
+        if (source != null && !level.isClientSide()) {
             affectedBlocks.setValue(0);
             
             if (source.isPlayer()) {

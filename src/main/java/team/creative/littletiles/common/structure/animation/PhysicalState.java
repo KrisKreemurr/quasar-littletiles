@@ -17,8 +17,8 @@ public class PhysicalState {
     }
     
     public PhysicalState(CompoundTag nbt) {
-        this.offset = new Vec3d(nbt.getDouble("oX"), nbt.getDouble("oY"), nbt.getDouble("oZ"));
-        this.rotation = new Vec3d(nbt.getDouble("rX"), nbt.getDouble("rY"), nbt.getDouble("rZ"));
+        this.offset = new Vec3d(nbt.getDoubleOr("oX", 0D), nbt.getDoubleOr("oY", 0D), nbt.getDoubleOr("oZ", 0D));
+        this.rotation = new Vec3d(nbt.getDoubleOr("rX", 0D), nbt.getDoubleOr("rY", 0D), nbt.getDoubleOr("rZ", 0D));
     }
     
     public boolean isAligned() {

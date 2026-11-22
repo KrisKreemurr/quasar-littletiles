@@ -87,10 +87,10 @@ public class LittleStorage extends LittleStructure {
     
     @Override
     protected void loadExtra(CompoundTag nbt, HolderLookup.Provider provider) {
-        inventorySize = nbt.getInt("inventorySize");
-        stackSizeLimit = nbt.getInt("stackSizeLimit");
-        numberOfSlots = nbt.getInt("numberOfSlots");
-        lastSlotStackSize = nbt.getInt("lastSlot");
+        inventorySize = nbt.getIntOr("inventorySize", 0);
+        stackSizeLimit = nbt.getIntOr("stackSizeLimit", 0);
+        numberOfSlots = nbt.getIntOr("numberOfSlots", 0);
+        lastSlotStackSize = nbt.getIntOr("lastSlot", 0);
         if (nbt.contains("inventory")) {
             var invNBT = nbt.getCompound("inventory");
             inventory = new SimpleContainer(invNBT.getInt("size")) {
@@ -106,13 +106,13 @@ public class LittleStorage extends LittleStructure {
         if (inventory != null)
             inventory.addListener(x -> onInventoryChanged());
         
-        invisibleStorageTiles = nbt.getBoolean("invisibleStorage");
-        whitelist = nbt.getBoolean("f_white");
+        invisibleStorageTiles = nbt.getBooleanOr("invisibleStorage", false);
+        whitelist = nbt.getBooleanOr("f_white", false);
         if (nbt.contains("filter")) {
-            ListTag list = nbt.getList("filter", Tag.TAG_COMPOUND);
+            ListTag list = nbt.getListOrEmpty("filter");
             filter = new ArrayList<>();
             for (int i = 0; i < list.size(); i++)
-                filter.add(CreativeIngredient.load(provider, list.getCompound(i)));
+                filter.add(CreativeIngredient.load(provider, list.getCompoundOrEmpty(i)));
         } else
             filter = null;
     }
@@ -166,7 +166,7 @@ public class LittleStorage extends LittleStructure {
     
     @Override
     public InteractionResult use(Level level, LittleTileContext context, BlockPos pos, Player player, BlockHitResult result) {
-        if (!level.isClientSide && !hasPlayerOpened(player))
+        if (!level.isClientSide() && !hasPlayerOpened(player))
             LittleTilesGuiRegistry.STORAGE.open(player, this);
         return InteractionResult.SUCCESS;
     }
@@ -241,7 +241,7 @@ public class LittleStorage extends LittleStructure {
         public void addIngredients(HolderLookup.Provider provider, LittleGroup previews, LittleIngredients ingredients) {
             super.addIngredients(provider, previews, ingredients);
             
-            Container inventory = InventoryUtils.load(provider, previews.getStructureTag().getCompound("inventory"));
+            Container inventory = InventoryUtils.load(provider, previews.getStructureTag().getCompoundOrEmpty("inventory"));
             if (inventory != null)
                 ingredients.add(new StackIngredient(inventory));
         }

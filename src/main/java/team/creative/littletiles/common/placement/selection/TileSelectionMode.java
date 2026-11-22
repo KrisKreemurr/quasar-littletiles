@@ -40,7 +40,7 @@ public class TileSelectionMode extends SelectionMode {
         if (!nbt.contains("boxes"))
             return null;
         
-        var boxes = new LittleBoxesNoOverlap(nbt.getCompound("boxes"));
+        var boxes = new LittleBoxesNoOverlap(nbt.getCompoundOrEmpty("boxes"));
         if (boxes.isEmpty())
             return null;
         
@@ -70,7 +70,7 @@ public class TileSelectionMode extends SelectionMode {
     public SelectionComponent leftClick(LittleActionSource source, ItemStack stack, SelectionComponent config, ILittleLevelContext level, LittleGrid positionGrid,
             BlockHitResult hit, @Nullable LittleTileContext context, boolean secondMode) {
         var nbt = config.getConfig();
-        var boxes = nbt.contains("boxes") ? new LittleBoxesNoOverlap(nbt.getCompound("boxes")) : new LittleBoxesNoOverlap(hit.getBlockPos().immutable(), LittleGrid.MIN);
+        var boxes = nbt.contains("boxes") ? new LittleBoxesNoOverlap(nbt.getCompoundOrEmpty("boxes")) : new LittleBoxesNoOverlap(hit.getBlockPos().immutable(), LittleGrid.MIN);
         ILittleLevelContext previousContext = null;
         try {
             previousContext = context(source.getActionLevel(), boxes, nbt);
@@ -114,7 +114,7 @@ public class TileSelectionMode extends SelectionMode {
             return config.withConfig(nbt);
         }
         
-        var boxes = nbt.contains("boxes") ? new LittleBoxesNoOverlap(nbt.getCompound("boxes")) : new LittleBoxesNoOverlap(hit.getBlockPos().immutable(), LittleGrid.MIN);
+        var boxes = nbt.contains("boxes") ? new LittleBoxesNoOverlap(nbt.getCompoundOrEmpty("boxes")) : new LittleBoxesNoOverlap(hit.getBlockPos().immutable(), LittleGrid.MIN);
         
         ILittleLevelContext previousContext = null;
         try {
@@ -146,7 +146,7 @@ public class TileSelectionMode extends SelectionMode {
         var nbt = config.getConfig();
         if (!nbt.contains("boxes"))
             return null;
-        var boxes = new LittleBoxesNoOverlap(nbt.getCompound("boxes"));
+        var boxes = new LittleBoxesNoOverlap(nbt.getCompoundOrEmpty("boxes"));
         if (boxes.isEmpty())
             return null;
         
@@ -179,7 +179,7 @@ public class TileSelectionMode extends SelectionMode {
         var nbt = config.getConfig();
         if (!nbt.contains("boxes"))
             return;
-        var boxes = new LittleBoxesNoOverlap(nbt.getCompound("boxes"));
+        var boxes = new LittleBoxesNoOverlap(nbt.getCompoundOrEmpty("boxes"));
         if (boxes.isEmpty())
             return;
         

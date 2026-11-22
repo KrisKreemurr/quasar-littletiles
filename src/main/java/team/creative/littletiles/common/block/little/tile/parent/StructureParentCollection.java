@@ -50,16 +50,16 @@ public class StructureParentCollection extends ParentCollection implements IStru
     @Override
     protected void loadExtra(CompoundTag nbt, HolderLookup.Provider provider) {
         if (nbt.contains("structure"))
-            cache = setStructureNBT(nbt.getCompound("structure"), provider);
+            cache = setStructureNBT(nbt.getCompoundOrEmpty("structure"), provider);
         else {
-            int[] array = nbt.getIntArray("coord");
+            int[] array = nbt.getIntArray("coord").orElseGet(() -> new int[0]);
             if (array.length == 3)
                 relativePos = new BlockPos(array[0], array[1], array[2]);
             else
                 throw new InvalidParameterException("No valid coord given " + nbt);
         }
-        attribute = nbt.getInt("type");
-        structureIndex = nbt.getInt("index");
+        attribute = nbt.getIntOr("type", 0);
+        structureIndex = nbt.getIntOr("index", 0);
     }
     
     @Override
@@ -238,7 +238,7 @@ public class StructureParentCollection extends ParentCollection implements IStru
         if (nbt == null)
             return null;
         
-        String id = nbt.getString("id");
+        String id = nbt.getStringOr("id", "");
         LittleStructureType type = LittleStructureRegistry.REGISTRY.get(id);
         LittleStructure structure = type.createStructure(mainBlock);
         structure.load(nbt, provider);

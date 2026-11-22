@@ -66,13 +66,13 @@ public abstract class LittleDoor extends LittleUndirectedStateStructure {
     @Override
     protected void loadExtra(CompoundTag nbt, HolderLookup.Provider provider) {
         super.loadExtra(nbt, provider);
-        duration = nbt.getInt("du");
-        interpolation = ValueInterpolation.values()[nbt.getInt("in")];
+        duration = nbt.getIntOr("du", 0);
+        interpolation = ValueInterpolation.values()[nbt.getIntOr("in", 0)];
         
-        activateParent = nbt.getBoolean("actP");
-        rightClick = nbt.getBoolean("hand");
-        playPlaceSounds = nbt.getBoolean("sound");
-        noClip = nbt.getBoolean("noClip");
+        activateParent = nbt.getBooleanOr("actP", false);
+        rightClick = nbt.getBooleanOr("hand", false);
+        playPlaceSounds = nbt.getBooleanOr("sound", false);
+        noClip = nbt.getBooleanOr("noClip", false);
     }
     
     @Override

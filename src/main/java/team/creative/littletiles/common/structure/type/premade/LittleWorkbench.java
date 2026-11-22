@@ -30,7 +30,7 @@ public class LittleWorkbench extends LittleStructurePremade {
     
     @Override
     public InteractionResult use(Level level, LittleTileContext context, BlockPos pos, Player player, BlockHitResult result) {
-        if (!level.isClientSide)
+        if (!level.isClientSide())
             LittleTilesGuiRegistry.WORKBENCH.open(player, this);
         return InteractionResult.SUCCESS;
     }

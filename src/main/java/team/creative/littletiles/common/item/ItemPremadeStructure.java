@@ -98,7 +98,7 @@ public class ItemPremadeStructure extends Item implements ILittlePlacer, IItemTo
         LittleGroup previews = getPreviews(id);
         var data = ILittleTool.getData(stack);
         if (previews != null && previews.getStructureTag() != null && data.contains(LittleGroup.STRUCTURE_KEY))
-            NBTUtils.mergeNotOverwrite(previews.getStructureTag(), data.getCompound(LittleGroup.STRUCTURE_KEY));
+            NBTUtils.mergeNotOverwrite(previews.getStructureTag(), data.getCompoundOrEmpty(LittleGroup.STRUCTURE_KEY));
         return previews;
     }
     

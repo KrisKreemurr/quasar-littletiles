@@ -37,10 +37,10 @@ public class SignalExternalOutputHandler implements ISignalComponent {
     
     public SignalExternalOutputHandler(LittleStructure structure, CompoundTag nbt) throws ParseException {
         this.structure = structure;
-        this.index = nbt.getInt("index");
+        this.index = nbt.getIntOr("index", 0);
         try {
             if (nbt.contains("con"))
-                condition = SignalInputCondition.parseInput(nbt.getString("con"));
+                condition = SignalInputCondition.parseInput(nbt.getStringOr("con", ""));
             else
                 condition = null;
         } catch (ParseException e) {
@@ -49,12 +49,12 @@ public class SignalExternalOutputHandler implements ISignalComponent {
         SignalMode mode = SignalMode.EQUAL;
         if (nbt.contains("mode"))
             mode = SignalMode.valueOf(nbt.getString("mode"));
-        int delay = nbt.getInt("delay");
+        int delay = nbt.getIntOr("delay", 0);
         if (condition != null)
             delay = Math.max((int) Math.ceil(condition.calculateDelay()), nbt.getInt("delay"));
         handler = SignalOutputHandler.create(this, mode, delay, nbt, structure);
         if (nbt.contains("x"))
-            outputPosition = new SignalPosition(nbt.getInt("x"), nbt.getInt("y"));
+            outputPosition = new SignalPosition(nbt.getIntOr("x", 0), nbt.getIntOr("y", 0));
         else
             outputPosition = null;
     }

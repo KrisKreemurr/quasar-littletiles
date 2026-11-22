@@ -72,12 +72,12 @@ public class OldLittleTilesDataParser {
             LOADED_BLOCK_MAP = true;
         }
         
-        String name = nbt.getString("block");
+        String name = nbt.getStringOr("block", "");
         if (nbt.contains("meta") && nbt.getInt("meta") != 0)
             name += ":" + nbt.getInt("meta");
         int color = -1;
         if (nbt.contains("color"))
-            color = nbt.getInt("color");
+            color = nbt.getIntOr("color", 0);
         return new LittleTile(BLOCK_MAP.getOrDefault(name, name), color, Collections.EMPTY_LIST);
     }
     
@@ -93,20 +93,20 @@ public class OldLittleTilesDataParser {
     
     public static void collect(ListTag tiles, Consumer<LittleTile> consumer) {
         for (int i = 0; i < tiles.size(); i++) {
-            CompoundTag tileNbt = tiles.getCompound(i);
+            CompoundTag tileNbt = tiles.getCompoundOrEmpty(i);
             LittleTile tile;
             if (tileNbt.contains("tile"))
-                tile = createTile(tileNbt.getCompound("tile"));
+                tile = createTile(tileNbt.getCompoundOrEmpty("tile"));
             else
                 tile = createTile(tileNbt);
             if (tileNbt.contains("boxes")) {
-                ListTag boxes = tileNbt.getList("boxes", Tag.TAG_INT_ARRAY);
+                ListTag boxes = tileNbt.getListOrEmpty("boxes");
                 for (int j = 0; j < boxes.size(); j++)
-                    tile.add(LittleBox.create(boxes.getIntArray(j)));
+                    tile.add(LittleBox.create(boxes.getIntArray(j).orElseGet(() -> new int[0])));
             } else if (tileNbt.contains("bBox"))
-                tile.add(LittleBox.create(tileNbt.getIntArray("bBox")));
+                tile.add(LittleBox.create(tileNbt.getIntArray("bBox").orElseGet(() -> new int[0])));
             else if (tileNbt.contains("box"))
-                tile.add(LittleBox.create(tileNbt.getIntArray("box")));
+                tile.add(LittleBox.create(tileNbt.getIntArray("box").orElseGet(() -> new int[0])));
             consumer.accept(tile);
         }
     }
@@ -114,13 +114,13 @@ public class OldLittleTilesDataParser {
     public static LittleGroup loadGroup(CompoundTag nbt, LittleGrid grid) throws LittleConvertException {
         List<LittleGroup> children = Collections.EMPTY_LIST;
         if (nbt.contains("children")) {
-            ListTag list = nbt.getList("children", Tag.TAG_COMPOUND);
+            ListTag list = nbt.getListOrEmpty("children");
             children = new ArrayList<>();
             for (int i = 0; i < list.size(); i++)
-                children.add(loadGroup(list.getCompound(i), grid));
+                children.add(loadGroup(list.getCompoundOrEmpty(i), grid));
         }
         LittleGroup group = new LittleGroup(convertStructureData(nbt.contains("structure") ? nbt.getCompound("structure") : null), children);
-        collect(nbt.getList("tiles", Tag.TAG_COMPOUND), x -> group.addTileFast(grid, x));
+        collect(nbt.getListOrEmpty("tiles"), x -> group.addTileFast(grid, x));
         return group;
     }
     
@@ -131,23 +131,23 @@ public class OldLittleTilesDataParser {
         if (state != null)
             newData.put("state", state);
         
-        newData.putBoolean("actP", oldData.getBoolean("activateParent"));
+        newData.putBoolean("actP", oldData.getBooleanOr("activateParent", false));
         newData.putBoolean("hand", !oldData.getBoolean("disableRightClick"));
-        newData.putBoolean("stay", oldData.getBoolean("stayAnimated"));
+        newData.putBoolean("stay", oldData.getBooleanOr("stayAnimated", false));
         newData.putBoolean("sound", oldData.contains("sounds") ? oldData.getBoolean("sounds") : true);
-        newData.putBoolean("noClip", oldData.getBoolean("noClip"));
-        newData.putInt("du", oldData.getInt("duration"));
-        newData.putInt("in", oldData.getInt("interpolation"));
+        newData.putBoolean("noClip", oldData.getBooleanOr("noClip", false));
+        newData.putInt("du", oldData.getIntOr("duration", 0));
+        newData.putInt("in", oldData.getIntOr("interpolation", 0));
         if (oldData.contains("axisCenter"))
-            newData.putIntArray("center", oldData.getIntArray("axisCenter"));
+            newData.putIntArray("center", oldData.getIntArray("axisCenter").orElseGet(() -> new int[0]));
         newData.putInt("aS", -1);
     }
     
     private static List<AnimationEventEntry> collectEvents(CompoundTag nbt, boolean opening) {
-        ListTag list = nbt.getList("events", Tag.TAG_COMPOUND);
+        ListTag list = nbt.getListOrEmpty("events");
         List<AnimationEventEntry> events = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
-            CompoundTag eventTag = list.getCompound(i);
+            CompoundTag eventTag = list.getCompoundOrEmpty(i);
             AnimationEvent event = switch (eventTag.getString("id")) {
                 case "sound-event" -> eventTag.getBoolean("opening") == opening ? new PlaySoundEvent(PlaySoundEvent.get(Identifier.parse(eventTag.getString(
                     "sound"))), eventTag.getFloat("volume"), eventTag.getFloat("pitch")) : null;
@@ -155,7 +155,7 @@ public class OldLittleTilesDataParser {
                 default -> null;
             };
             if (event != null)
-                events.add(new AnimationEventEntry(eventTag.getInt("tick"), event));
+                events.add(new AnimationEventEntry(eventTag.getIntOr("tick", 0), event));
         }
         return events;
     }
@@ -241,25 +241,25 @@ public class OldLittleTilesDataParser {
         }
         
         if (oldData.contains("name")) {
-            String name = oldData.getString("name");
+            String name = oldData.getStringOr("name", "");
             oldData.remove("name");
             newData.putString("n", name);
         }
         
         if (oldData.contains("blocks")) {
-            int[] array = oldData.getIntArray("blocks");
+            int[] array = oldData.getIntArray("blocks").orElseGet(() -> new int[0]);
             oldData.remove("blocks");
             newData.putIntArray("b", array);
         }
         
         if (oldData.contains("parent")) {
-            CompoundTag parent = oldData.getCompound("parent");
+            CompoundTag parent = oldData.getCompoundOrEmpty("parent");
             oldData.remove("parent");
             newData.put(LittleGroup.PARENT_KEY, parent);
         }
         
         if (oldData.contains("children")) {
-            ListTag children = oldData.getList("children", Tag.TAG_COMPOUND);
+            ListTag children = oldData.getListOrEmpty("children");
             oldData.remove("children");
             newData.put(LittleGroup.CHILDREN_KEY, children);
         }
@@ -286,15 +286,15 @@ public class OldLittleTilesDataParser {
                 CompoundTag converted = new CompoundTag();
                 convertDoorBaseData(nbt, converted);
                 CompoundTag rotation = new CompoundTag();
-                Axis axis = Axis.values()[nbt.getInt("axis")];
+                Axis axis = Axis.values()[nbt.getIntOr("axis", 0)];
                 rotation.putInt("a", axis.ordinal());
                 PhysicalState end = new PhysicalState();
                 if (nbt.getInt("rot-type") == 1) {
-                    double degree = nbt.getDouble("degree");
+                    double degree = nbt.getDoubleOr("degree", 0D);
                     rotation.putDouble("d", degree);
                     end.rot(axis, degree);
                 } else {
-                    boolean clockwise = nbt.getBoolean("clockwise");
+                    boolean clockwise = nbt.getBooleanOr("clockwise", false);
                     rotation.putBoolean("c", clockwise);
                     end.rot(axis, clockwise ? 90 : -90);
                 }
@@ -304,10 +304,10 @@ public class OldLittleTilesDataParser {
                 AnimationTimeline opening = null;
                 AnimationTimeline closing = null;
                 if (openingEvents != null)
-                    opening = new AnimationTimeline(nbt.getInt("duration"), openingEvents);
+                    opening = new AnimationTimeline(nbt.getIntOr("duration", 0), openingEvents);
                 List<AnimationEventEntry> closingEvents = collectEvents(nbt, false); // Cannot properly reverse events, but it should be fine in most cases
                 if (closingEvents != null)
-                    closing = new AnimationTimeline(nbt.getInt("duration"), closingEvents);
+                    closing = new AnimationTimeline(nbt.getIntOr("duration", 0), closingEvents);
                 
                 saveDoor(converted, new PhysicalState(), end, opening, closing);
                 
@@ -318,9 +318,9 @@ public class OldLittleTilesDataParser {
                 CompoundTag converted = new CompoundTag();
                 convertDoorBaseData(nbt, converted);
                 PhysicalState end = new PhysicalState();
-                Facing direction = Facing.VALUES[nbt.getInt("direction")];
+                Facing direction = Facing.VALUES[nbt.getIntOr("direction", 0)];
                 converted.putInt("direction", direction.ordinal());
-                int distance = nbt.getInt("distance");
+                int distance = nbt.getIntOr("distance", 0);
                 converted.putInt("dis", distance);
                 LittleGrid grid = LittleGrid.get(nbt);
                 converted.putInt("disG", grid.count);
@@ -331,10 +331,10 @@ public class OldLittleTilesDataParser {
                 AnimationTimeline opening = null;
                 AnimationTimeline closing = null;
                 if (openingEvents != null)
-                    opening = new AnimationTimeline(nbt.getInt("duration"), openingEvents);
+                    opening = new AnimationTimeline(nbt.getIntOr("duration", 0), openingEvents);
                 List<AnimationEventEntry> closingEvents = collectEvents(nbt, false); // Cannot properly reverse events, but it should be fine in most cases
                 if (closingEvents != null)
-                    closing = new AnimationTimeline(nbt.getInt("duration"), closingEvents);
+                    closing = new AnimationTimeline(nbt.getIntOr("duration", 0), closingEvents);
                 
                 saveDoor(converted, new PhysicalState(), end, opening, closing);
                 
@@ -346,7 +346,7 @@ public class OldLittleTilesDataParser {
                 convertDoorBaseData(nbt, converted);
                 int duration = 1;
                 converted.putInt("du", duration);
-                int[] toActivate = nbt.getIntArray("activate");
+                int[] toActivate = nbt.getIntArray("activate").orElseGet(() -> new int[0]);
                 converted.putIntArray("act", toActivate);
                 
                 List<AnimationEventEntry> events = new ArrayList<>();
@@ -369,9 +369,9 @@ public class OldLittleTilesDataParser {
                 CompoundTag converted = new CompoundTag();
                 convertDoorBaseData(nbt, converted);
                 
-                int duration = nbt.getInt("duration");
+                int duration = nbt.getIntOr("duration", 0);
                 
-                CompoundTag animation = nbt.getCompound("animation");
+                CompoundTag animation = nbt.getCompoundOrEmpty("animation");
                 
                 PhysicalState start = new PhysicalState();
                 PhysicalState end = new PhysicalState();
@@ -380,7 +380,7 @@ public class OldLittleTilesDataParser {
                 
                 HashMap<PhysicalPart, ValueCurveInterpolation<Vec1d>> curves = new HashMap<>();
                 for (PhysicalPart part : PhysicalPart.values())
-                    curves.put(part, loadValueTimelineAndPrepare(part, animation.getIntArray(part.oldKey), start, end, grid, duration));
+                    curves.put(part, loadValueTimelineAndPrepare(part, animation.getIntArray(part.oldKey).orElseGet(() -> new int[0]), start, end, grid, duration));
                 
                 AnimationTimeline opening = new AnimationTimeline(duration, collectEvents(nbt, true));
                 AnimationTimeline closing = new AnimationTimeline(duration, collectEvents(nbt, false));// Cannot properly reverse events, but it should be fine in most cases

@@ -180,7 +180,7 @@ public class LittleBed extends LittleStructure {
             if (!LittleTiles.CONFIG.interact.get(player).useBed)
                 return InteractionResult.PASS;
             
-            if (level.isClientSide)
+            if (level.isClientSide())
                 return InteractionResult.CONSUME;
             
             if (level instanceof ISubLevel l)

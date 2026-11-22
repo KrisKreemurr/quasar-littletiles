@@ -61,24 +61,24 @@ public class LittleStructureBuilder extends LittleStructurePremade {
     @Override
     protected void loadExtra(CompoundTag nbt, HolderLookup.Provider provider) {
         if (nbt.contains("sizeX"))
-            lastSizeX = nbt.getInt("sizeX");
+            lastSizeX = nbt.getIntOr("sizeX", 0);
         else
             lastSizeX = 16;
         if (nbt.contains("sizeY"))
-            lastSizeY = nbt.getInt("sizeY");
+            lastSizeY = nbt.getIntOr("sizeY", 0);
         else
             lastSizeY = 16;
         if (nbt.contains("thickness"))
-            lastThickness = nbt.getInt("thickness");
+            lastThickness = nbt.getIntOr("thickness", 0);
         else
             lastThickness = 1;
         if (nbt.contains("grid"))
-            lastGrid = nbt.getInt("grid");
+            lastGrid = nbt.getIntOr("grid", 0);
         else
             lastGrid = 16;
-        lastStructureType = nbt.getString("type");
+        lastStructureType = nbt.getStringOr("type", "");
         if (nbt.contains("state"))
-            lastBlockState = LittleBlockRegistry.loadState(nbt.getString("state"));
+            lastBlockState = LittleBlockRegistry.loadState(nbt.getStringOr("state", ""));
         else
             lastBlockState = Blocks.OAK_PLANKS.defaultBlockState();
         inventory = InventoryUtils.load(getStructureLevel().registryAccess(), nbt, 1);

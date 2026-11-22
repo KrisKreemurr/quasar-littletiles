@@ -25,7 +25,7 @@ public class LittleVec {
     public int z;
     
     public LittleVec(String name, CompoundTag nbt) {
-        int[] array = nbt.getIntArray(name);
+        int[] array = nbt.getIntArray(name).orElseGet(() -> new int[0]);
         if (array.length == 3)
             set(array[0], array[1], array[2]);
         else

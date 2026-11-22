@@ -15,7 +15,7 @@ public class LittleAdvancedDoor extends LittleDoor {
     @Override
     protected void loadExtra(CompoundTag nbt, HolderLookup.Provider provider) {
         super.loadExtra(nbt, provider);
-        differentTransition = nbt.getBoolean("diffT");
+        differentTransition = nbt.getBooleanOr("diffT", false);
     }
     
     @Override

@@ -45,13 +45,13 @@ public class StructureConnection implements IStructureConnection {
     
     public StructureConnection(Level level, CompoundTag nbt) {
         this.level = level;
-        int[] posArray = nbt.getIntArray("p");
+        int[] posArray = nbt.getIntArray("p").orElseGet(() -> new int[0]);
         if (posArray.length != 3)
             throw new IllegalArgumentException("Invalid pos array length " + Arrays.toString(posArray));
         
         pos = new BlockPos(posArray[0], posArray[1], posArray[2]);
-        index = nbt.getInt("i");
-        attribute = nbt.getInt("a");
+        index = nbt.getIntOr("i", 0);
+        attribute = nbt.getIntOr("a", 0);
     }
     
     public CompoundTag write() {

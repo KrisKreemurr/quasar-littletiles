@@ -158,7 +158,7 @@ public abstract class LittleAction<T> extends CreativePacket {
     }
     
     public static boolean setBlockPreventPredict(Level level, BlockPos pos, BlockState state, int notification) {
-        if (level.isClientSide)
+        if (level.isClientSide())
             return setBlockPreventPredictClient(level, pos, state, notification);
         return level.setBlock(pos, state, notification);
     }
@@ -216,7 +216,7 @@ public abstract class LittleAction<T> extends CreativePacket {
     }
     
     public static boolean fireBlockBreakEvent(Level level, BlockPos pos, LittleActionSource source) {
-        if (!source.isPlayer() || level.isClientSide)
+        if (!source.isPlayer() || level.isClientSide())
             return true;
         BreakEvent event = new BlockEvent.BreakEvent(level, pos, level.getBlockState(pos), source.asPlayer());
         NeoForge.EVENT_BUS.post(event);
@@ -290,7 +290,7 @@ public abstract class LittleAction<T> extends CreativePacket {
     }
     
     public static boolean isAllowedToInteract(LevelAccessor level, LittleActionSource source, BlockPos pos, boolean rightClick, Facing facing) {
-        if (source == null || !source.isPlayer() || source.getActionLevel().isClientSide)
+        if (source == null || !source.isPlayer() || source.getActionLevel().isClientSide())
             return true;
         
         var player = source.asPlayer();

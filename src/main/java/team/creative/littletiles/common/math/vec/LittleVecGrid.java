@@ -20,7 +20,7 @@ public class LittleVecGrid implements IGridBased {
     }
     
     public LittleVecGrid(String name, CompoundTag nbt) {
-        int[] array = nbt.getIntArray(name);
+        int[] array = nbt.getIntArray(name).orElseGet(() -> new int[0]);
         if (array.length == 3) {
             LittleVec vec = new LittleVec(name, nbt);
             this.grid = LittleGrid.overallDefault();

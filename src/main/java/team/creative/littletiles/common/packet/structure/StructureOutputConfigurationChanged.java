@@ -35,15 +35,15 @@ public class StructureOutputConfigurationChanged extends CreativePacket {
         try {
             LittleStructure structure = location.find(player.level());
             
-            ListTag list = nbt.getList("internal", Tag.TAG_COMPOUND);
+            ListTag list = nbt.getListOrEmpty("internal");
             for (int i = 0; i < list.size(); i++)
-                structure.getOutput(i).loadConfiguration(list.getCompound(i));
+                structure.getOutput(i).loadConfiguration(list.getCompoundOrEmpty(i));
             
-            CompoundTag external = nbt.getCompound("external");
+            CompoundTag external = nbt.getCompoundOrEmpty("external");
             Int2ObjectMap<SignalExternalOutputHandler> map = new Int2ObjectArrayMap<>();
             for (String key : external.getAllKeys())
                 try {
-                    map.put(Integer.parseInt(key), new SignalExternalOutputHandler(structure, external.getCompound(key)));
+                    map.put(Integer.parseInt(key), new SignalExternalOutputHandler(structure, external.getCompoundOrEmpty(key)));
                 } catch (NumberFormatException | ParseException e) {}
             structure.setExternalOutputs(map);
             

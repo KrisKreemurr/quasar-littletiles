@@ -61,9 +61,9 @@ public enum SignalMode {
                 
             };
             if (hasWorld) {
-                ListTag list = nbt.getList("tickets", 11);
+                ListTag list = nbt.getListOrEmpty("tickets");
                 for (int i = 0; i < list.size(); i++) {
-                    int[] array = list.getIntArray(i);
+                    int[] array = list.getIntArray(i).orElseGet(() -> new int[0]);
                     if (array.length == 2) {
                         try {
                             SignalState state = SignalState.create(component.getBandwidth()).load(array[1]);
@@ -96,7 +96,7 @@ public enum SignalMode {
         public SignalOutputHandler create(ISignalComponent component, int delay, CompoundTag nbt, boolean hasWorld) {
             SignalState before;
             SignalState result;
-            int bandwidth = nbt.getInt("bandwidth");
+            int bandwidth = nbt.getIntOr("bandwidth", 0);
             if (bandwidth > 0) {
                 before = SignalState.create(bandwidth);
                 result = SignalState.create(bandwidth);
@@ -109,9 +109,9 @@ public enum SignalMode {
             
             SignalOutputHandler handler = new SignalOutputHandlerToggle(component, delay, nbt, before, result);
             if (hasWorld) {
-                ListTag list = nbt.getList("tickets", 11);
+                ListTag list = nbt.getListOrEmpty("tickets");
                 for (int i = 0; i < list.size(); i++) {
-                    int[] array = list.getIntArray(i);
+                    int[] array = list.getIntArray(i).orElseGet(() -> new int[0]);
                     if (array.length == 2) {
                         try {
                             SignalState state = SignalState.create(component.getBandwidth()).load(array[1]);
@@ -144,10 +144,10 @@ public enum SignalMode {
             SignalOutputHandler condition = new SignalOutputHandlerPulse(component, delay, nbt);
             if (hasWorld) {
                 if (nbt.contains("start")) {
-                    LittleTiles.TICKERS.schedule(condition, SignalState.TRUE, nbt.getInt("start"));
-                    LittleTiles.TICKERS.schedule(condition, SignalState.FALSE, nbt.getInt("end"));
+                    LittleTiles.TICKERS.schedule(condition, SignalState.TRUE, nbt.getIntOr("start", 0));
+                    LittleTiles.TICKERS.schedule(condition, SignalState.FALSE, nbt.getIntOr("end", 0));
                 } else if (nbt.contains("end"))
-                    LittleTiles.TICKERS.schedule(condition, SignalState.FALSE, nbt.getInt("end"));
+                    LittleTiles.TICKERS.schedule(condition, SignalState.FALSE, nbt.getIntOr("end", 0));
             }
             return condition;
         }
@@ -204,7 +204,7 @@ public enum SignalMode {
             
             if (hasWorld) {
                 if (nbt.contains("ticket")) {
-                    int[] array = nbt.getIntArray("ticket");
+                    int[] array = nbt.getIntArray("ticket").orElseGet(() -> new int[0]);
                     if (array.length == 2) {
                         try {
                             SignalState state = SignalState.create(component.getBandwidth()).load(array[1]);
@@ -264,7 +264,7 @@ public enum SignalMode {
             
             if (hasWorld) {
                 if (nbt.contains("ticket")) {
-                    int[] array = nbt.getIntArray("ticket");
+                    int[] array = nbt.getIntArray("ticket").orElseGet(() -> new int[0]);
                     if (array.length == 2) {
                         try {
                             SignalState state = SignalState.create(component.getBandwidth()).load(array[1]);
@@ -296,10 +296,10 @@ public enum SignalMode {
             SignalOutputHandler condition = new SignalOutputHandlerExtender(component, delay, nbt);
             if (hasWorld) {
                 if (nbt.contains("start")) {
-                    LittleTiles.TICKERS.schedule(condition, SignalState.TRUE, nbt.getInt("start"));
-                    LittleTiles.TICKERS.schedule(condition, SignalState.FALSE, nbt.getInt("end"));
+                    LittleTiles.TICKERS.schedule(condition, SignalState.TRUE, nbt.getIntOr("start", 0));
+                    LittleTiles.TICKERS.schedule(condition, SignalState.FALSE, nbt.getIntOr("end", 0));
                 } else if (nbt.contains("end"))
-                    LittleTiles.TICKERS.schedule(condition, SignalState.FALSE, nbt.getInt("end"));
+                    LittleTiles.TICKERS.schedule(condition, SignalState.FALSE, nbt.getIntOr("end", 0));
             }
             return condition;
         }

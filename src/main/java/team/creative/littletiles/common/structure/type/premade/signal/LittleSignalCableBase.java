@@ -118,7 +118,7 @@ public abstract class LittleSignalCableBase extends LittleStructurePremade imple
     
     @Override
     protected void loadExtra(CompoundTag nbt, HolderLookup.Provider provider) {
-        int[] result = nbt.getIntArray("faces");
+        int[] result = nbt.getIntArray("faces").orElseGet(() -> new int[0]);
         if (result != null && result.length == getNumberOfConnections() * 3) {
             for (int i = 0; i < faces.length; i++) {
                 int distance = result[i * 3];
@@ -143,7 +143,7 @@ public abstract class LittleSignalCableBase extends LittleStructurePremade imple
                 }
             }
         if (nbt.contains("color"))
-            color = nbt.getInt("color");
+            color = nbt.getIntOr("color", 0);
         else
             color = DEFAULT_CABLE_COLOR;
     }
@@ -624,7 +624,7 @@ public abstract class LittleSignalCableBase extends LittleStructurePremade imple
         
         public int getColor(LittleGroup group) {
             if (group.hasStructure() && group.getStructureTag().contains("color"))
-                return group.getStructureTag().getInt("color");
+                return group.getStructureTag().getIntOr("color", 0);
             return DEFAULT_CABLE_COLOR;
         }
         

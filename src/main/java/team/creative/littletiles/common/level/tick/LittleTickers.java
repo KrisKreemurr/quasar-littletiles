@@ -41,7 +41,7 @@ public class LittleTickers extends LevelHandlers<LittleTicker> {
     protected Function<Level, LittleTicker> createFactory() {
         return level -> {
             LittleTicker ticker = new LittleTicker(level);
-            if (level.isClientSide)
+            if (level.isClientSide())
                 client = ticker;
             return ticker;
         };
@@ -61,7 +61,7 @@ public class LittleTickers extends LevelHandlers<LittleTicker> {
     }
     
     public void levelTick(LevelTickEvent.Pre event) {
-        if (event.getLevel().isClientSide)
+        if (event.getLevel().isClientSide())
             return;
         LittleTicker ticker = getWithoutCreate(event.getLevel());
         if (ticker != null)
@@ -82,7 +82,7 @@ public class LittleTickers extends LevelHandlers<LittleTicker> {
     
     public synchronized List<SignalScheduleTicket> findTickets(ISignalComponent component, SignalOutputHandler condition) {
         Level level = component.getStructureLevel();
-        if (level != null && !level.isClientSide) {
+        if (level != null && !level.isClientSide()) {
             List<SignalScheduleTicket> tickets = new ArrayList<>();
             for (LittleTickTicket ticket : LittleTiles.TICKERS.get(level))
                 if (ticket.get() instanceof SignalScheduleTicket s && s.is(condition))

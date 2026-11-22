@@ -351,7 +351,7 @@ public class LittleActionDestroyBoxes extends LittleActionBoxes {
         for (StructurePreview structure : destroyedStructures) {
             try {
                 if (!structure.structure.mainBlock.isRemoved()) {
-                    if ((structure.structure.shouldForceDrop() || source.needsIngredients()) && !level.isClientSide) {
+                    if ((structure.structure.shouldForceDrop() || source.needsIngredients()) && !level.isClientSide()) {
                         ItemStack stack = structure.structure.getStructureDrop();
                         if (!stack.isEmpty() && !source.addStack(stack))
                             source.dropStack(stack);

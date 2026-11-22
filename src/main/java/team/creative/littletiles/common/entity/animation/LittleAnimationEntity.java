@@ -39,7 +39,7 @@ import team.creative.littletiles.common.structure.relative.StructureAbsolute;
 public class LittleAnimationEntity extends LittleEntity<LittleAnimationEntityPhysic> {
     
     public static void loadBE(LevelAccessor level, CompoundTag nbt, boolean update) {
-        BlockState state = BlockTile.getState(nbt.getBoolean("ticking"), nbt.getBoolean("rendered"));
+        BlockState state = BlockTile.getState(nbt.getBooleanOr("ticking", false), nbt.getBooleanOr("rendered", false));
         BlockPos pos = BlockEntity.getPosFromTag(nbt);
         level.setBlock(pos, state, 0);
         
@@ -87,7 +87,7 @@ public class LittleAnimationEntity extends LittleEntity<LittleAnimationEntityPhy
     }
     
     protected void beforeInitalPlacement() {
-        if (level().isClientSide)
+        if (level().isClientSide())
             getSubLevel().renderManager = LittleAnimationRenderManager.of(this);
     }
     
@@ -171,9 +171,9 @@ public class LittleAnimationEntity extends LittleEntity<LittleAnimationEntityPhy
     
     protected void loadBlocks(CompoundTag nbt) {
         LittleAnimationLevel level = getSubLevel();
-        ListTag blocks = nbt.getList("b", Tag.TAG_COMPOUND);
+        ListTag blocks = nbt.getListOrEmpty("b");
         for (int i = 0; i < blocks.size(); i++)
-            loadBE(level, blocks.getCompound(i), false);
+            loadBE(level, blocks.getCompoundOrEmpty(i), false);
     }
     
     protected void saveBlocks(CompoundTag nbt) {
@@ -238,7 +238,7 @@ public class LittleAnimationEntity extends LittleEntity<LittleAnimationEntityPhy
         setCenter(absolute);
         ((LittleAnimationLevel) subLevel).renderManager = LittleAnimationRenderManager.of(this);
         loadBlocks(extraData);
-        physic.load(extraData.getCompound("physic"));
+        physic.load(extraData.getCompoundOrEmpty("physic"));
         this.structure = new StructureConnection((Level) subLevel, extraData.getCompound("st"));
         physic.updateBoundingBox();
     }
@@ -246,7 +246,7 @@ public class LittleAnimationEntity extends LittleEntity<LittleAnimationEntityPhy
     @Override
     public void performTick() {
         super.performTick();
-        if (!level().isClientSide && getSubLevel().isEmpty())
+        if (!level().isClientSide() && getSubLevel().isEmpty())
             destroyAnimation();
     }
     

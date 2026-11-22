@@ -111,7 +111,7 @@ public abstract class ValueCurve<T extends VecNd> {
     
     public static ValueCurve load(CompoundTag nbt) {
         try {
-            return REGISTRY.create(nbt.getString("id"), nbt);
+            return REGISTRY.create(nbt.getStringOr("id", ""), nbt);
         } catch (RegistryException e) {
             throw new RuntimeException(e);
         }

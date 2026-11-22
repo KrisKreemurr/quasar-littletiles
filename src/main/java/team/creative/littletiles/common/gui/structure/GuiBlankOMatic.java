@@ -51,7 +51,7 @@ public class GuiBlankOMatic extends GuiLayer {
     
     public final GuiSyncLocal<IntTag> VOLUME = getSyncHolder().register("volume", x -> get("volume", GuiProgressbar.class).pos = x.getAsInt());
     public final GuiSyncLocal<CompoundTag> CRAFT = getSyncHolder().register("craft", x -> {
-        int amount = x.getInt("amount");
+        int amount = x.getIntOr("amount", 0);
         ItemStack stack = whitener.inventory.getItem(0);
         int stackSize = 1;
         if (amount > 1)
@@ -59,7 +59,7 @@ public class GuiBlankOMatic extends GuiLayer {
         List<BleachRecipe> recipes = BlankOMaticRecipeRegistry.getRecipe(stack);
         if (!recipes.isEmpty()) {
             int index = 0;
-            int variant = x.getInt("variant");
+            int variant = x.getIntOr("variant", 0);
             BleachRecipe selected = null;
             Block block = null;
             for (BleachRecipe recipe : recipes) {

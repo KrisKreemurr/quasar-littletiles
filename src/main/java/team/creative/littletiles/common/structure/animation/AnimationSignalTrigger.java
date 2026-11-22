@@ -13,11 +13,11 @@ public class AnimationSignalTrigger {
     
     public AnimationSignalTrigger(CompoundTag nbt) {
         try {
-            condition = SignalInputCondition.parseInput(nbt.getString("i"));
+            condition = SignalInputCondition.parseInput(nbt.getStringOr("i", ""));
         } catch (ParseException e) {
             throw new RuntimeException("Invalid trigger condition found '" + nbt.getString("i") + "'");
         }
-        transition = nbt.getInt("t");
+        transition = nbt.getIntOr("t", 0);
     }
     
     public int signalChanged(LittleStructure structure) {

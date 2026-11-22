@@ -409,7 +409,7 @@ public class BlockTile extends BaseEntityBlock implements LittlePhysicBlock, Sim
     
     @Override
     public float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
-        if (!player.level().isClientSide)
+        if (!player.level().isClientSide())
             return super.getDestroyProgress(state, player, level, pos);
         LittleTileContext context = LittleTileContext.selectFocused(level, pos, player);
         if (context.isComplete()) {
@@ -478,7 +478,7 @@ public class BlockTile extends BaseEntityBlock implements LittlePhysicBlock, Sim
     
     @Override
     public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult result) {
-        if (level.isClientSide)
+        if (level.isClientSide())
             return useClient(state, level, pos, player, result);
         return InteractionResult.PASS;
     }
@@ -548,7 +548,7 @@ public class BlockTile extends BaseEntityBlock implements LittlePhysicBlock, Sim
     
     @Override
     public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
-        if (level.isClientSide)
+        if (level.isClientSide())
             return removedByPlayerClient(state, level, pos, player, willHarvest, fluid);
         return true;
     }
@@ -728,7 +728,7 @@ public class BlockTile extends BaseEntityBlock implements LittlePhysicBlock, Sim
         BETiles te = loadBE(level, pos);
         if (te != null) {
             te.onNeighbourChanged(origin.equals(pos) ? null : Facing.direction(origin, pos));
-            if (!level.isClientSide)
+            if (!level.isClientSide())
                 LittleTilesServer.NEIGHBOR.add(level, pos);
         }
     }

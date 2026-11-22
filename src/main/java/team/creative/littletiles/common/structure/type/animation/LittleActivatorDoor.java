@@ -21,7 +21,7 @@ public class LittleActivatorDoor extends LittleDoor {
     @Override
     protected void loadExtra(CompoundTag nbt, HolderLookup.Provider provider) {
         super.loadExtra(nbt, provider);
-        toActivate = nbt.getIntArray("act");
+        toActivate = nbt.getIntArray("act").orElseGet(() -> new int[0]);
     }
     
 }

@@ -52,17 +52,17 @@ public class LittleLevelEntity extends LittleEntity<LittleLevelEntityPhysic> {
     
     @Override
     protected Vec3d loadCenter(CompoundTag nbt) {
-        return new Vec3d(nbt.getInt("cX"), nbt.getInt("cY"), nbt.getInt("cZ"));
+        return new Vec3d(nbt.getIntOr("cX", 0), nbt.getIntOr("cY", 0), nbt.getIntOr("cZ", 0));
     }
     
     @Override
     public void loadEntity(CompoundTag nbt) {
-        center = new BlockPos(nbt.getInt("cX"), nbt.getInt("cY"), nbt.getInt("cZ"));
+        center = new BlockPos(nbt.getIntOr("cX", 0), nbt.getIntOr("cY", 0), nbt.getIntOr("cZ", 0));
         LittleServerLevel sub = (LittleServerLevel) subLevel;
-        ListTag chunks = nbt.getList("chunks", Tag.TAG_COMPOUND);
+        ListTag chunks = nbt.getListOrEmpty("chunks");
         for (int i = 0; i < chunks.size(); i++) {
-            CompoundTag chunk = chunks.getCompound(i);
-            sub.load(new ChunkPos(chunk.getInt("xPos"), chunk.getInt("zPos")), chunk);
+            CompoundTag chunk = chunks.getCompoundOrEmpty(i);
+            sub.load(new ChunkPos(chunk.getIntOr("xPos", 0), chunk.getIntOr("zPos", 0)), chunk);
         }
     }
     
@@ -98,10 +98,10 @@ public class LittleLevelEntity extends LittleEntity<LittleLevelEntityPhysic> {
             changedLevel = false;
             return;
         }
-        setSubLevel(createLevel(), new Vec3d(extraData.getInt("cX"), extraData.getInt("cY"), extraData.getInt("cZ")));
+        setSubLevel(createLevel(), new Vec3d(extraData.getIntOr("cX", 0), extraData.getIntOr("cY", 0), extraData.getIntOr("cZ", 0)));
         
         ((LittleClientLevel) subLevel).renderManager = new LittleLevelRenderManager(this);
-        physic.load(extraData.getCompound("physic"));
+        physic.load(extraData.getCompoundOrEmpty("physic"));
     }
     
     @Override
@@ -113,14 +113,14 @@ public class LittleLevelEntity extends LittleEntity<LittleLevelEntityPhysic> {
     @Override
     public void performTick() {
         super.performTick();
-        if (!level().isClientSide && physic.getBlockUpdateLevelSystem().isEntirelyEmpty())
+        if (!level().isClientSide() && physic.getBlockUpdateLevelSystem().isEntirelyEmpty())
             destroyAnimation();
     }
     
     @Override
     public void syncMovement() {
         var origin = getOrigin();
-        if (!level().isClientSide && (origin.offXLast() != origin.offX() || origin.offYLast() != origin.offY() || origin.offZLast() != origin.offZ() || origin.rotXLast() != origin
+        if (!level().isClientSide() && (origin.offXLast() != origin.offX() || origin.offYLast() != origin.offY() || origin.offZLast() != origin.offZ() || origin.rotXLast() != origin
                 .rotX() || origin.rotYLast() != origin.rotY() || origin.rotZLast() != origin.rotZ()))
             LittleTiles.NETWORK.sendToClientTracking(new EntityOriginChanged(this), this);
     }

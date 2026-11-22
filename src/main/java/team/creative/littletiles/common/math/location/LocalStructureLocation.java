@@ -26,12 +26,12 @@ public class LocalStructureLocation {
     }
     
     public LocalStructureLocation(CompoundTag nbt) {
-        int[] posArray = nbt.getIntArray("pos");
+        int[] posArray = nbt.getIntArray("pos").orElseGet(() -> new int[0]);
         if (posArray.length != 3)
             throw new IllegalArgumentException("Invalid pos array length " + Arrays.toString(posArray));
         
         pos = new BlockPos(posArray[0], posArray[1], posArray[2]);
-        index = nbt.getInt("index");
+        index = nbt.getIntOr("index", 0);
     }
     
     public CompoundTag write() {

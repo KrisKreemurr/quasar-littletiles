@@ -71,7 +71,7 @@ public class TileFilters {
         }
         
         public TileBlockFilter(CompoundTag nbt) {
-            block = BuiltInRegistries.BLOCK.get(Identifier.parse(nbt.getString("block")));
+            block = BuiltInRegistries.BLOCK.get(Identifier.parse(nbt.getStringOr("block", "")));
         }
         
         @Override
@@ -96,7 +96,7 @@ public class TileFilters {
         }
         
         public TileColorFilter(CompoundTag nbt) {
-            color = nbt.getInt("color");
+            color = nbt.getIntOr("color", 0);
         }
         
         @Override
@@ -140,7 +140,7 @@ public class TileFilters {
         }
         
         public TileTagFilter(CompoundTag nbt) {
-            tag = TagKey.create(Registries.BLOCK, Identifier.parse(nbt.getString("tag")));
+            tag = TagKey.create(Registries.BLOCK, Identifier.parse(nbt.getStringOr("tag", "")));
         }
         
         @Override
@@ -165,7 +165,7 @@ public class TileFilters {
         }
         
         public TileNameFilter(CompoundTag nbt) {
-            name = nbt.getString("name");
+            name = nbt.getStringOr("name", "");
         }
         
         @Override

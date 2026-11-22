@@ -20,8 +20,8 @@ public abstract class ValueCurveInterpolation<T extends VecNd> extends ValueCurv
     protected ValueCurveInterpolation() {}
     
     public ValueCurveInterpolation(CompoundTag nbt) {
-        int[] timestamps = nbt.getIntArray("time");
-        long[] data = nbt.getLongArray("data");
+        int[] timestamps = nbt.getIntArray("time").orElseGet(() -> new int[0]);
+        long[] data = nbt.getLongArray("data").orElseGet(() -> new long[0]);
         int dimension = timestamps.length == data.length ? 1 : timestamps.length * 2 == data.length ? 2 : 3;
         int j = 0;
         for (int i = 0; i < timestamps.length; i++) {

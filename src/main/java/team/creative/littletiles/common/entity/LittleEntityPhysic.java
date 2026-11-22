@@ -142,12 +142,12 @@ public abstract class LittleEntityPhysic<T extends LittleEntity<? extends Little
         origin.setChanged();
         preventPush = false;
         
-        minX = nbt.getDouble("x");
-        minY = nbt.getDouble("y");
-        minZ = nbt.getDouble("z");
-        maxX = nbt.getDouble("x2");
-        maxY = nbt.getDouble("y2");
-        maxZ = nbt.getDouble("z2");
+        minX = nbt.getDoubleOr("x", 0D);
+        minY = nbt.getDoubleOr("y", 0D);
+        minZ = nbt.getDoubleOr("z", 0D);
+        maxX = nbt.getDoubleOr("x2", 0D);
+        maxY = nbt.getDoubleOr("y2", 0D);
+        maxZ = nbt.getDoubleOr("z2", 0D);
         setBB(new ABB(minX, minY, minZ, maxX, maxY, maxZ));
         loadExtra(nbt);
     }

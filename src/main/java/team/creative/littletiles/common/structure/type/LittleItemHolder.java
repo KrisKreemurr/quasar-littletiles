@@ -54,13 +54,13 @@ public class LittleItemHolder extends LittleStructure {
     }
     
     public void loadSettings(CompoundTag nbt, HolderLookup.Provider provider) {
-        locked = nbt.getBoolean("locked");
-        whitelist = nbt.getBoolean("f_white");
+        locked = nbt.getBooleanOr("locked", false);
+        whitelist = nbt.getBooleanOr("f_white", false);
         if (nbt.contains("filter")) {
-            ListTag list = nbt.getList("filter", Tag.TAG_COMPOUND);
+            ListTag list = nbt.getListOrEmpty("filter");
             filter = new ArrayList<>();
             for (int i = 0; i < list.size(); i++)
-                filter.add(CreativeIngredient.load(provider, list.getCompound(i)));
+                filter.add(CreativeIngredient.load(provider, list.getCompoundOrEmpty(i)));
         } else
             filter = null;
     }
@@ -92,7 +92,7 @@ public class LittleItemHolder extends LittleStructure {
     
     @Override
     public boolean wrenchInteract(Player player) {
-        if (!player.level().isClientSide)
+        if (!player.level().isClientSide())
             LittleTilesGuiRegistry.ITEM_HOLDER.open(player, this);
         return true;
     }
@@ -108,7 +108,7 @@ public class LittleItemHolder extends LittleStructure {
     
     @Override
     public InteractionResult use(Level level, LittleTileContext context, BlockPos pos, Player player, BlockHitResult result) {
-        if (level.isClientSide || (locked && !(player.getMainHandItem().getItem() instanceof ItemLittleWrench)))
+        if (level.isClientSide() || (locked && !(player.getMainHandItem().getItem() instanceof ItemLittleWrench)))
             return InteractionResult.SUCCESS;
         ItemStack mainStack = player.getMainHandItem();
         if (mainStack.isEmpty() && !stack.isEmpty()) {

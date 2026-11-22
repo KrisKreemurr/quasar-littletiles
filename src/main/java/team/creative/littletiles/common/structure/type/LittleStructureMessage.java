@@ -48,7 +48,7 @@ public class LittleStructureMessage extends LittleStructure {
     @Override
     public InteractionResult use(Level level, LittleTileContext context, BlockPos pos, Player player, BlockHitResult result) {
         if (allowRightClick) {
-            if (!level.isClientSide) {
+            if (!level.isClientSide()) {
                 for (int i = 0; i < text.size(); i++)
                     player.displayClientMessage(message(i), status);
             }
@@ -60,15 +60,15 @@ public class LittleStructureMessage extends LittleStructure {
     @Override
     protected void loadExtra(CompoundTag nbt, HolderLookup.Provider provider) {
         if (nbt.contains("text"))
-            text = Arrays.asList(StringUtils.truncate(nbt.getString("text"), LittleTiles.CONFIG.general.messageStructureLength));
+            text = Arrays.asList(StringUtils.truncate(nbt.getStringOr("text", ""), LittleTiles.CONFIG.general.messageStructureLength));
         else {
             text = new ArrayList<>();
-            ListTag list = nbt.getList("lines", Tag.TAG_STRING);
+            ListTag list = nbt.getListOrEmpty("lines");
             for (int i = 0; i < list.size(); i++)
-                text.add(StringUtils.truncate(list.getString(i), LittleTiles.CONFIG.general.messageStructureLength));
+                text.add(StringUtils.truncate(list.getStringOr(i, ""), LittleTiles.CONFIG.general.messageStructureLength));
         }
-        allowRightClick = nbt.getBoolean("right");
-        status = nbt.getBoolean("status");
+        allowRightClick = nbt.getBooleanOr("right", false);
+        status = nbt.getBooleanOr("status", false);
     }
     
     @Override
@@ -94,7 +94,7 @@ public class LittleStructureMessage extends LittleStructure {
     public void performInternalOutputChange(InternalSignalOutput output) {
         if (output.component.is("message")) {
             Level level = getStructureLevel();
-            if (level.isClientSide)
+            if (level.isClientSide())
                 return;
             
             final LevelChunk chunk = level.getChunkAt(getStructurePos());

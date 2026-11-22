@@ -34,7 +34,7 @@ public class LittleBoxLevel extends LittleBoxAbsolute {
         if (tag instanceof CompoundTag nbt) {
             if (!nbt.contains("b") || !nbt.contains("c"))
                 return null;
-            int[] array = nbt.getIntArray("b");
+            int[] array = nbt.getIntArray("b").orElseGet(() -> new int[0]);
             return new LittleBoxLevel(ILittleLevelContext.of(level, nbt.getString("c")), of(array));
         }
         return null;

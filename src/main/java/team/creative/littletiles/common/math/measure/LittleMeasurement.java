@@ -61,7 +61,7 @@ public abstract class LittleMeasurement {
     @Nullable
     public static LittleMeasurement load(Level level, CompoundTag nbt) {
         try {
-            return REGISTRY.create(nbt.getString("type"), level, nbt);
+            return REGISTRY.create(nbt.getStringOr("type", ""), level, nbt);
         } catch (RegistryException e) {
             return null;
         }
@@ -77,7 +77,7 @@ public abstract class LittleMeasurement {
     public int color;
     
     public LittleMeasurement(Level level, CompoundTag nbt) {
-        this.color = nbt.getInt("color");
+        this.color = nbt.getIntOr("color", 0);
     }
     
     public LittleMeasurement() {}

@@ -19,7 +19,7 @@ public class ChiselAndBitsConveration {
     @SubscribeEvent
     public static void worldTick(LevelTickEvent.Post event) {
         Level level = event.getLevel();
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             LittleGrid chiselContext = LittleGrid.get(ChiselsAndBitsManager.convertingFrom);
             int progress = 0;
             int size = blockEntities.size();

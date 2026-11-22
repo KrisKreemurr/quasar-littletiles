@@ -47,21 +47,21 @@ public class LevelChildrenList extends ChildrenList<StructureChildConnection> {
     
     public void load(CompoundTag nbt) {
         if (nbt.contains(LittleGroup.PARENT_KEY))
-            parent = StructureChildConnection.load(owner, nbt.getCompound(LittleGroup.PARENT_KEY), true);
+            parent = StructureChildConnection.load(owner, nbt.getCompoundOrEmpty(LittleGroup.PARENT_KEY), true);
         else
             parent = null;
         
-        ListTag list = nbt.getList(LittleGroup.CHILDREN_KEY, Tag.TAG_COMPOUND);
+        ListTag list = nbt.getListOrEmpty(LittleGroup.CHILDREN_KEY);
         List<StructureChildConnection> children = new ArrayList<>(list.size());
         for (int i = 0; i < list.size(); i++)
-            children.add(StructureChildConnection.load(owner, list.getCompound(i), false));
+            children.add(StructureChildConnection.load(owner, list.getCompoundOrEmpty(i), false));
         set(children);
         
         extensions.clear();
-        list = nbt.getList(LittleGroup.EXTENSION_KEY, Tag.TAG_COMPOUND);
+        list = nbt.getListOrEmpty(LittleGroup.EXTENSION_KEY);
         for (int i = 0; i < list.size(); i++) {
-            CompoundTag extension = list.getCompound(i);
-            extensions.put(extension.getString(LittleGroup.EXTENSION_ID_KEY), StructureChildConnection.load(owner, extension, false));
+            CompoundTag extension = list.getCompoundOrEmpty(i);
+            extensions.put(extension.getStringOr(LittleGroup.EXTENSION_ID_KEY, ""), StructureChildConnection.load(owner, extension, false));
         }
     }
     

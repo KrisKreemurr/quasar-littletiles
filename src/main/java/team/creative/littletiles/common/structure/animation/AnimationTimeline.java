@@ -34,19 +34,19 @@ public class AnimationTimeline {
     protected ValueCurve<Vec1d> rotZ = ValueCurve.ONE_EMPTY;
     
     public AnimationTimeline(CompoundTag nbt) {
-        duration = nbt.getInt("d");
-        tick = nbt.getInt("t");
-        eventIndex = nbt.getInt("eI");
+        duration = nbt.getIntOr("d", 0);
+        tick = nbt.getIntOr("t", 0);
+        eventIndex = nbt.getIntOr("eI", 0);
         
         for (PhysicalPart part : PhysicalPart.values())
             if (nbt.contains(part.name()))
-                set(part, ValueCurve.load(nbt.getCompound(part.name())));
+                set(part, ValueCurve.load(nbt.getCompoundOrEmpty(part.name())));
             
         List<AnimationEventEntry> entries = new ArrayList<>();
-        ListTag list = nbt.getList("e", Tag.TAG_COMPOUND);
+        ListTag list = nbt.getListOrEmpty("e");
         for (int i = 0; i < list.size(); i++)
             try {
-                entries.add(new AnimationEventEntry(list.getCompound(i)));
+                entries.add(new AnimationEventEntry(list.getCompoundOrEmpty(i)));
             } catch (RegistryException e) {}
         events = new MarkList<>(entries);
     }
@@ -249,9 +249,9 @@ public class AnimationTimeline {
         protected boolean active = false;
         
         AnimationEventEntry(CompoundTag nbt) throws RegistryException {
-            this.start = nbt.getInt("t");
-            this.event = AnimationEvent.REGISTRY.create(nbt.getString("id"), nbt.get("e"));
-            this.active = nbt.getBoolean("a");
+            this.start = nbt.getIntOr("t", 0);
+            this.event = AnimationEvent.REGISTRY.create(nbt.getStringOr("id", ""), nbt.get("e"));
+            this.active = nbt.getBooleanOr("a", false);
         }
         
         public AnimationEventEntry(int tick, AnimationEvent event) {

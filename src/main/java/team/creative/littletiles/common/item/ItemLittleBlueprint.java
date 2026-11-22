@@ -47,7 +47,7 @@ public class ItemLittleBlueprint extends Item implements ILittlePlacer, ILittleS
     public static CompoundTag getContent(ItemStack stack) {
         var nbt = ILittleTool.getData(stack);
         if (nbt.contains(CONTENT_KEY) && !nbt.contains(LittleGroup.BOXES_COUNT_KEY))
-            return nbt.getCompound(CONTENT_KEY);
+            return nbt.getCompoundOrEmpty(CONTENT_KEY);
         return nbt;
     }
     

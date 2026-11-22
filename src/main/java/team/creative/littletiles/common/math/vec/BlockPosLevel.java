@@ -30,7 +30,7 @@ public class BlockPosLevel {
             return new BlockPosLevel(ILittleLevelContext.of(level, pos), pos);
         }
         if (tag instanceof CompoundTag nbt) {
-            int[] array = nbt.getIntArray("p");
+            int[] array = nbt.getIntArray("p").orElseGet(() -> new int[0]);
             return new BlockPosLevel(ILittleLevelContext.of(level, nbt.getString("c")), new BlockPos(array[0], array[1], array[2]));
         }
         return null;

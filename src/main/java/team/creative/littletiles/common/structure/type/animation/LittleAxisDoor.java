@@ -32,10 +32,10 @@ public class LittleAxisDoor extends LittleDoor {
             @Override
             public LittleAxisDoorRotation read(Tag nbt) {
                 if (nbt instanceof CompoundTag tag) {
-                    Axis axis = Axis.values()[tag.getInt("a")];
+                    Axis axis = Axis.values()[tag.getIntOr("a", 0)];
                     if (tag.contains("d"))
-                        return new LittleAxisDoorRotationFixed(axis, tag.getDouble("d"));
-                    return new LittleAxisDoorRotationDirection(axis, tag.getBoolean("c"));
+                        return new LittleAxisDoorRotationFixed(axis, tag.getDoubleOr("d", 0D));
+                    return new LittleAxisDoorRotationDirection(axis, tag.getBooleanOr("c", false));
                 }
                 return null;
             }

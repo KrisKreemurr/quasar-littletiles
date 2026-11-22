@@ -185,7 +185,7 @@ public abstract class LittleEntity<T extends LittleEntityPhysic> extends Entity 
             entitiesToAdd = null;
         }
         if (level() instanceof ISubLevel) {
-            if (!level().isClientSide)
+            if (!level().isClientSide())
                 this.setSharedFlag(6, this.isCurrentlyGlowing());
             super.baseTick();
         } else
@@ -216,14 +216,14 @@ public abstract class LittleEntity<T extends LittleEntityPhysic> extends Entity 
     public void readAdditionalSaveData(CompoundTag nbt) {
         setSubLevel(createLevel(), loadCenter(nbt));
         
-        physic.load(nbt.getCompound("physic"));
+        physic.load(nbt.getCompoundOrEmpty("physic"));
         
         loadEntity(nbt);
         
         physic.updateBoundingBox();
         if (nbt.contains("entities")) {
             entitiesToAdd = new ArrayList<>();
-            ListTag list = nbt.getList("entities", Tag.TAG_COMPOUND);
+            ListTag list = nbt.getListOrEmpty("entities");
             for (int i = 0; i < list.size(); i++)
                 EntityType.create(list.getCompound(i), (Level) subLevel).ifPresent(entitiesToAdd::add);
         } else

@@ -35,7 +35,7 @@ public class LittleLevelEntityPhysic extends LittleEntityPhysic<LittleLevelEntit
     
     @Override
     public void loadExtra(CompoundTag nbt) {
-        updateSystem.load(nbt.getCompound("bounds"));
+        updateSystem.load(nbt.getCompoundOrEmpty("bounds"));
     }
     
     @Override

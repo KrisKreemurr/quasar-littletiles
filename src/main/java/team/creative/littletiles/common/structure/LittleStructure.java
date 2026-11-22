@@ -415,13 +415,13 @@ public abstract class LittleStructure implements ISignalSchedulable, ILevelPosit
         // LoadTiles
         if (nbt.contains("b")) {
             blocks.clear();
-            int[] array = nbt.getIntArray("b");
+            int[] array = nbt.getIntArray("b").orElseGet(() -> new int[0]);
             for (int i = 0; i + 2 < array.length; i += 3)
                 blocks.add(new StructureBlockConnector(this, new BlockPos(array[i], array[i + 1], array[i + 2])));
         }
         
         if (nbt.contains("n"))
-            name = nbt.getString("n");
+            name = nbt.getStringOr("n", "");
         else
             name = null;
         
@@ -435,11 +435,11 @@ public abstract class LittleStructure implements ISignalSchedulable, ILevelPosit
         }
         
         if (nbt.contains("ex")) {
-            ListTag list = nbt.getList("ex", Tag.TAG_COMPOUND);
+            ListTag list = nbt.getListOrEmpty("ex");
             externalHandler = new Int2ObjectArrayMap<>();
             for (int i = 0; i < list.size(); i++) {
                 try {
-                    SignalExternalOutputHandler handler = new SignalExternalOutputHandler(this, list.getCompound(i));
+                    SignalExternalOutputHandler handler = new SignalExternalOutputHandler(this, list.getCompoundOrEmpty(i));
                     externalHandler.put(handler.index, handler);
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -452,7 +452,7 @@ public abstract class LittleStructure implements ISignalSchedulable, ILevelPosit
                 inputs[i].load(nbt);
         if (outputs != null)
             for (int i = 0; i < outputs.length; i++)
-                outputs[i].load(nbt.getCompound(outputs[i].component.identifier));
+                outputs[i].load(nbt.getCompoundOrEmpty(outputs[i].component.identifier));
     }
     
     @OnlyIn(Dist.CLIENT)

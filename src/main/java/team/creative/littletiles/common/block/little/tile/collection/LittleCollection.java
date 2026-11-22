@@ -201,7 +201,7 @@ public class LittleCollection implements Iterable<LittleTile> {
         collection.clear();
         
         for (String name : nbt.getAllKeys()) {
-            ListTag boxes = nbt.getList(name, Tag.TAG_INT_ARRAY);
+            ListTag boxes = nbt.getListOrEmpty(name);
             BlockState state = LittleBlockRegistry.loadState(name);
             LittleBlock block;
             if (state.getBlock() instanceof AirBlock)
@@ -211,7 +211,7 @@ public class LittleCollection implements Iterable<LittleTile> {
             List<LittleBox> tileBoxes = null;
             int color = -1;
             for (int j = 0; j < boxes.size(); j++) {
-                int[] data = boxes.getIntArray(j);
+                int[] data = boxes.getIntArray(j).orElseGet(() -> new int[0]);
                 if (data.length == 1) {
                     if (tileBoxes != null)
                         collection.content.add(new LittleTile(state, block, color, tileBoxes));
@@ -230,7 +230,7 @@ public class LittleCollection implements Iterable<LittleTile> {
         collection.clear();
         
         for (String name : nbt.getAllKeys()) {
-            ListTag boxes = nbt.getList(name, Tag.TAG_INT_ARRAY);
+            ListTag boxes = nbt.getListOrEmpty(name);
             BlockState state = LittleBlockRegistry.loadState(name);
             LittleBlock block;
             if (state.getBlock() instanceof AirBlock)
@@ -240,7 +240,7 @@ public class LittleCollection implements Iterable<LittleTile> {
             List<LittleBox> tileBoxes = null;
             int color = -1;
             for (int j = 0; j < boxes.size(); j++) {
-                int[] data = boxes.getIntArray(j);
+                int[] data = boxes.getIntArray(j).orElseGet(() -> new int[0]);
                 if (data.length == 1) {
                     if (tileBoxes != null)
                         collection.content.add(new LittleTile(state, block, color, tileBoxes));
