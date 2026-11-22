@@ -1,5 +1,6 @@
 package team.creative.littletiles.common.gui.tool;
 
+import team.creative.littletiles.common.gui.LittleGuiHooks;
 import com.mojang.serialization.DataResult;
 
 import net.minecraft.core.component.DataComponentMap;
@@ -11,9 +12,8 @@ import net.minecraft.nbt.Tag;
 import team.creative.creativecore.common.gui.GuiLayer;
 import team.creative.creativecore.common.gui.sync.GuiSyncLocal;
 import team.creative.creativecore.common.util.inventory.ContainerSlotView;
-import team.creative.littletiles.client.LittleTilesClient;
 
-public abstract class GuiConfigure extends GuiLayer {
+public abstract class GuiConfigure extends GuiLayer implements LittleGuiHooks.CloseOnConfigureKey {
     
     public ContainerSlotView tool;
     public final GuiSyncLocal<CompoundTag> SAVE_CONFIG = getSyncHolder().register("save_config", nbt -> {
@@ -40,17 +40,6 @@ public abstract class GuiConfigure extends GuiLayer {
      *            all changes to save to
      * @return if true the data will be send to the server and changes will be applied */
     public abstract boolean saveConfiguration(PatchedDataComponentMap data);
-    
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (super.keyPressed(keyCode, scanCode, modifiers))
-            return true;
-        if (LittleTilesClient.KEY_CONFIGURE.matches(keyCode, scanCode)) {
-            closeTopLayer();
-            return true;
-        }
-        return false;
-    }
     
     @Override
     public void closed() {

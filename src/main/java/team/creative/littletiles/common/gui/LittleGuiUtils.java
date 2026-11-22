@@ -1,5 +1,8 @@
 package team.creative.littletiles.common.gui;
 
+import net.minecraft.core.Holder;
+import net.minecraft.sounds.SoundEvent;
+import team.creative.creativecore.common.gui.GuiControl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -110,6 +113,29 @@ public class LittleGuiUtils {
         if (player.isCreative())
             return new GuiStackSelector.CreativeCollector(new LittleBlockSelector());
         return new LittleBlockCollector(new LittleBlockSelector());
+    }
+    
+    /** CreativeCore 26.x: sounds go through the control's dist handler (no-op on the server). */
+    public static void playSound(GuiControl control, SoundEvent event) {
+        if (control.dist() != null)
+            control.dist().playSound(event);
+    }
+    
+    public static void playSound(GuiControl control, SoundEvent event, float volume, float pitch) {
+        if (control.dist() != null)
+            control.dist().playSound(event, volume, pitch);
+    }
+    
+    public static void playSound(GuiControl control, Holder.Reference<SoundEvent> event) {
+        if (control.dist() != null)
+            control.dist().playSound(event);
+    }
+    
+    /** Enabled state lives on the client dist since CreativeCore 26.x; the server side treats every control as enabled. */
+    public static boolean isEnabled(GuiControl control) {
+        if (control.isClient() && control.dist() instanceof team.creative.creativecore.client.gui.GuiClientControl client)
+            return client.enabled;
+        return true;
     }
     
 }

@@ -1,12 +1,12 @@
 package team.creative.littletiles.common.gui.tool.blueprint;
 
+import team.creative.littletiles.common.gui.LittleGuiHooks;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.EndTag;
@@ -35,7 +35,6 @@ import team.creative.creativecore.common.gui.style.Icon;
 import team.creative.creativecore.common.gui.sync.GuiSyncLocal;
 import team.creative.creativecore.common.gui.sync.GuiSyncLocalLayer;
 import team.creative.creativecore.common.util.inventory.ContainerSlotView;
-import team.creative.creativecore.common.util.math.geo.Rect;
 import team.creative.creativecore.common.util.text.TextBuilder;
 import team.creative.creativecore.common.util.text.TextMapBuilder;
 import team.creative.creativecore.common.util.type.itr.FunctionIterator;
@@ -55,7 +54,7 @@ import team.creative.littletiles.common.structure.registry.gui.LittleStructureGu
 import team.creative.littletiles.common.structure.registry.gui.LittleStructureGuiControl;
 import team.creative.littletiles.common.structure.registry.gui.LittleStructureGuiRegistry;
 
-public class GuiBlueprint extends GuiConfigure {
+public class GuiBlueprint extends GuiConfigure implements LittleGuiHooks.PreRender {
     
     public final GuiSyncLocal<EndTag> CLEAR_CONTENT = getSyncHolder().register("clear_content", tag -> {
         CompoundTag content = new CompoundTag();
@@ -314,9 +313,8 @@ public class GuiBlueprint extends GuiConfigure {
     }
     
     @Override
-    public void render(GuiGraphics graphics, Rect controlRect, Rect realRect, double scale, int mouseX, int mouseY) {
+    public void preRender() {
         storage.renderTick();
-        super.render(graphics, controlRect, realRect, scale, mouseX, mouseY);
     }
     
     public void removeItem(GuiTreeItemStructure item) {

@@ -1,5 +1,6 @@
 package team.creative.littletiles.common.gui.tool.blueprint;
 
+import team.creative.littletiles.common.gui.LittleGuiHooks;
 import team.creative.creativecore.common.gui.IGuiParent;
 
 import java.util.ArrayList;
@@ -13,10 +14,8 @@ import org.joml.Matrix4f;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item.TooltipContext;
@@ -38,7 +37,6 @@ import team.creative.creativecore.common.gui.control.tree.GuiTree;
 import team.creative.creativecore.common.gui.control.tree.GuiTreeItem;
 import team.creative.creativecore.common.gui.flow.GuiFlow;
 import team.creative.creativecore.common.gui.flow.GuiSizeRule.GuiSizeRatioRules;
-import team.creative.creativecore.common.util.math.geo.Rect;
 import team.creative.creativecore.common.util.math.vec.Vec3d;
 import team.creative.littletiles.api.common.tool.ILittlePlacer;
 import team.creative.littletiles.client.level.little.FakeClientLevel;
@@ -50,7 +48,7 @@ import team.creative.littletiles.common.gui.control.animation.GuiAnimationViewer
 import team.creative.littletiles.common.structure.LittleStructureType;
 import team.creative.littletiles.server.level.little.FakeServerLevel;
 
-public class GuiBlueprintAdd extends GuiLayer implements GuiAnimationViewerStorage {
+public class GuiBlueprintAdd extends GuiLayer implements GuiAnimationViewerStorage, LittleGuiHooks.PreRender {
     
     public static String generateGroupName(LittleGroup group) {
         String name = group.getStructureName();
@@ -206,7 +204,7 @@ public class GuiBlueprintAdd extends GuiLayer implements GuiAnimationViewerStora
     }
     
     @Override
-    public void render(GuiGraphics graphics, Rect controlRect, Rect realRect, double scale, int mouseX, int mouseY) {
+    public void preRender() {
         synchronized (scheduled) {
             GuiBlueprintAddAnimationRequest request = scheduled.getAndSet(null);
             if (request != null && executedPreview < request.index) {
@@ -216,7 +214,6 @@ public class GuiBlueprintAdd extends GuiLayer implements GuiAnimationViewerStora
                 executedPreview = request.index;
             }
         }
-        super.render(graphics, controlRect, realRect, scale, mouseX, mouseY);
     }
     
     protected LittleGroup reconstructBlueprint(GuiBlueprintAddTreeItem item) {
@@ -263,11 +260,9 @@ public class GuiBlueprintAdd extends GuiLayer implements GuiAnimationViewerStora
                 right.add(new GuiLabel(this, "label").setTitle(line));
         }
         
-        @Override
-        public boolean mouseClicked(double x, double y, int button) {
+        /** Called by the client dist on click. */
+        public void clicked() {
             select(stack);
-            playSound(SoundEvents.UI_BUTTON_CLICK);
-            return true;
         }
         
     }

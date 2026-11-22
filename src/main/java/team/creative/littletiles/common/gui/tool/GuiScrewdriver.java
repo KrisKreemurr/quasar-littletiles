@@ -108,7 +108,7 @@ public class GuiScrewdriver extends GuiConfigure {
                 LittleAction action = getDesiredAction();
                 if (action != null)
                     if (action.wasSuccessful(LittleTilesClient.ACTION_HANDLER.execute(action)))
-                        playSound(SoundEvents.LEVER_CLICK);
+                        LittleGuiUtils.playSound(this, SoundEvents.LEVER_CLICK);
             } catch (LittleActionException e) {
                 LittleActionHandlerClient.handleException(e);
             }

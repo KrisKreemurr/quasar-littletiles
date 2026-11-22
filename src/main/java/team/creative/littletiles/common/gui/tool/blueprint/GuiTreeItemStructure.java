@@ -1,5 +1,6 @@
 package team.creative.littletiles.common.gui.tool.blueprint;
 
+import team.creative.littletiles.common.gui.LittleGuiUtils;
 import team.creative.creativecore.common.gui.IGuiParent;
 
 import java.util.ArrayList;
@@ -224,7 +225,7 @@ public class GuiTreeItemStructure extends GuiTreeItem implements AnimationContex
         if (text.isBlank())
             text = null;
         updateTitle(text, gui.type());
-        tree.reflowTree();
+        tree.updateTree();
     }
     
     public void load() {
@@ -233,14 +234,8 @@ public class GuiTreeItemStructure extends GuiTreeItem implements AnimationContex
         blueprint.control = gui.create(this);
         blueprint.control.setExpandableY();
         blueprint.config.clear();
-        GuiScrollY scroll = new GuiScrollY(this, "config") {
-            
-            @Override
-            public ControlFormatting getControlFormatting() {
-                return ControlFormatting.TRANSPARENT;
-            }
-            
-        }.setHover(true);
+        GuiScrollY scroll = new GuiScrollY(this, "config").setHover(true);
+        scroll.setFormatting(ControlFormatting.TRANSPARENT);
         scroll.add(blueprint.control);
         blueprint.config.add(scroll);
         blueprint.control.create(structure);
@@ -466,7 +461,7 @@ public class GuiTreeItemStructure extends GuiTreeItem implements AnimationContex
     @Override
     @OnlyIn(Dist.CLIENT)
     public void play(SoundEvent event, float volume, float pitch) {
-        GuiControl.playSound(event, volume, pitch);
+        LittleGuiUtils.playSound(this, event, volume, pitch);
     }
     
     @Override

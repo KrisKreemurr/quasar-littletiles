@@ -114,12 +114,12 @@ public class GuiChildEventPanel extends GuiTimelinePanel {
         public final int childId;
         
         public GuiChildTimelineChannel(IGuiParent parent, GuiTimeline timeline, int childId) {
-            super(parent, timeline);
+            super(timeline);
             this.childId = childId;
         }
         
         @Override
-        protected ChildDoorEvent getValueAt(int time) {
+        public ChildDoorEvent getValueAt(int time) {
             return new ChildDoorEvent(childId);
         }
         

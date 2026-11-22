@@ -1,5 +1,6 @@
 package team.creative.littletiles.common.gui.control.animation;
 
+import team.creative.littletiles.common.gui.LittleGuiUtils;
 import team.creative.creativecore.common.gui.IGuiParent;
 
 import java.util.ArrayList;
@@ -145,7 +146,7 @@ public class GuiAnimationTimelinePanel extends GuiTimelinePanel {
                                 return Component.literal(y.getPath());
                             return Component.literal(y.toString());
                         })).setSearchbar(true);
-                box.select(value.sound.getLocation());
+                box.select(value.sound.location());
                 editKey.add(box);
                 GuiParent other = new GuiParent(this).setVAlign(VAlign.CENTER);
                 other.add(new GuiLabeledControl(this, GuiControl.translatable("gui.volume").append(":"), new GuiSlider(this, "volume", value.volume, 0, 1).setDim(40, 10)));
@@ -153,7 +154,7 @@ public class GuiAnimationTimelinePanel extends GuiTimelinePanel {
                 other.add(new GuiButtonIcon(this, "play", Icon.PLAY, y -> {
                     GuiSlider volume = other.get("volume");
                     GuiSlider pitch = other.get("pitch");
-                    GuiControl.playSound(PlaySoundEvent.get(box.selected()), (float) volume.getValue(), (float) pitch.getValue());
+                    LittleGuiUtils.playSound(box, PlaySoundEvent.get(box.selected()), (float) volume.getValue(), (float) pitch.getValue());
                 }));
                 editKey.add(other);
             }

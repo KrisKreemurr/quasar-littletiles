@@ -23,9 +23,9 @@ public class GuiElementFilterTag extends GuiElementFilter {
     
     public GuiElementFilterTag(IGuiParent parent, TagKey<Block> selected) {
         super(parent);
-        add(box = new GuiComboBox<>(this, "tag", new TextMapBuilder<TagKey<Block>>().addComponents(BuiltInRegistries.BLOCK.getTagNames().toList(), x -> {
+        add(box = new GuiComboBox<>(this, "tag", new TextMapBuilder<TagKey<Block>>().addComponents(BuiltInRegistries.BLOCK.getTags().map(x -> x.key()).toList(), x -> {
             TextBuilder builder = new TextBuilder();
-            Optional<Named<Block>> tag = BuiltInRegistries.BLOCK.getTag(x);
+            Optional<Named<Block>> tag = BuiltInRegistries.BLOCK.get(x);
             if (tag.isPresent() && tag.get().size() > 0)
                 builder.stack(new ItemStack(tag.get().get(0).value()));
             return builder.text(x.location().toString()).build();

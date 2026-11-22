@@ -1,5 +1,6 @@
 package team.creative.littletiles.common.gui.tool.blueprint;
 
+import team.creative.littletiles.common.gui.LittleGuiUtils;
 import org.apache.commons.lang3.ArrayUtils;
 
 import net.minecraft.core.component.PatchedDataComponentMap;
@@ -188,9 +189,9 @@ public class GuiBlueprintSelection extends GuiConfigure {
     
     public void updateSlider() {
         GuiArraySlider slider = (GuiArraySlider) get("scale");
-        boolean includeVanilla = get("includeVanilla", GuiCheckBox.class).isEnabled() && get("includeVanilla", GuiCheckBox.class).get();
-        boolean includeCB = get("includeCB", GuiCheckBox.class).isEnabled() && get("includeCB", GuiCheckBox.class).get();
-        boolean includeLT = get("includeLT", GuiCheckBox.class).isEnabled() && get("includeLT", GuiCheckBox.class).get();
+        boolean includeVanilla = LittleGuiUtils.isEnabled(get("includeVanilla", GuiCheckBox.class)) && get("includeVanilla", GuiCheckBox.class).get();
+        boolean includeCB = LittleGuiUtils.isEnabled(get("includeCB", GuiCheckBox.class)) && get("includeCB", GuiCheckBox.class).get();
+        boolean includeLT = LittleGuiUtils.isEnabled(get("includeLT", GuiCheckBox.class)) && get("includeLT", GuiCheckBox.class).get();
         
         if (result == null || (!includeVanilla && !includeCB && !includeLT))
             slider.setEnabled(false);
