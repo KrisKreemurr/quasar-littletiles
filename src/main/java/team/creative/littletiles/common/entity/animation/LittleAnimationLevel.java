@@ -533,6 +533,11 @@ public class LittleAnimationLevel extends Level implements LittleSubLevel, Itera
     }
     
     @Override
+    public net.minecraft.world.level.border.WorldBorder getWorldBorder() {
+        return parentLevel.getWorldBorder();
+    }
+    
+    @Override
     public int getSeaLevel() {
         return parentLevel.getSeaLevel();
     }
