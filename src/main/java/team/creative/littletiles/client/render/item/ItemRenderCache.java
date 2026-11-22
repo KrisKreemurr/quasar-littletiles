@@ -5,9 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
 import org.spongepowered.include.com.google.common.base.Objects;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.Sheets;
@@ -29,147 +27,51 @@ import team.creative.creativecore.common.util.type.list.Pair;
 import team.creative.littletiles.api.common.tool.ILittleTool;
 import team.creative.littletiles.client.level.LevelAwareHandler;
 
+// QUASAR STUB: generated no-op stand-in; the original lives in src/parked (render rewrite pending).
+
 public class ItemRenderCache implements LevelAwareHandler {
-    
-    public static final RenderingThreadItem THREAD = new RenderingThreadItem();
-    
-    public static ItemModelBox get(ItemStack stack) {
-        BakedModel model = Minecraft.getInstance().getItemRenderer().getModel(stack, null, null, 0);
-        if (model instanceof CreativeBakedLayerModel l)
-            for (CreativeBakedItemLayer layer : l.layers)
-                if (layer instanceof CreativeBakedBoxItemLayer b)
-                    return b.model();
-        return null;
-    }
-    
-    private RenderedStack temp = new RenderedStack();
-    private HashMap<RenderedStack, ItemModelCache> caches = new HashMap<>();
-    private int slowTicker = 0;
-    private int timeToCheckSlowTick = 100;
-    
-    public ItemRenderCache() {
-        NeoForge.EVENT_BUS.addListener(this::tick);
-    }
-    
-    public int countCaches() {
-        return caches.size();
-    }
-    
-    public boolean hasTranslucent(ItemStack stack) {
-        synchronized (caches) {
-            ItemModelCache cache = caches.get(temp.set(stack));
-            if (cache != null)
-                return cache.hasTranslucent();
-            return false;
-        }
-    }
-    
-    public List<BakedQuad> requestCache(ItemStack stack, boolean translucent) {
-        synchronized (caches) {
-            ItemModelCache cache = caches.get(temp.set(stack));
-            if (cache != null)
-                return cache.getQuads(translucent);
-            if (!ILittleTool.hasData(stack))
-                return null;
-            ItemModelBox renderer = get(stack);
-            if (renderer != null) {
-                if (renderer.checkTranslucentLayer(stack))
-                    cache = new ItemModelCacheLayered();
-                else
-                    cache = new ItemModelCache();
-                caches.put(new RenderedStack().set(stack), cache);
-                THREAD.items.add(new Pair<>(stack, cache));
-            }
-            return null;
-        }
-    }
-    
-    public void clearCache() {
-        synchronized (caches) {
-            caches.clear();
-            THREAD.items.clear();
-        }
-    }
-    
-    @Override
-    public void unload() {
-        caches.clear();
-        THREAD.items.clear();
-    }
-    
-    public void tick(ClientTickEvent.Post event) {
-        slowTicker++;
-        if (slowTicker >= timeToCheckSlowTick) {
-            for (Iterator<ItemModelCache> iterator = caches.values().iterator(); iterator.hasNext();)
-                if (iterator.next().expired())
-                    iterator.remove();
-            slowTicker = 0;
-        }
-    }
-    
+
+    public static RenderingThreadItem THREAD;
+    public static ItemModelBox get(ItemStack stack) { return null; }
+
+    private RenderedStack temp;
+    private HashMap<RenderedStack, ItemModelCache> caches;
+    private int slowTicker;
+    private int timeToCheckSlowTick;
+    public ItemRenderCache() {}
+
+    public int countCaches() { return 0; }
+
+    public boolean hasTranslucent(ItemStack stack) { return false; }
+
+    public List<BakedQuad> requestCache(ItemStack stack, boolean translucent) { return null; }
+
+    public void clearCache() {}
+
+    public void unload() {}
+
+    public void tick(ClientTickEvent.Post event) {}
+
     public static class RenderedStack {
-        
+
         private Item item;
         private CompoundTag nbt;
-        
-        public RenderedStack set(ItemStack stack) {
-            item = stack.getItem();
-            nbt = null;
-            ILittleTool.consumeUnsafeData(stack, x -> nbt = x);
-            return this;
-        }
-        
-        @Override
-        public int hashCode() {
-            return nbt == null ? 0 : nbt.hashCode();
-        }
-        
-        @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof RenderedStack stack)
-                return stack.item == item && Objects.equal(stack.nbt, nbt);
-            return false;
-        }
+        public RenderedStack set(ItemStack stack) { return null; }
+
+        public int hashCode() { return 0; }
+
+        public boolean equals(Object obj) { return false; }
+
     }
-    
+
     public static class RenderingThreadItem extends Thread {
-        
-        public ConcurrentLinkedQueue<Pair<ItemStack, ItemModelCache>> items = new ConcurrentLinkedQueue<>();
-        
-        public RenderingThreadItem() {
-            start();
-        }
-        
-        @Override
-        public void run() {
-            while (true) {
-                if (Minecraft.getInstance().level != null && !items.isEmpty()) {
-                    Pair<ItemStack, ItemModelCache> pair = items.poll();
-                    ItemModelBox renderer = get(pair.getKey());
-                    
-                    if (renderer != null) {
-                        boolean translucent = renderer.hasTranslucentLayer(pair.key);
-                        RandomSource rand = RandomSource.create();
-                        List<BakedQuad> quads = new ArrayList<>();
-                        for (int j = 0; j < Facing.VALUES.length; j++)
-                            CreativeBakedBoxItemLayer.compileBoxes(renderer.getBoxes(pair.key, false), Facing.VALUES[j], Sheets.cutoutBlockSheet(), rand, true, quads);
-                        pair.value.setQuads(false, quads);
-                        if (translucent) {
-                            quads = new ArrayList<>();
-                            for (int j = 0; j < Facing.VALUES.length; j++)
-                                CreativeBakedBoxItemLayer.compileBoxes(renderer.getBoxes(pair.key, true), Facing.VALUES[j], RenderTypeHelper.getEntityRenderType(ChunkSectionLayer
-                                        .translucent(), false), rand, true, quads);
-                            pair.value.setQuads(true, quads);
-                        }
-                        pair.value.complete();
-                    }
-                    
-                } else
-                    try {
-                        sleep(10);
-                    } catch (InterruptedException e) {}
-            }
-        }
+
+        public ConcurrentLinkedQueue<Pair<ItemStack, ItemModelCache>> items;
+        public RenderingThreadItem() {}
+
+        public void run() {}
+
     }
-    
+
 }
+

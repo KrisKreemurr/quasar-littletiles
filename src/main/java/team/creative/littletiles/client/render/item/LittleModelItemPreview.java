@@ -7,14 +7,14 @@ import team.creative.creativecore.client.render.model.preview.ItemModelPreview;
 import team.creative.littletiles.common.block.little.element.LittleElement;
 import team.creative.littletiles.common.item.ItemMultiTiles;
 
+// QUASAR STUB: generated no-op stand-in; the original lives in src/parked (render rewrite pending).
+
 @OnlyIn(Dist.CLIENT)
 public interface LittleModelItemPreview extends ItemModelPreview {
-    
+
     public LittleElement getElement(ItemStack stack);
-    
-    @Override
-    public default ItemStack getPreview(ItemStack stack) {
-        return ItemMultiTiles.of(getElement(stack));
-    }
-    
+
+    public default ItemStack getPreview(ItemStack stack) { return null; }
+
 }
+

@@ -3,9 +3,7 @@ package team.creative.littletiles.client.render.tile;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.annotation.Nullable;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -28,152 +26,19 @@ import team.creative.creativecore.common.util.math.vec.Vec3f;
 import team.creative.littletiles.common.math.box.LittleBox;
 import team.creative.littletiles.common.structure.type.LittleItemHolder;
 
+// QUASAR STUB: generated no-op stand-in; the original lives in src/parked (render rewrite pending).
+
 public class LittleRenderBoxItem extends LittleRenderBox {
-    
-    private static final Vec3f defaultDirection = new Vec3f(1, 1, 0);
-    private static final Vec3f center = new Vec3f(0.5F, 0.5F, 0.5F);
-    
-    public final LittleItemHolder structure;
-    
-    public LittleRenderBoxItem(LittleItemHolder structure, AlignedBox cube, LittleBox box) {
-        super(cube);
-        this.box = box;
-        this.structure = structure;
-        this.allowOverlap = true;
-        this.keepVU = true;
-        this.state = Blocks.STONE.defaultBlockState();
-    }
-    
-    @Override
+
+    private static Vec3f defaultDirection;
+    private static Vec3f center;
+    public LittleItemHolder structure;
+    public LittleRenderBoxItem(LittleItemHolder structure, AlignedBox cube, LittleBox box) {}
+
     public List<BakedQuad> getBakedQuad(@Nullable QuadGeneratorContext holder, LevelAccessor level, BlockPos pos, BlockPos offset, BlockState state, BakedModel blockModel,
-            ModelData modelData, Facing facing, ChunkSectionLayer layer, RandomSource rand, boolean overrideTint, int defaultColor) {
-        if (facing != structure.facing)
-            return Collections.EMPTY_LIST;
-        BakedModel bakedmodel = Minecraft.getInstance().getItemRenderer().getModel(structure.stack, null, null, 0);
-        List<BakedQuad> blockQuads = new ArrayList<>(bakedmodel.getQuads(null, null, rand));
-        
-        for (Direction direction : Direction.values()) {
-            List<BakedQuad> newQuads = bakedmodel.getQuads(null, direction, rand);
-            blockQuads.addAll(newQuads);
-        }
-        
-        Vec3f topRight = new Vec3f(defaultDirection);
-        Rotation rotation;
-        int rotationSteps = 1;
-        boolean flipX = false;
-        boolean flipY = false;
-        boolean flipZ = false;
-        switch (structure.facing) {
-            case EAST:
-                rotation = Rotation.Y_COUNTER_CLOCKWISE;
-                flipX = true;
-                break;
-            case WEST:
-                rotation = Rotation.Y_CLOCKWISE;
-                flipX = true;
-                break;
-            case UP:
-                flipY = true;
-                rotation = Rotation.X_CLOCKWISE;
-                break;
-            case DOWN:
-                rotation = Rotation.X_CLOCKWISE;
-                break;
-            case SOUTH:
-                rotation = null;
-                break;
-            case NORTH:
-                rotation = Rotation.Y_COUNTER_CLOCKWISE;
-                rotationSteps = 2;
-                flipZ = true;
-                break;
-            default:
-                rotation = null;
-                break;
-        }
-        
-        if (rotation != null)
-            for (int i = 0; i < rotationSteps; i++)
-                rotation.transform(topRight);
-        if (structure.topRight.x != 0 && structure.topRight.x == topRight.x)
-            flipX = true;
-        if (structure.topRight.y != 0 && structure.topRight.y != topRight.y)
-            flipY = true;
-        if (structure.topRight.z != 0 && structure.topRight.z == topRight.z)
-            flipZ = true;
-        
-        float scale;
-        switch (structure.facing.axis) {
-            case X:
-                scale = Math.min(getSize(Axis.Y), getSize(Axis.Z));
-                break;
-            case Y:
-                scale = Math.min(getSize(Axis.X), getSize(Axis.Z));
-                break;
-            case Z:
-                scale = Math.min(getSize(Axis.X), getSize(Axis.Y));
-                break;
-            default:
-                scale = 1;
-                break;
-        }
-        
-        float offsetX = (minX + maxX) * 0.5F - 0.5F;
-        float offsetY = (minY + maxY) * 0.5F - 0.5F;
-        float offsetZ = (minZ + maxZ) * 0.5F - 0.5F;
-        
-        boolean reverse = ((flipX ? 1 : 0) + (flipY ? 1 : 0) + (flipZ ? 1 : 0)) % 2 == 1;
-        
-        List<BakedQuad> quads = new ArrayList<>();
-        for (int i = 0; i < blockQuads.size(); i++) {
-            int[] originalData = blockQuads.get(i).getVertices();
-            int[] vertices = originalData.clone();
-            
-            for (int k = 0; k < 4; k++) {
-                int index = k * VertexFormatUtils.blockFormatIntSize();
-                Vec3f vec = new Vec3f(Float.intBitsToFloat(originalData[index]), Float.intBitsToFloat(originalData[index + 1]), Float.intBitsToFloat(originalData[index + 2]));
-                
-                vec.sub(center);
-                
-                if (rotation != null)
-                    for (int j = 0; j < rotationSteps; j++)
-                        rotation.transform(vec);
-                if (flipX)
-                    vec.x = -vec.x;
-                if (flipY)
-                    vec.y = -vec.y;
-                if (flipZ)
-                    vec.z = -vec.z;
-                
-                vec.x *= scale;
-                vec.y *= scale;
-                vec.z *= scale;
-                vec.x += offsetX;
-                vec.y += offsetY;
-                vec.z += offsetZ;
-                
-                vec.add(center);
-                
-                int newIndex = index;
-                if (reverse)
-                    newIndex = (3 - k) * VertexFormatUtils.blockFormatIntSize();
-                vertices[newIndex] = Float.floatToIntBits(vec.x);
-                vertices[newIndex + 1] = Float.floatToIntBits(vec.y);
-                vertices[newIndex + 2] = Float.floatToIntBits(vec.z);
-                if (reverse)
-                    for (int j = 3; j < VertexFormatUtils.blockFormatIntSize(); j++)
-                        vertices[newIndex + j] = originalData[index + j];
-            }
-            CreativeBakedQuad quad = new CreativeBakedQuad(vertices, blockQuads.get(i), this, defaultColor, overrideTint);
-            quads.add(quad);
-        }
-        return quads;
-        
-    }
-    
-    @Override
-    public boolean intersectsWithFace(Facing facing, QuadGeneratorContext holder, BlockPos offset) {
-        return true;
-    }
-    
+            ModelData modelData, Facing facing, ChunkSectionLayer layer, RandomSource rand, boolean overrideTint, int defaultColor) { return null; }
+
+    public boolean intersectsWithFace(Facing facing, QuadGeneratorContext holder, BlockPos offset) { return false; }
+
 }
+

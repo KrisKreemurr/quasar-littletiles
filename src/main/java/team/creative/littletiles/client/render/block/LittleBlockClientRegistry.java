@@ -4,7 +4,6 @@ import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.neoforged.neoforge.client.ChunkRenderTypeSet;
@@ -13,42 +12,18 @@ import net.neoforged.neoforge.client.model.data.ModelData;
 import team.creative.littletiles.api.common.block.ILittleMCBlock;
 import team.creative.littletiles.api.common.block.LittleBlock;
 
+// QUASAR STUB: generated no-op stand-in; the original lives in src/parked (render rewrite pending).
+
 public class LittleBlockClientRegistry {
-    
-    private static final ChunkRenderTypeSet SOLID = ChunkRenderTypeSet.of(ChunkSectionLayer.SOLID);
-    private static final Map<LittleBlock, ChunkRenderTypeSet> CACHED_LAYERS = Collections.synchronizedMap(new HashMap<>());
-    
-    private static final Map<LittleBlock, Boolean> GUI_TRANSLUCENT = Collections.synchronizedMap(new HashMap<>());
-    
-    public static synchronized boolean canRenderInLayer(LittleBlock block, RenderType layer) {
-        ChunkRenderTypeSet layers = CACHED_LAYERS.get(block);
-        if (layers == null) {
-            if (block.shouldUseStateForRenderType())
-                CACHED_LAYERS.put(block, Minecraft.getInstance().getBlockRenderer().getBlockModel(block.getState()).getRenderTypes(block.getState(), ILittleMCBlock.RANDOM,
-                    ModelData.EMPTY));
-            else
-                CACHED_LAYERS.put(block, SOLID);
-            layers = CACHED_LAYERS.get(block);
-        }
-        if (layers == null)
-            throw new IllegalArgumentException();
-        return layers.contains(layer);
-    }
-    
-    public static synchronized boolean isTranslucentInGui(LittleBlock block) {
-        Boolean translucent = GUI_TRANSLUCENT.get(block);
-        if (translucent == null) {
-            if (block.shouldUseStateForRenderType()) {
-                var layers = Minecraft.getInstance().getBlockRenderer().getBlockModel(block.getState()).getRenderTypes(block.getStack(), false);
-                GUI_TRANSLUCENT.put(block, translucent = layers.contains(RenderTypeHelper.getEntityRenderType(RenderType.TRANSLUCENT, false)));
-            } else
-                GUI_TRANSLUCENT.put(block, translucent = true);
-        }
-        return translucent;
-    }
-    
-    public static synchronized void clearCache() {
-        CACHED_LAYERS.clear();
-    }
-    
+
+    private static ChunkRenderTypeSet SOLID;
+    private static Map<LittleBlock, ChunkRenderTypeSet> CACHED_LAYERS;
+    private static Map<LittleBlock, Boolean> GUI_TRANSLUCENT;
+    public static synchronized boolean canRenderInLayer(LittleBlock block, RenderType layer) { return false; }
+
+    public static synchronized boolean isTranslucentInGui(LittleBlock block) { return false; }
+
+    public static synchronized void clearCache() {}
+
 }
+

@@ -3,12 +3,9 @@ package team.creative.littletiles.client.render.overlay;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
-
 import org.joml.Vector3f;
-
 import com.google.common.base.Strings;
 import com.mojang.blaze3d.systems.RenderSystem;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -44,271 +41,104 @@ import team.creative.littletiles.common.block.mc.BlockTile;
 import team.creative.littletiles.common.gui.control.GuiActionDisplay;
 import team.creative.littletiles.common.item.tooltip.IItemTooltip;
 
+// QUASAR STUB: generated no-op stand-in; the original lives in src/parked (render rewrite pending).
+
 public class OverlayRenderer implements IGuiIntegratedParent, LevelAwareHandler {
-    
-    private static final Minecraft MC = Minecraft.getInstance();
-    
-    private boolean doneInit = false;
-    private final OverlayGuiLayer transparentLayer = new OverlayGuiLayer(isClient(), "overlay");
-    
-    private final SingletonList<GuiLayer> layers = new SingletonList<>(transparentLayer);
-    private final Screen screen = new Screen(Component.literal("overlay")) {};
-    private final ScreenEventListener listener = new ScreenEventListener(this, screen);
-    private int lastWidth = -1;
-    private int lastHeight = -1;
-    private List<OverlayText> scheduled = new ArrayList<>();
-    
-    public OverlayRenderer() {
-        NeoForge.EVENT_BUS.addListener(this::renderPost);
-        NeoForge.EVENT_BUS.addListener(this::renderBlockOverlay);
-        transparentLayer.setParent(this);
-    }
-    
-    public OverlayGuiLayer gui() {
-        return this.transparentLayer;
-    }
-    
-    public void displayActionMessage(List<Component> message) {
-        transparentLayer.addMessage(message);
-    }
-    
-    public void renderBlockOverlay(RenderBlockScreenEffectEvent event) {
-        if (event.getBlockState().getBlock() instanceof BlockTile && event.getOverlayType() == OverlayType.BLOCK)
-            event.setCanceled(true);
-    }
-    
-    private Vec2d projectToScreen(Vec3 cam, Vec3d pos) {
-        Vector3f vec = new Vector3f((float) (pos.x - cam.x), (float) (pos.y - cam.y), (float) (pos.z - cam.z));
-        RenderSystem.getModelViewMatrix().transformPosition(vec);
-        RenderSystem.getProjectionMatrix().transformPosition(vec);
-        vec.x /= vec.z;
-        vec.y /= vec.z;
-        vec.x = (vec.x + 1) * MC.getWindow().getGuiScaledWidth() / 2;
-        vec.y = (1 - (vec.y)) * MC.getWindow().getGuiScaledHeight() / 2;
-        return new Vec2d(vec.x, vec.y);
-    }
-    
-    public void renderLabel(Vec3 cam, Vec3d vec, Component component, int color) {
-        scheduled.add(new OverlayText(projectToScreen(cam, vec), component, color));
-        
-    }
-    
-    public void renderPost(RenderGuiEvent.Post event) {
-        Player player = MC.player;
-        Font font = MC.font;
-        if (player != null && !MC.options.hideGui) {
-            if (!doneInit) {
-                transparentLayer.style = GuiStyle.getStyle(transparentLayer.name);
-                transparentLayer.init();
-                doneInit = true;
-            }
-            
-            GuiGraphics graphics = event.getGuiGraphics();
-            screen.width = MC.getWindow().getGuiScaledWidth();
-            screen.height = MC.getWindow().getGuiScaledHeight();
-            if (screen.width != lastWidth || screen.height != lastHeight) {
-                transparentLayer.reflow();
-                lastWidth = screen.width;
-                lastHeight = screen.height;
-            }
-            
-            render(graphics, screen, listener, 0, 0);
-            
-            for (OverlayText text : scheduled)
-                graphics.drawString(MC.font, text.component, (int) text.pos.x, (int) text.pos.y, text.color);
-            scheduled.clear();
-            
-            Component tooltip = null;
-            if (LittleTilesClient.PREVIEW_RENDERER.tool() != null)
-                tooltip = LittleTilesClient.PREVIEW_RENDERER.tool().tooltip();
-            
-            if (tooltip == null && LittleTiles.CONFIG.rendering.showTooltip && player.getMainHandItem().getItem() instanceof IItemTooltip item) {
-                ItemStack stack = player.getMainHandItem();
-                String tooltipKey = stack.getItem().builtInRegistryHolder().key().identifier().getNamespace() + "." + stack.getItem().builtInRegistryHolder().key().identifier()
-                        .getPath() + ".tooltip";
-                tooltipKey = item.tooltipTranslateKey(stack, tooltipKey);
-                if (LanguageUtils.can(tooltipKey))
-                    tooltip = Component.translatable(tooltipKey, item.tooltipData(stack));
-            }
-            
-            if (tooltip != null) {
-                String[] lines = tooltip.getString().split("\\n");
-                
-                int y = MC.getWindow().getGuiScaledHeight() - 2;
-                for (int i = lines.length - 1; i >= 0; i--) {
-                    String s = lines[i];
-                    
-                    if (!Strings.isNullOrEmpty(s)) {
-                        y -= font.lineHeight;
-                        int k = font.width(s);
-                        int i1 = 2 + y;
-                        graphics.fill(1, i1 - 1, 2 + k + 1, i1 + font.lineHeight - 1, -1873784752);
-                        graphics.drawString(font, s, 2, i1, 14737632);
-                    }
-                }
-            }
-        }
-    }
-    
-    @Override
-    public boolean isContainer() {
-        return false;
-    }
-    
-    @Override
-    public boolean isClient() {
-        return true;
-    }
-    
-    @Override
-    public Player getPlayer() {
-        return MC.player;
-    }
-    
-    @Override
+
+    private static Minecraft MC;
+    private boolean doneInit;
+    private OverlayGuiLayer transparentLayer;
+    private SingletonList<GuiLayer> layers;
+    private Screen screen;
+    private ScreenEventListener listener;
+    private int lastWidth;
+    private int lastHeight;
+    private List<OverlayText> scheduled;
+    public OverlayRenderer() {}
+
+    public OverlayGuiLayer gui() { return null; }
+
+    public void displayActionMessage(List<Component> message) {}
+
+    public void renderBlockOverlay(RenderBlockScreenEffectEvent event) {}
+
+    private Vec2d projectToScreen(Vec3 cam, Vec3d pos) { return null; }
+
+    public void renderLabel(Vec3 cam, Vec3d vec, Component component, int color) {}
+
+    public void renderPost(RenderGuiEvent.Post event) {}
+
+    public boolean isContainer() { return false; }
+
+    public boolean isClient() { return false; }
+
+    public Player getPlayer() { return null; }
+
     public void closeTopLayer() {}
-    
-    @Override
+
     public void closeLayer(GuiLayer layer) {}
-    
-    @Override
-    public List<GuiLayer> getLayers() {
-        return layers;
-    }
-    
-    @Override
-    public GuiLayer getTopLayer() {
-        return transparentLayer;
-    }
-    
-    @Override
+
+    public List<GuiLayer> getLayers() { return null; }
+
+    public GuiLayer getTopLayer() { return null; }
+
     public void openLayer(GuiLayer layer) {}
-    
-    @Override
+
     public void closeLayer(int layer) {}
-    
-    @Override
+
     public void send(CreativePacket message) {}
-    
-    @Override
-    public void unload() {
-        transparentLayer.clearMessages();
-    }
-    
-    @Override
-    public Provider provider() {
-        return MC.level.registryAccess();
-    }
-    
+
+    public void unload() {}
+
+    public Provider provider() { return null; }
+
     public static class OverlayGuiLayer extends GuiLayer {
-        
-        private final GuiActionDisplay actionDisplay = new GuiActionDisplay(this, "action").setMessageCount(1);
-        
-        public OverlayGuiLayer(boolean client, String name) {
-            super(client, name);
-        }
-        
-        private TupleList<GuiControl, OverlayPosition> positions = new TupleList<>();
-        
-        @Override
-        public void create() {
-            addOverlayControl(actionDisplay, OverlayPosition.ACTION_BAR);
-        }
-        
-        public void addOverlayControl(GuiControl control, OverlayPosition position) {
-            super.add(control);
-            positions.add(control, position);
-        }
-        
-        @Override
-        public boolean hasMinimumOuterSpacing() {
-            return false;
-        }
-        
-        @Override
+
+        private GuiActionDisplay actionDisplay;
+        public OverlayGuiLayer(boolean client, String name) {}
+
+        private TupleList<GuiControl, OverlayPosition> positions;
+        public void create() {}
+
+        public void addOverlayControl(GuiControl control, OverlayPosition position) {}
+
+        public boolean hasMinimumOuterSpacing() { return false; }
+
         @Deprecated
-        public GuiParent add(boolean conditional, Supplier<GuiControl> controlSupplier) {
-            throw new UnsupportedOperationException();
-        }
-        
-        @Override
+        public GuiParent add(boolean conditional, Supplier<GuiControl> controlSupplier) { return null; }
+
         @Deprecated
-        public GuiParent add(GuiControl control) {
-            throw new UnsupportedOperationException();
-        }
-        
-        @Override
+        public GuiParent add(GuiControl control) { return null; }
+
         @Deprecated
-        public GuiParent add(GuiControl... controls) {
-            throw new UnsupportedOperationException();
-        }
-        
-        @Override
-        public ControlFormatting getControlFormatting() {
-            return ControlFormatting.TRANSPARENT;
-        }
-        
-        @Override
-        public boolean hasGrayBackground() {
-            return false;
-        }
-        
-        @Override
-        public void flowY(int width, int height, int preferred) {
-            super.flowY(width, height, preferred);
-            for (Tuple<GuiControl, OverlayPosition> tuple : positions)
-                tuple.value.positionControl(tuple.key.rect, width, height);
-        }
-        
-        @Override
-        public boolean isExpandableX() {
-            return true;
-        }
-        
-        @Override
-        public boolean isExpandableY() {
-            return true;
-        }
-        
-        public void clearMessages() {
-            actionDisplay.clearMessages();
-        }
-        
-        public void addMessage(List<Component> message) {
-            actionDisplay.addMessage(message);
-        }
+        public GuiParent add(GuiControl... controls) { return null; }
+
+        public ControlFormatting getControlFormatting() { return null; }
+
+        public boolean hasGrayBackground() { return false; }
+
+        public void flowY(int width, int height, int preferred) {}
+
+        public boolean isExpandableX() { return false; }
+
+        public boolean isExpandableY() { return false; }
+
+        public void clearMessages() {}
+
+        public void addMessage(List<Component> message) {}
+
     }
-    
+
     public static enum OverlayPosition {
-        
-        TOP_STRETCH {
-            @Override
-            protected void positionControl(GuiControlRect control, int width, int height) {
-                control.setX(0);
-                control.setWidth(width, 0);
-                control.setY(0);
-            }
-        },
-        
-        CENTER {
-            @Override
-            protected void positionControl(GuiControlRect control, int width, int height) {
-                control.setX(width / 2 - control.getWidth() / 2);
-                control.setY(height / 2 - control.getHeight() / 2);
-            }
-        },
-        ACTION_BAR {
-            
-            @Override
-            protected void positionControl(GuiControlRect control, int width, int height) {
-                control.setX(width / 2 - control.getWidth() / 2);
-                control.setY(height - control.getHeight() - 30);
-            }
-        };
-        
+
+        TOP_STRETCH, CENTER, ACTION_BAR;
         protected abstract void positionControl(GuiControlRect control, int width, int height);
+
     }
-    
-    public static record OverlayText(Vec2d pos, Component component, int color) {}
-    
+
+    public static record OverlayText(Vec2d pos, Component component, int color) {
+
+    }
+
 }
+
