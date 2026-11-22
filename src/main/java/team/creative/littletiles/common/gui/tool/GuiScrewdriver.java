@@ -59,7 +59,7 @@ public class GuiScrewdriver extends GuiConfigure {
     
     public GuiScrewdriver(boolean client, ContainerSlotView view) {
         super(client, "screwdriver", 200, 205, view);
-        flow = GuiFlow.STACK_Y;
+        setFlow(GuiFlow.STACK_Y);
     }
     
     @Override
@@ -132,9 +132,9 @@ public class GuiScrewdriver extends GuiConfigure {
         
         LittleBoxes boxes = LittleBoxes.of(selection);
         
-        boolean remove = get("remove", GuiCheckBox.class).value;
-        boolean replace = get("replace", GuiCheckBox.class).value;
-        boolean colorize = get("colorize", GuiCheckBox.class).value;
+        boolean remove = get("remove", GuiCheckBox.class).get();
+        boolean replace = get("replace", GuiCheckBox.class).get();
+        boolean colorize = get("colorize", GuiCheckBox.class).get();
         
         if (remove)
             return new LittleActionDestroyBoxes(level, boxes);

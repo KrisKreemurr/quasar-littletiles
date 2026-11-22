@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.gui.signal.node;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -44,8 +46,8 @@ public abstract class GuiSignalNode extends GuiParent {
             controller.selectOrConnect(GuiSignalNode.this, from -> buttonAnchor(from), x == 0);
         }));
         button.setTitle(Component.literal(caption));
-        flow = GuiFlow.STACK_Y;
-        align = Align.CENTER;
+        setFlow(GuiFlow.STACK_Y);
+        setAlign(Align.CENTER);
     }
     
     public abstract void testInputChanged();

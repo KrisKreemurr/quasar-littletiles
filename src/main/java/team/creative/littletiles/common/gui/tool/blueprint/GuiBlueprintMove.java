@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.gui.tool.blueprint;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import java.util.Collections;
 
 import net.minecraft.network.chat.Component;
@@ -31,7 +33,7 @@ public class GuiBlueprintMove extends GuiLayer {
     
     public GuiBlueprintMove(boolean client) {
         super(client, "gui.blueprint.move", 400, 200);
-        flow = GuiFlow.STACK_Y;
+        setFlow(GuiFlow.STACK_Y);
         registerEventChanged(x -> {
             if (x.control.is("modes"))
                 ((GuiStateButton<GuiBlueprintMoveMode>) x.control).selected().select(tree);

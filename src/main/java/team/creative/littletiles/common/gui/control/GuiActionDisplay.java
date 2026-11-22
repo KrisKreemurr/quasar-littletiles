@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.gui.control;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import java.util.ArrayList;
 import java.util.List;
 

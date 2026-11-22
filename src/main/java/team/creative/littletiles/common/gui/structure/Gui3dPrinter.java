@@ -121,8 +121,8 @@ public class Gui3dPrinter extends GuiLayer {
     
     @Override
     public void create() {
-        flow = GuiFlow.STACK_Y;
-        align = Align.CENTER;
+        setFlow(GuiFlow.STACK_Y);
+        setAlign(Align.CENTER);
         
         GuiPanel savable = new GuiPanel(this, GuiFlow.STACK_Y);
         add(savable);
@@ -144,13 +144,13 @@ public class Gui3dPrinter extends GuiLayer {
             nbt.putInt("skip", skipField.parseInteger());
             nbt.putInt("amount", amountField.parseInteger());
             
-            nbt.putBoolean("continue", continueBox.value);
-            nbt.putBoolean("remember", rememberBox.value);
+            nbt.putBoolean("continue", continueBox.get());
+            nbt.putBoolean("remember", rememberBox.get());
             SAVE.send(nbt);
         }).setTranslate("gui.save"));
         
         GuiParent content = new GuiParent(this, GuiFlow.STACK_X).setVAlign(VAlign.CENTER);
-        content.spacing = 5;
+        content.setSpacing(5);
         add(content);
         content.add(new GuiInventoryGrid(this, "blueprint", blueprint));
         content.add(new GuiButton(this, "set", x -> SET.send(EndTag.INSTANCE)).setTranslate("gui.3dprinter.set"));
@@ -159,7 +159,7 @@ public class Gui3dPrinter extends GuiLayer {
         GuiPanel state = new GuiPanel(this, GuiFlow.STACK_Y);
         add(state);
         GuiParent active = new GuiParent(this).setVAlign(VAlign.CENTER);
-        active.spacing = 5;
+        active.setSpacing(5);
         state.add(active);
         active.add(activeLabel = new GuiLabel(this, "active"));
         active.add(new GuiButton(this, "toggle", x -> TOGGLE.send(EndTag.INSTANCE)).setTranslate("gui.3dprinter.toggle"));
@@ -167,9 +167,9 @@ public class Gui3dPrinter extends GuiLayer {
         active.add(new GuiButton(this, "reset", x -> RESET.send(EndTag.INSTANCE)).setTranslate("gui.3dprinter.reset"));
         
         GuiLeftRightBox errors = new GuiLeftRightBox(this);
-        errors.spacing = 5;
+        errors.setSpacing(5);
         state.add(errors);
-        errors.getLeft().flow = GuiFlow.STACK_Y;
+        errors.getLeft().setFlow(GuiFlow.STACK_Y);
         errors.getLeft().setUnexpandableX();
         errors.addLeft(new GuiLabel(this, "errors").setTranslate("gui.3dprinter.errors"));
         errors.addLeft(new GuiButton(this, "clear", x -> CLEAR_ERRORS.send(EndTag.INSTANCE)).setTranslate("gui.3dprinter.clear"));

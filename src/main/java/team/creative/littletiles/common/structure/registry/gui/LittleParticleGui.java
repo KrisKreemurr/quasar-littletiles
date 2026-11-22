@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.structure.registry.gui;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import team.creative.littletiles.common.gui.structure.GuiParticle.GuiParticleControl;
 import team.creative.littletiles.common.gui.tool.blueprint.GuiTreeItemStructure;
 import team.creative.littletiles.common.structure.LittleStructure;
@@ -53,8 +55,8 @@ public class LittleParticleGui extends LittleStructureGuiControl {
         particle.spread = control.saveSpread();
         
         ParticleSettings newSettings = new ParticleSettings();
-        newSettings.randomColor = control.randomColor.value;
-        newSettings.collision = control.collision.value;
+        newSettings.randomColor = control.randomColor.get();
+        newSettings.collision = control.collision.get();
         newSettings.texture = control.textureBox.selected();
         newSettings.lifetime = control.age.getIntValue();
         newSettings.lifetimeDeviation = control.ageDiv.getValue();
@@ -64,7 +66,7 @@ public class LittleParticleGui extends LittleStructureGuiControl {
         newSettings.endSize = (float) control.sizeEnd.getValue();
         newSettings.sizeDeviation = (float) control.sizeDiv.getValue();
         particle.settings = newSettings;
-        particle.locked = control.locked.value;
+        particle.locked = control.locked.get();
         
         return particle;
     }

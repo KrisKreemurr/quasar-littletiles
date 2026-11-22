@@ -81,7 +81,7 @@ public class GuiBlueprintSelection extends GuiConfigure {
     
     public GuiBlueprintSelection(boolean client, ContainerSlotView view) {
         super(client, "blueprint_selection", 200, 200, view);
-        flow = GuiFlow.STACK_Y;
+        setFlow(GuiFlow.STACK_Y);
         
         registerEventChanged(x -> {
             if (!x.control.is("scale"))
@@ -115,21 +115,21 @@ public class GuiBlueprintSelection extends GuiConfigure {
         if (result != null && result.hasBlocks())
             vanilla.setTooltip(result.blockInfo());
         else
-            vanilla.enabled = false;
+            vanilla.setEnabled(false);
         add(vanilla);
         
         GuiCheckBox cb = new GuiCheckBox(this, "includeCB", true).setTranslate("selection.include.cb");
         if (result != null && result.hasCB())
             cb.setTooltip(result.cbInfo());
         else
-            cb.enabled = false;
+            cb.setEnabled(false);
         add(cb);
         
         GuiCheckBox lt = new GuiCheckBox(this, "includeLT", true).setTranslate("selection.include.lt");
         if (result != null && result.hasTiles())
             cb.setTooltip(result.ltInfo());
         else
-            lt.enabled = false;
+            lt.setEnabled(false);
         add(lt);
         
         add(new GuiCheckBox(this, "remember_structure", true).setTranslate("selection.include.structure"));
@@ -151,8 +151,8 @@ public class GuiBlueprintSelection extends GuiConfigure {
             }, DialogButton.NO, DialogButton.YES);
         }).setTranslate("selection.clear"));
         bottom.addRight(new GuiButton(this, "save", x -> {
-            SelectionParameters selection = new SelectionParameters(get("includeVanilla", GuiCheckBox.class).value, get("includeCB", GuiCheckBox.class).value, get("includeLT",
-                GuiCheckBox.class).value, get("remember_structure", GuiCheckBox.class).value);
+            SelectionParameters selection = new SelectionParameters(get("includeVanilla", GuiCheckBox.class).get(), get("includeCB", GuiCheckBox.class).get(), get("includeLT",
+                GuiCheckBox.class).get(), get("remember_structure", GuiCheckBox.class).get());
             
             SelectionMode mode = box.selected(SelectionMode.REGISTRY.getDefault());
             
@@ -188,9 +188,9 @@ public class GuiBlueprintSelection extends GuiConfigure {
     
     public void updateSlider() {
         GuiArraySlider slider = (GuiArraySlider) get("scale");
-        boolean includeVanilla = get("includeVanilla", GuiCheckBox.class).enabled && get("includeVanilla", GuiCheckBox.class).value;
-        boolean includeCB = get("includeCB", GuiCheckBox.class).enabled && get("includeCB", GuiCheckBox.class).value;
-        boolean includeLT = get("includeLT", GuiCheckBox.class).enabled && get("includeLT", GuiCheckBox.class).value;
+        boolean includeVanilla = get("includeVanilla", GuiCheckBox.class).isEnabled() && get("includeVanilla", GuiCheckBox.class).get();
+        boolean includeCB = get("includeCB", GuiCheckBox.class).isEnabled() && get("includeCB", GuiCheckBox.class).get();
+        boolean includeLT = get("includeLT", GuiCheckBox.class).isEnabled() && get("includeLT", GuiCheckBox.class).get();
         
         if (result == null || (!includeVanilla && !includeCB && !includeLT))
             slider.setEnabled(false);

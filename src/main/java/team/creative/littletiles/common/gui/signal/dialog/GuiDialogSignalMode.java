@@ -24,7 +24,7 @@ public class GuiDialogSignalMode extends GuiLayer {
     public GuiDialogSignalMode(boolean client) {
         super(client, "gui.dialog.signal.mode", 100, 100);
         registerEventChanged(this::changed);
-        flow = GuiFlow.STACK_Y;
+        setFlow(GuiFlow.STACK_Y);
     }
     
     public void init(GuiDialogSignal dialog, IConditionConfiguration event) {

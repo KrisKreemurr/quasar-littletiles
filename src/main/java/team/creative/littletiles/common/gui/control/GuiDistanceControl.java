@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.gui.control;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import net.minecraft.util.Mth;
 import team.creative.creativecore.common.gui.GuiParent;
 import team.creative.creativecore.common.gui.control.simple.GuiCounter;

@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.gui.control.filter;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import team.creative.creativecore.common.gui.control.simple.GuiColorPicker;
 import team.creative.creativecore.common.util.filter.BiFilter;
 import team.creative.creativecore.common.util.type.Color;

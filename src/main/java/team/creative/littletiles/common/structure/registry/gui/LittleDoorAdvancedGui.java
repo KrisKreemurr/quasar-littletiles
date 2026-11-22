@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.structure.registry.gui;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -112,15 +114,15 @@ public class LittleDoorAdvancedGui extends LittleStructureGuiControl {
             
         }
         
-        flow = GuiFlow.STACK_Y;
-        align = Align.STRETCH;
+        setFlow(GuiFlow.STACK_Y);
+        setAlign(Align.STRETCH);
         
         GuiParent upper = new GuiParent(this);
         add(upper);
         
         upper.add(new GuiIsoAnimationPanel(this, item, box, grid, even).setViewerDim(100, 100).setVisibleAxis(true));
         GuiParent settings = new GuiParent(this, GuiFlow.FIT_X).setVAlign(VAlign.CENTER);
-        settings.spacing = 5;
+        settings.setSpacing(5);
         upper.add(settings);
         
         settings.add(new GuiLabeledControl(this, Component.translatable("gui.interpolation").append(
@@ -160,7 +162,7 @@ public class LittleDoorAdvancedGui extends LittleStructureGuiControl {
         
         settings.registerEventChanged(x -> {
             if (x.control.is("even"))
-                get("viewer", GuiIsoAnimationViewer.class).setEven(((GuiCheckBox) x.control).value);
+                get("viewer", GuiIsoAnimationViewer.class).setEven(((GuiCheckBox) x.control).get());
             if (x.control.is("inter"))
                 updateTimeline();
         });
@@ -222,10 +224,10 @@ public class LittleDoorAdvancedGui extends LittleStructureGuiControl {
         door.interpolation = inter.selected();
         
         door.differentTransition = get("tabs", GuiTabs.class).index() != 0;
-        door.stayAnimated = get("stayAnimated", GuiCheckBox.class).value;
-        door.rightClick = get("rightClick", GuiCheckBox.class).value;
-        door.noClip = get("noClip", GuiCheckBox.class).value;
-        door.playPlaceSounds = get("playPlaceSounds", GuiCheckBox.class).value;
+        door.stayAnimated = get("stayAnimated", GuiCheckBox.class).get();
+        door.rightClick = get("rightClick", GuiCheckBox.class).get();
+        door.noClip = get("noClip", GuiCheckBox.class).get();
+        door.playPlaceSounds = get("playPlaceSounds", GuiCheckBox.class).get();
         door.duration = get("duration", GuiTextfield.class).parseInteger();
         GuiTimelineConfig config = door.differentTransition ? different : same;
         
@@ -321,7 +323,7 @@ public class LittleDoorAdvancedGui extends LittleStructureGuiControl {
         public GuiAnimationTimelinePanel closing;
         
         public GuiTimelineConfigDifferent(IGuiParent parent, GuiTreeItemStructure item, GuiBlueprintAnimationHandler handler, PhysicalState closedState, PhysicalState openedState, int duration, AnimationTimeline opening, AnimationTimeline closing) {
-            flow = GuiFlow.STACK_Y;
+            setFlow(GuiFlow.STACK_Y);
             
             GuiParent stateConfig = new GuiParent(this);
             add(stateConfig);

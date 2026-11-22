@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.structure.registry.gui;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -68,7 +70,7 @@ public class LittleDoorSlidingGui extends LittleDoorBaseGui {
         }
         
         GuiParent settings = new GuiParent(this, GuiFlow.FIT_X);
-        settings.spacing = 12;
+        settings.setSpacing(12);
         add(settings.setVAlign(VAlign.CENTER));
         
         settings.add(new GuiLabeledControl(this, Component.translatable("gui.door.distance").append(":"), new GuiDistanceControl(this, "distance", grid, distance)));

@@ -71,7 +71,7 @@ public class GuiBuilder extends GuiLayer {
     
     @Override
     public void create() {
-        flow = GuiFlow.STACK_Y;
+        setFlow(GuiFlow.STACK_Y);
         GuiTable table = new GuiTable(this);
         add(table.setExpandableX());
         GuiRow row = new GuiRow(this);

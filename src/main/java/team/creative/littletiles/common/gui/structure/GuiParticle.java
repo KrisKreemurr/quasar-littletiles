@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.gui.structure;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import team.creative.creativecore.common.gui.Align;
@@ -157,8 +159,8 @@ public class GuiParticle extends GuiLayer {
             spread.write(nbt);
             
             ParticleSettings newSettings = new ParticleSettings();
-            newSettings.randomColor = control.randomColor.value;
-            newSettings.collision = control.collision.value;
+            newSettings.randomColor = control.randomColor.get();
+            newSettings.collision = control.collision.get();
             newSettings.texture = control.textureBox.selected();
             newSettings.lifetime = control.age.getIntValue();
             newSettings.lifetimeDeviation = control.ageDiv.getValue();
@@ -171,7 +173,7 @@ public class GuiParticle extends GuiLayer {
             newSettings.write(data);
             nbt.put("settings", data);
             
-            nbt.putBoolean("locked", control.locked.value);
+            nbt.putBoolean("locked", control.locked.get());
             
             SAVE.send(nbt);
             closeThisLayer();
@@ -202,7 +204,7 @@ public class GuiParticle extends GuiLayer {
         
         public GuiParticleControl(IGuiParent parent, ParticleSpread particleSpread, ParticleSettings settings, int particleCount, int particleDelay, boolean particleLocked) {
             this.particleSpread = particleSpread;
-            this.flow = GuiFlow.STACK_Y;
+            this.setFlow(GuiFlow.STACK_Y);
             this.setAlign(Align.STRETCH);
             registerEventChanged(x -> {
                 if (x.control.is("spread"))

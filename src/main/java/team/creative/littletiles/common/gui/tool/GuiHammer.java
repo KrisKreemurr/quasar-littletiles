@@ -15,8 +15,8 @@ public class GuiHammer extends GuiConfigureTool {
     
     public GuiHammer(boolean client, ContainerSlotView view) {
         super(client, "hammer", 140, 200, view);
-        flow = GuiFlow.STACK_Y;
-        align = Align.STRETCH;
+        setFlow(GuiFlow.STACK_Y);
+        setAlign(Align.STRETCH);
     }
     
     @Override

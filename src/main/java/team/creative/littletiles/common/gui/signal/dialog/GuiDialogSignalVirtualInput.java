@@ -35,7 +35,7 @@ public class GuiDialogSignalVirtualInput extends GuiLayer {
     
     public GuiDialogSignalVirtualInput(boolean client) {
         super(client, "gui.dialog.signal.virtual_input", 230, 200);
-        flow = GuiFlow.STACK_Y;
+        setFlow(GuiFlow.STACK_Y);
         registerEventChanged(this::changed);
     }
     
@@ -104,7 +104,7 @@ public class GuiDialogSignalVirtualInput extends GuiLayer {
         
         public void create(GuiScrollY box) {
             panel = new GuiPanel(box, index + "", GuiFlow.STACK_X);
-            panel.valign = VAlign.CENTER;
+            panel.setVAlign(VAlign.CENTER);
             box.add(panel.setExpandableX());
             
             panel.registerEventChanged(x -> {

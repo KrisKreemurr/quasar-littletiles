@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.structure.registry.gui;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import java.util.function.Function;
 
 import net.minecraft.core.BlockPos;
@@ -36,7 +38,7 @@ public class LittleDoorAxisGui extends LittleDoorBaseGui {
         super(parent, gui, item);
         registerEventChanged(x -> {
             if (x.control.is("even"))
-                get("viewer", GuiIsoAnimationViewer.class).setEven(((GuiCheckBox) x.control).value);
+                get("viewer", GuiIsoAnimationViewer.class).setEven(((GuiCheckBox) x.control).get());
             if (x.control.is("angle", "direction"))
                 updateTimeline();
         });

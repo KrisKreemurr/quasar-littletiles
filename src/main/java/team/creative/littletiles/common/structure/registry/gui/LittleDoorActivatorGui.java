@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.structure.registry.gui;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +35,7 @@ public class LittleDoorActivatorGui extends LittleStructureGuiControl {
     
     public LittleDoorActivatorGui(IGuiParent parent, LittleStructureGui gui, GuiTreeItemStructure item) {
         super(parent, gui, item);
-        flow = GuiFlow.STACK_Y;
+        setFlow(GuiFlow.STACK_Y);
         registerEventChanged(x -> updateTimeline());
     }
     
@@ -71,7 +73,7 @@ public class LittleDoorActivatorGui extends LittleStructureGuiControl {
     public int[] generateActivated() {
         IntList list = new IntArrayList();
         for (GuiControl control : controls)
-            if (control instanceof GuiCheckBox box && box.value && box.name.startsWith("c"))
+            if (control instanceof GuiCheckBox box && box.get() && box.name.startsWith("c"))
                 list.add(Integer.parseInt(box.name.replace("c", "")));
         return list.toIntArray();
     }
@@ -93,7 +95,7 @@ public class LittleDoorActivatorGui extends LittleStructureGuiControl {
         LittleActivatorDoor door = (LittleActivatorDoor) structure;
         
         door.center = new StructureRelative(new LittleBox(item.group.getMinVec()), item.group.getGrid());
-        door.rightClick = get("rightClick", GuiCheckBox.class).value;
+        door.rightClick = get("rightClick", GuiCheckBox.class).get();
         door.toActivate = generateActivated();
         door.interpolation = ValueInterpolation.HERMITE;
         

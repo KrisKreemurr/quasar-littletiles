@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.structure.registry.gui;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +30,7 @@ public class LittleMessageGui extends LittleStructureGuiControl {
     
     @Override
     public void create(@Nullable LittleStructure structure) {
-        flow = GuiFlow.STACK_Y;
+        setFlow(GuiFlow.STACK_Y);
         add(new GuiCheckBox(this, "rightclick", structure instanceof LittleStructureMessage m ? m.allowRightClick : true).setTranslate("gui.message.rightclick"));
         add(new GuiCheckBox(this, "status", structure instanceof LittleStructureMessage m ? m.status : false).setTranslate("gui.message.status"));
         
@@ -56,8 +58,8 @@ public class LittleMessageGui extends LittleStructureGuiControl {
         message.text = new ArrayList<>();
         for (GuiTextfield item : list.items())
             message.text.add(item.getText());
-        message.allowRightClick = get("rightclick", GuiCheckBox.class).value;
-        message.status = get("status", GuiCheckBox.class).value;
+        message.allowRightClick = get("rightclick", GuiCheckBox.class).get();
+        message.status = get("status", GuiCheckBox.class).get();
         return structure;
     }
     

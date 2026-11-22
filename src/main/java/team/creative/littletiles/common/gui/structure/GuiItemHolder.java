@@ -33,7 +33,7 @@ public class GuiItemHolder extends GuiLayer {
     public GuiItemHolder(boolean client, LittleItemHolder holder) {
         super(client, "item_holder", 200, 230);
         this.holder = holder;
-        flow = GuiFlow.STACK_Y;
+        setFlow(GuiFlow.STACK_Y);
     }
     
     @Override
@@ -53,7 +53,7 @@ public class GuiItemHolder extends GuiLayer {
         bottom.addRight(new GuiButton(this, "save", x -> {
             CompoundTag nbt = new CompoundTag();
             
-            nbt.putBoolean("locked", locked.value);
+            nbt.putBoolean("locked", locked.get());
             
             sortingControl.save();
             SortingList sorting = (SortingList) sortingControl.value;

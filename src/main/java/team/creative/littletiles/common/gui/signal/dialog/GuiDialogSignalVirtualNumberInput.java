@@ -16,7 +16,7 @@ public class GuiDialogSignalVirtualNumberInput extends GuiLayer {
     public GuiDialogSignalVirtualNumberInput(boolean client) {
         super(client, "gui.dialog.signal.virtual_number");
         setDim(new GuiFixedDimension(100));
-        flow = GuiFlow.STACK_Y;
+        setFlow(GuiFlow.STACK_Y);
     }
     
     public void init(int number, GuiSignalNodeVirtualNumberInput input) {

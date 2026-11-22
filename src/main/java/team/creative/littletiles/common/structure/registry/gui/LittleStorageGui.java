@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.structure.registry.gui;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +38,7 @@ public class LittleStorageGui extends LittleStructureGuiControl {
     
     public LittleStorageGui(IGuiParent parent, LittleStructureGui type, GuiTreeItemStructure item) {
         super(parent, type, item);
-        flow = GuiFlow.STACK_Y;
+        setFlow(GuiFlow.STACK_Y);
     }
     
     @Override
@@ -69,7 +71,7 @@ public class LittleStorageGui extends LittleStructureGuiControl {
         if (item.group.getStructureTag() != null)
             structure.load(item.group.getStructureTag(), item.provider()); // Make sure the items do not get lost
             
-        storage.invisibleStorageTiles = ((GuiCheckBox) get("invisible")).value;
+        storage.invisibleStorageTiles = ((GuiCheckBox) get("invisible")).get();
         
         for (LittleTile tile : item.group)
             if (tile.getBlock().is(LittleTiles.STORAGE_BLOCKS))

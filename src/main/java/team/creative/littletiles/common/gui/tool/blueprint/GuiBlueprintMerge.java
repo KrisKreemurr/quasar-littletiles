@@ -22,7 +22,7 @@ public class GuiBlueprintMerge extends GuiLayer {
     public GuiBlueprintMerge(boolean client) {
         super(client, "gui.blueprint.merge");
         setDim(new GuiFixedDimension(150));
-        flow = GuiFlow.STACK_Y;
+        setFlow(GuiFlow.STACK_Y);
     }
     
     public void init(GuiBlueprint blueprint) {

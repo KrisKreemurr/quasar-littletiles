@@ -19,7 +19,7 @@ public class GuiBlueprintTest extends GuiLayer {
     
     public GuiBlueprintTest(boolean client) {
         super(client, "gui.blueprint.test", 300, 200);
-        flow = GuiFlow.STACK_Y;
+        setFlow(GuiFlow.STACK_Y);
     }
     
     public void init(GuiBlueprint blueprint) {

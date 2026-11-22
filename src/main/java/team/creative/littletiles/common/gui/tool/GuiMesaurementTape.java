@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.gui.tool;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +29,7 @@ public class GuiMesaurementTape extends GuiConfigure {
     
     @Override
     public void create() {
-        flow = GuiFlow.STACK_Y;
+        setFlow(GuiFlow.STACK_Y);
         var measurements = ((ILittleMeasure) tool.get().getItem()).getMeasurements(getPlayer().level(), tool.get());
         GuiStateButton<LittleMeasurementType> types = new GuiStateButton<>(this, "type", new TextMapBuilder<LittleMeasurementType>().addComponent(LittleMeasurementType.REGISTRY.values(),
             LittleMeasurementType::translatable));

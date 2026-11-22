@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.gui.signal.node;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;

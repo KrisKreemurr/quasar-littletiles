@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.structure.registry.gui;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,8 +87,8 @@ public abstract class LittleDoorBaseGui extends LittleStructureGuiControl {
             opening = closing = null;
         }
         
-        flow = GuiFlow.STACK_Y;
-        align = Align.STRETCH;
+        setFlow(GuiFlow.STACK_Y);
+        setAlign(Align.STRETCH);
         GuiParent settings = new GuiParent(this, GuiFlow.FIT_X).setVAlign(VAlign.CENTER);
         add(settings);
         
@@ -106,7 +108,7 @@ public abstract class LittleDoorBaseGui extends LittleStructureGuiControl {
         
         GuiParent extraSettings = new GuiParent(this);
         add(extraSettings);
-        extraSettings.spacing = 4;
+        extraSettings.setSpacing(4);
         
         soundPanel = new GuiSoundEventPanel(this, item.blueprint.animation, opening, closing, duration);
         extraSettings.add(soundPanel);
@@ -139,10 +141,10 @@ public abstract class LittleDoorBaseGui extends LittleStructureGuiControl {
         door.interpolation = inter.selected();
         
         door.duration = get("duration", GuiSteppedSlider.class).getIntValue();
-        door.stayAnimated = get("stayAnimated", GuiCheckBox.class).value;
-        door.rightClick = get("rightClick", GuiCheckBox.class).value;
-        door.noClip = get("noClip", GuiCheckBox.class).value;
-        door.playPlaceSounds = get("playPlaceSounds", GuiCheckBox.class).value;
+        door.stayAnimated = get("stayAnimated", GuiCheckBox.class).get();
+        door.rightClick = get("rightClick", GuiCheckBox.class).get();
+        door.noClip = get("noClip", GuiCheckBox.class).get();
+        door.playPlaceSounds = get("playPlaceSounds", GuiCheckBox.class).get();
         
         door.putState(new AnimationState("closed"));
         AnimationState state = new AnimationState("opened");

@@ -39,7 +39,7 @@ public class GuiDialogSignal extends GuiLayer {
     
     public GuiDialogSignal(boolean client) {
         super(client, "gui.dialog.signal", 420, 300);
-        flow = GuiFlow.STACK_Y;
+        setFlow(GuiFlow.STACK_Y);
         registerEventChanged(this::changed);
     }
     
@@ -64,9 +64,9 @@ public class GuiDialogSignal extends GuiLayer {
                 delay.setTitle(Component.literal(0 + " ticks"));
             }
         } else if (event.control.is("testing"))
-            get("controller", GuiSignalController.class).setTesting(((GuiCheckBox) event.control).value);
+            get("controller", GuiSignalController.class).setTesting(((GuiCheckBox) event.control).get());
         else if (event.control.is("testingNumbers"))
-            get("controller", GuiSignalController.class).setTestingDisplayNumber(((GuiCheckBox) event.control).value);
+            get("controller", GuiSignalController.class).setTestingDisplayNumber(((GuiCheckBox) event.control).get());
     }
     
     @Override

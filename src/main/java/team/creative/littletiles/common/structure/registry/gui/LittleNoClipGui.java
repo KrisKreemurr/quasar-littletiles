@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.structure.registry.gui;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import javax.annotation.Nullable;
 
 import net.neoforged.api.distmarker.Dist;
@@ -26,7 +28,7 @@ public class LittleNoClipGui extends LittleStructureGuiControl {
     
     @Override
     public LittleStructure save(LittleStructure structure) {
-        ((LittleNoClipStructure) structure).web = get("web", GuiCheckBox.class).value;
+        ((LittleNoClipStructure) structure).web = get("web", GuiCheckBox.class).get();
         return structure;
     }
     

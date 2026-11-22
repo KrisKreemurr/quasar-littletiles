@@ -24,9 +24,9 @@ public class GuiBlueprintSecondary extends GuiConfigureTool {
     
     public GuiBlueprintSecondary(boolean client, ContainerSlotView view) {
         super(client, "blueprint_secondary", 160, 240, view);
-        flow = GuiFlow.STACK_Y;
-        align = Align.STRETCH;
-        spacing = 4;
+        setFlow(GuiFlow.STACK_Y);
+        setAlign(Align.STRETCH);
+        setSpacing(4);
         registerEventChanged(x -> {
             if (x.control.is("mode")) {
                 GuiComboBox<PlacementMode> modeBox = (GuiComboBox<PlacementMode>) x.control;

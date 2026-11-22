@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.gui.control;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import java.util.function.Consumer;
 
 import net.minecraft.world.entity.player.Player;
@@ -18,8 +20,8 @@ public class GuiGridConfig extends GuiParent {
     
     public GuiGridConfig(IGuiParent parent, String name, Player player, LittleGrid grid, Consumer<LittleGrid> consumer) {
         super(parent, name);
-        flow = GuiFlow.STACK_X;
-        valign = VAlign.CENTER;
+        setFlow(GuiFlow.STACK_X);
+        setVAlign(VAlign.CENTER);
         comboBox = new GuiComboBox<LittleGrid>(this, "grid", LittleTiles.CONFIG.build.get(player).gridBuilder());
         comboBox.select(grid);
         add(new GuiButtonHoldSlim("left", x -> comboBox.previous()).setTranslate("gui.previous"));

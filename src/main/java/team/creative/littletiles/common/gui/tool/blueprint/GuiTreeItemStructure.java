@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.gui.tool.blueprint;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;

@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.gui.control.filter;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import net.minecraft.world.entity.player.Player;
 import team.creative.creativecore.common.gui.Align;
 import team.creative.creativecore.common.gui.GuiParent;
@@ -57,8 +59,8 @@ public abstract class GuiElementFilter extends GuiParent {
     }
     
     public GuiElementFilter(IGuiParent parent) {
-        flow = GuiFlow.STACK_Y;
-        align = Align.STRETCH;
+        setFlow(GuiFlow.STACK_Y);
+        setAlign(Align.STRETCH);
     }
     
     public abstract BiFilter<IParentCollection, LittleTile> get();

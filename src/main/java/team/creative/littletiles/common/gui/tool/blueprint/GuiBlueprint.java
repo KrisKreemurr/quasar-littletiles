@@ -97,8 +97,8 @@ public class GuiBlueprint extends GuiConfigure {
     
     public GuiBlueprint(boolean client, ContainerSlotView view) {
         super(client, "blueprint", view);
-        flow = GuiFlow.STACK_X;
-        valign = VAlign.STRETCH;
+        setFlow(GuiFlow.STACK_X);
+        setVAlign(VAlign.STRETCH);
         setDim(new GuiSizeRules().minWidth(500).minHeight(300));
         registerEventChanged(x -> {
             if (x.control.is("type") && tree.selected() != null)
@@ -200,8 +200,8 @@ public class GuiBlueprint extends GuiConfigure {
         if (!isClient())
             return;
         
-        flow = GuiFlow.STACK_Y;
-        align = Align.STRETCH;
+        setFlow(GuiFlow.STACK_Y);
+        setAlign(Align.STRETCH);
         
         // Load blueprint content
         LittleGroup group = LittleGroup.load(ItemLittleBlueprint.getContent(tool.get()));

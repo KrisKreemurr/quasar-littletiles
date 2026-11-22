@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.gui.control.filter;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import team.creative.creativecore.common.gui.control.collection.GuiStackSelector;
 import team.creative.creativecore.common.gui.control.simple.GuiLabel;
 import team.creative.creativecore.common.util.filter.BiFilter;

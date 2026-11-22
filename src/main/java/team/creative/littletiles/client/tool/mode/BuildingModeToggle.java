@@ -36,7 +36,7 @@ public class BuildingModeToggle extends BuildingModeFeature implements BuildingM
     
     protected void changed() {
         if (box != null)
-            box.value = enabled;
+            box.set(enabled);
     }
     
     public void set(boolean enabled) {

@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.gui.control.filter;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;

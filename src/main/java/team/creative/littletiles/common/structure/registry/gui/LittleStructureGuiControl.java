@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.structure.registry.gui;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import javax.annotation.Nullable;
 
 import net.neoforged.api.distmarker.Dist;

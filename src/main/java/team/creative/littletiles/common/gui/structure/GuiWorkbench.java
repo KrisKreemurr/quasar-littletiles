@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.gui.structure;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -114,8 +116,8 @@ public class GuiWorkbench extends GuiLayer {
     
     @Override
     public void create() {
-        flow = GuiFlow.STACK_Y;
-        align = Align.CENTER;
+        setFlow(GuiFlow.STACK_Y);
+        setAlign(Align.CENTER);
         add(new CraftingGrid(this));
         add(new GuiListBoxBase<GuiLabel>(this, "missing", false, new ArrayList<>()).setDim(150, 100));
         add(new GuiPlayerInventoryGrid(this, getPlayer()).setUnexpandableX());

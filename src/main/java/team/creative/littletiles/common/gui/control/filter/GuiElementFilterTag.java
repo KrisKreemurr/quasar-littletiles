@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.gui.control.filter;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import java.util.Optional;
 
 import net.minecraft.core.HolderSet.Named;

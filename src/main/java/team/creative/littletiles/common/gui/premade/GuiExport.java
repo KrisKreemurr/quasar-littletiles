@@ -26,8 +26,8 @@ public class GuiExport extends GuiLayer {
     
     public GuiExport(boolean client) {
         super(client, "export");
-        this.flow = GuiFlow.STACK_Y;
-        this.align = Align.STRETCH;
+        this.setFlow(GuiFlow.STACK_Y);
+        this.setAlign(Align.STRETCH);
     }
     
     @Override

@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.gui.signal.node;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import java.util.List;
 
 import javax.annotation.Nullable;

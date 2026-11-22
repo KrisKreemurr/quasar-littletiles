@@ -104,7 +104,7 @@ public class GuiBag extends GuiConfigure {
     @Override
     public void create() {
         sendUpdateToClient();
-        flow = GuiFlow.STACK_Y;
+        setFlow(GuiFlow.STACK_Y);
         
         bag = ((ItemLittleBag) tool.get().getItem()).getInventory(tool.get());
         ColorIngredient unit = bag.get(ColorIngredient.class);

@@ -22,8 +22,8 @@ public class GuiPaintBrush extends GuiConfigureTool {
     
     public GuiPaintBrush(boolean client, ContainerSlotView view) {
         super(client, "paint_brush", 140, 200, view);
-        flow = GuiFlow.STACK_Y;
-        align = Align.STRETCH;
+        setFlow(GuiFlow.STACK_Y);
+        setAlign(Align.STRETCH);
     }
     
     @Override

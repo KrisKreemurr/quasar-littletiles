@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.gui.control;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -25,7 +27,7 @@ public class GuiShapeConfiguration extends GuiParent {
     
     public GuiShapeConfiguration(IGuiParent parent, Player player, String name, ContainerSlotView tool) {
         super(parent, name);
-        this.flow = GuiFlow.STACK_Y;
+        this.setFlow(GuiFlow.STACK_Y);
         this.player = player;
         this.tool = tool;
         GuiComboBoxTree<LittleShape> box = new GuiComboBoxTree<>(this, "shape", ShapeRegistry.SHAPE_TREE, x -> Component.translatable("shape." + x)).setDirection(

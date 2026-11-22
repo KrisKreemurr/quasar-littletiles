@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.gui.signal.node;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -240,7 +242,7 @@ public class GuiSignalNodeInput extends GuiSignalNodeComponent {
         
         public GuiSignalInputBitToggle(IGuiParent parent, int bandwidth) {
             this.bandwidth = bandwidth;
-            spacing = 0;
+            setSpacing(0);
             setScale(0.5);
             
             buttons = new GuiStateButton[bandwidth];

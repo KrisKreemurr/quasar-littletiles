@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.structure.registry.gui;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import javax.annotation.Nullable;
 
 import net.neoforged.api.distmarker.Dist;
@@ -27,7 +29,7 @@ public class LittleLightGui extends LittleStructureGuiControl {
     public LittleStructure save(LittleStructure structure) {
         LittleLight light = (LittleLight) structure;
         light.level = (int) get("level", GuiSteppedSlider.class).getValue();
-        light.allowRightClick = get("rightclick", GuiCheckBox.class).value;
+        light.allowRightClick = get("rightclick", GuiCheckBox.class).get();
         return structure;
     }
     

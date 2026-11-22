@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.gui.tool.blueprint;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -71,7 +73,7 @@ public class GuiBlueprintAdd extends GuiLayer implements GuiAnimationViewerStora
     
     public GuiBlueprintAdd(boolean client) {
         super(client, "blueprint.add", 400, 200);
-        flow = GuiFlow.STACK_Y;
+        setFlow(GuiFlow.STACK_Y);
     }
     
     public void init(GuiBlueprint blueprint) {
@@ -250,7 +252,7 @@ public class GuiBlueprintAdd extends GuiLayer implements GuiAnimationViewerStora
         
         public GuiBlueprintAddEntry(IGuiParent parent, ItemStack stack, Player player) {
             this.stack = stack;
-            flow = GuiFlow.STACK_X;
+            setFlow(GuiFlow.STACK_X);
             
             add(new GuiShowItem(this, "show", stack).setDim(40, 40));
             GuiParent right = new GuiParent(this, GuiFlow.STACK_Y);

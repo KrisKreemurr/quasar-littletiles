@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.gui.control.animation;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import team.creative.creativecore.common.gui.Align;
 import team.creative.creativecore.common.gui.GuiParent;
 import team.creative.creativecore.common.gui.control.simple.GuiButtonIcon;
@@ -12,8 +14,8 @@ import team.creative.littletiles.common.math.box.LittleBox;
 public class GuiIsoAnimationPanel extends GuiParent {
     
     public GuiIsoAnimationPanel(IGuiParent parent, GuiTreeItemStructure item, LittleBox box, LittleGrid grid, boolean even) {
-        flow = GuiFlow.STACK_Y;
-        align = Align.STRETCH;
+        setFlow(GuiFlow.STACK_Y);
+        setAlign(Align.STRETCH);
         GuiIsoAnimationViewer viewer = new GuiIsoAnimationViewer(this, "viewer", item, box, grid, even);
         add(viewer);
         GuiParent buttons = new GuiParent(this, GuiFlow.STACK_X).setAlign(Align.CENTER);

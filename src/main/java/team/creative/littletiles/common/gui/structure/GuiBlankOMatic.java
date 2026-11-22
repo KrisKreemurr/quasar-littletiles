@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.gui.structure;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -114,7 +116,7 @@ public class GuiBlankOMatic extends GuiLayer {
     
     @Override
     public void create() {
-        flow = GuiFlow.STACK_Y;
+        setFlow(GuiFlow.STACK_Y);
         GuiParent machine = new GuiParent(this);
         add(machine);
         GuiParent left = new GuiParent(this, GuiFlow.STACK_Y);

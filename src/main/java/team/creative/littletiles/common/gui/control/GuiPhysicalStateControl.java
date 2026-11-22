@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.gui.control;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import team.creative.creativecore.common.gui.control.parent.GuiColumn;
 import team.creative.creativecore.common.gui.control.parent.GuiLabeledControl;
 import team.creative.creativecore.common.gui.control.parent.GuiRow;

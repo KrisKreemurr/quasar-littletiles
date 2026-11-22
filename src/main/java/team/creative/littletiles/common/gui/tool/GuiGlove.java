@@ -35,8 +35,8 @@ public class GuiGlove extends GuiConfigureTool {
             if (x.control.is("picker", "preview"))
                 updateLabel();
         });
-        flow = GuiFlow.STACK_Y;
-        valign = VAlign.STRETCH;
+        setFlow(GuiFlow.STACK_Y);
+        setVAlign(VAlign.STRETCH);
         
         registerEventChanged(x -> {
             if (x.control.is("mode")) {

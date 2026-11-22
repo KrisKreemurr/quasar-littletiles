@@ -36,7 +36,7 @@ public class GuiDialogSignalEvents extends GuiLayer {
     
     public GuiDialogSignalEvents(boolean client) {
         super(client, "gui.dialog.signal.overview", 340, 200);
-        flow = GuiFlow.STACK_Y;
+        setFlow(GuiFlow.STACK_Y);
     }
     
     public void init(IGuiSignalStructure item) {
@@ -75,11 +75,11 @@ public class GuiDialogSignalEvents extends GuiLayer {
         add(upper.setExpandable());
         
         GuiScrollY left = new GuiScrollY(this, "content");
-        left.flow = GuiFlow.STACK_Y;
+        left.setFlow(GuiFlow.STACK_Y);
         upper.add(left.setExpandable());
         
         GuiScrollY right = new GuiScrollY(this, "components");
-        right.flow = GuiFlow.STACK_Y;
+        right.setFlow(GuiFlow.STACK_Y);
         upper.add(right.setDim(new GuiFixedDimension(140)).setExpandableY());
         
         right.add(new GuiLabel(this, "title").setTranslate("gui.signal.components"));

@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.gui.control.animation;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -49,7 +51,7 @@ public class GuiTimelinePanel extends GuiParent {
     
     public GuiTimelinePanel(IGuiParent parent, GuiBlueprintAnimationHandler handler, int duration) {
         setDim(200, -1);
-        flow = GuiFlow.STACK_Y;
+        setFlow(GuiFlow.STACK_Y);
         this.handler = handler;
         setExpandableX();
         addBefore();

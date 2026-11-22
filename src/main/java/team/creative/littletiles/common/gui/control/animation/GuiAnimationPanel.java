@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.gui.control.animation;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import team.creative.creativecore.common.gui.Align;
 import team.creative.creativecore.common.gui.GuiParent;
 import team.creative.creativecore.common.gui.control.simple.GuiButtonIcon;
@@ -57,8 +59,8 @@ public class GuiAnimationPanel extends GuiParent {
     
     public void refresh() {
         if (options) {
-            get("filter", GuiCheckBox.class).value = tree.hasCheckboxes();
-            get("highlight", GuiCheckBox.class).value = storage.highlightSelected();
+            get("filter", GuiCheckBox.class).set(tree.hasCheckboxes());
+            get("highlight", GuiCheckBox.class).set(storage.highlightSelected());
         }
     }
     

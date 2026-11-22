@@ -82,8 +82,8 @@ public class GuiImport extends GuiLayer {
     
     public GuiImport(boolean client) {
         super(client, "import");
-        flow = GuiFlow.STACK_Y;
-        align = Align.STRETCH;
+        setFlow(GuiFlow.STACK_Y);
+        setAlign(Align.STRETCH);
     }
     
     @Override

@@ -38,8 +38,8 @@ public class GuiStorage extends GuiLayer {
     
     @Override
     public void create() {
-        flow = GuiFlow.STACK_Y;
-        align = Align.CENTER;
+        setFlow(GuiFlow.STACK_Y);
+        setAlign(Align.CENTER);
         
         GuiParent parent = this;
         if (size.scrollbox) {

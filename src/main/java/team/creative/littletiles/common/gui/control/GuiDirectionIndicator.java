@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.gui.control;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import team.creative.creativecore.common.gui.control.simple.GuiButtonIcon;
 import team.creative.creativecore.common.gui.style.Icon;
 import team.creative.creativecore.common.util.math.base.Facing;

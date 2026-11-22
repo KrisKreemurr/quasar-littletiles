@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.gui.control.filter;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import net.minecraft.world.entity.player.Player;
 import team.creative.creativecore.common.gui.GuiParent;
 import team.creative.creativecore.common.gui.control.simple.GuiCheckBox;
@@ -19,7 +21,7 @@ public class GuiFilterConfiguration extends GuiParent {
     
     public GuiFilterConfiguration(IGuiParent parent, Player player, String name, ContainerSlotView view) {
         super(parent, name);
-        this.flow = GuiFlow.STACK_Y;
+        this.setFlow(GuiFlow.STACK_Y);
         this.view = view;
         
         var filter = TileFilterComponent.getOrCreate(view.get());
@@ -31,6 +33,6 @@ public class GuiFilterConfiguration extends GuiParent {
     }
     
     public TileFilterComponent save() {
-        return TileFilterComponent.of(!get("any", GuiCheckBox.class).value, filterElement.get());
+        return TileFilterComponent.of(!get("any", GuiCheckBox.class).get(), filterElement.get());
     }
 }

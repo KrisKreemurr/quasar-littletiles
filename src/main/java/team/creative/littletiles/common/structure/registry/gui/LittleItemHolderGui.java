@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.structure.registry.gui;
 
+import team.creative.creativecore.common.gui.IGuiParent;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +27,7 @@ public class LittleItemHolderGui extends LittleStructureGuiControl {
     
     public LittleItemHolderGui(IGuiParent parent, LittleStructureGui gui, GuiTreeItemStructure item) {
         super(parent, gui, item);
-        flow = GuiFlow.STACK_Y;
+        setFlow(GuiFlow.STACK_Y);
     }
     
     @Override
@@ -61,7 +63,7 @@ public class LittleItemHolderGui extends LittleStructureGuiControl {
         if (item.group.getStructureTag() != null)
             structure.load(item.group.getStructureTag(), item.provider());
         
-        holder.locked = locked.value;
+        holder.locked = locked.get();
         
         sortingControl.save();
         SortingList sorting = (SortingList) sortingControl.value;

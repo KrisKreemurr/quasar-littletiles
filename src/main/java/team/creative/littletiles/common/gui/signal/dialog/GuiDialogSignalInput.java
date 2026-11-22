@@ -32,7 +32,7 @@ public class GuiDialogSignalInput extends GuiLayer {
     
     public GuiDialogSignalInput(boolean client) {
         super(client, "gui.dialog.signal.input", 200, 100);
-        flow = GuiFlow.STACK_Y;
+        setFlow(GuiFlow.STACK_Y);
         registerEventChanged(this::changed);
     }
     
