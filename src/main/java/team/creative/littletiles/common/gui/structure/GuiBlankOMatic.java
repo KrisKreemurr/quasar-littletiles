@@ -173,7 +173,7 @@ public class GuiBlankOMatic extends GuiLayer {
         right.add(new GuiLabel(this, "cost"));
         right.add(new GuiShowItem(this, "item").setDim(50, 50));
         
-        add(new GuiPlayerInventoryGrid(this)));
+        add(new GuiPlayerInventoryGrid(this));
         
         updateVariants();
     }

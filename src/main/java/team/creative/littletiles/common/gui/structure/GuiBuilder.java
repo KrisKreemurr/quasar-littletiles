@@ -130,7 +130,7 @@ public class GuiBuilder extends GuiLayer {
         }).setTranslate("gui.structure_builder.craft")));
         
         add(new GuiInventoryGrid(this, "builder", builder.inventory));
-        add(new GuiPlayerInventoryGrid(this)));
+        add(new GuiPlayerInventoryGrid(this));
     }
     
 }
