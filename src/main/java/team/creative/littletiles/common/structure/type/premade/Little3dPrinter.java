@@ -190,7 +190,7 @@ public class Little3dPrinter extends LittleStructurePremade {
                     var tag = ComponentSerialization.CODEC.encodeStart(NbtOps.INSTANCE, error.get(j)).getOrThrow();
                     if (tag instanceof StringTag s) {
                         CompoundTag wrapper = new CompoundTag();
-                        wrapper.putString("text", s.getAsString());
+                        wrapper.putString("text", s.value());
                         tag = wrapper;
                     }
                     errorList.add(tag);

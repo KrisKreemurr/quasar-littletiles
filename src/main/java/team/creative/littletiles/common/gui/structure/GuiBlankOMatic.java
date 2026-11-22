@@ -5,20 +5,17 @@ import team.creative.creativecore.common.gui.IGuiParent;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import team.creative.creativecore.common.gui.GuiLayer;
 import team.creative.creativecore.common.gui.GuiParent;
 import team.creative.creativecore.common.gui.control.inventory.GuiInventoryGrid;
@@ -31,11 +28,7 @@ import team.creative.creativecore.common.gui.control.simple.GuiShowItem;
 import team.creative.creativecore.common.gui.event.GuiControlChangedEvent;
 import team.creative.creativecore.common.gui.flow.GuiFlow;
 import team.creative.creativecore.common.gui.style.ControlFormatting;
-import team.creative.creativecore.common.gui.style.GuiStyle;
-import team.creative.creativecore.common.gui.style.display.DisplayColor;
-import team.creative.creativecore.common.gui.style.display.StyleDisplay;
 import team.creative.creativecore.common.gui.sync.GuiSyncLocal;
-import team.creative.creativecore.common.util.mc.ColorUtils;
 import team.creative.creativecore.common.util.mc.PlayerUtils;
 import team.creative.creativecore.common.util.text.TextBuilder;
 import team.creative.creativecore.common.util.type.list.Pair;
@@ -45,13 +38,10 @@ import team.creative.littletiles.common.structure.type.premade.LittleBlankOMatic
 
 public class GuiBlankOMatic extends GuiLayer {
     
-    @OnlyIn(Dist.CLIENT)
-    @Environment(EnvType.CLIENT)
-    private static DisplayColor SELECTED_DISPLAY;
     public LittleBlankOMatic whitener;
-    public SimpleContainer whiteInput = new SimpleContainer(1);
+    public SimpleContainer whiteInput;
     
-    public final GuiSyncLocal<IntTag> VOLUME = getSyncHolder().register("volume", x -> get("volume", GuiProgressbar.class).pos = x.getAsInt());
+    public final GuiSyncLocal<IntTag> VOLUME = getSyncHolder().register("volume", x -> get("volume", GuiProgressbar.class).pos = x.value());
     public final GuiSyncLocal<CompoundTag> CRAFT = getSyncHolder().register("craft", x -> {
         int amount = x.getIntOr("amount", 0);
         ItemStack stack = whitener.inventory.getItem(0);
@@ -83,7 +73,7 @@ public class GuiBlankOMatic extends GuiLayer {
             whitener.inventory.setItem(0, stack);
             Player player = getPlayer();
             if (!player.addItem(newStack))
-                player.drop(newStack, false);
+                player.drop(newStack, false, Prediction.PREDICTED);
             if (result && selected.needed > 0)
                 whitener.whiteColor -= stackSize * selected.needed;
             VOLUME.send(IntTag.valueOf(whitener.whiteColor));
@@ -93,7 +83,13 @@ public class GuiBlankOMatic extends GuiLayer {
     public GuiBlankOMatic(boolean client, LittleBlankOMatic whitener) {
         super(client, "whitener", 170, 200);
         this.whitener = whitener;
-        this.whiteInput.addListener(x -> whitener.markDirty());
+        this.whiteInput = new SimpleContainer(1) {
+            @Override
+            public void setChanged() {
+                super.setChanged();
+                whitener.markDirty();
+            }
+        };
         
         registerEventChanged(x -> {
             if (x.control.is("variant"))
@@ -177,7 +173,7 @@ public class GuiBlankOMatic extends GuiLayer {
         right.add(new GuiLabel(this, "cost"));
         right.add(new GuiShowItem(this, "item").setDim(50, 50));
         
-        add(new GuiPlayerInventoryGrid(this, getPlayer()));
+        add(new GuiPlayerInventoryGrid(this)));
         
         updateVariants();
     }
@@ -204,15 +200,11 @@ public class GuiBlankOMatic extends GuiLayer {
     public static class GuiVariantSelector extends GuiParent {
         
         public List<Pair<BleachRecipe, Block>> states;
-        private int selected = 0;
+        public int selected = 0;
         
         public GuiVariantSelector(IGuiParent parent, String name) {
             super(parent, name, GuiFlow.FIT_X);
-        }
-        
-        @Override
-        public ControlFormatting getControlFormatting() {
-            return ControlFormatting.TRANSPARENT;
+            setFormatting(ControlFormatting.TRANSPARENT);
         }
         
         public BleachRecipe getSelectedRecipe() {
@@ -229,8 +221,8 @@ public class GuiBlankOMatic extends GuiLayer {
         
         public void select(int index) {
             this.selected = index;
-            for (int i = 0; i < controls.size(); i++) {
-                GuiSlotControlSelect slot = (GuiSlotControlSelect) controls.get(i);
+            for (int i = 0; i < size(); i++) {
+                GuiSlotControlSelect slot = (GuiSlotControlSelect) get(i);
                 slot.selected = index == i;
             }
             raiseEvent(new GuiControlChangedEvent(this));
@@ -247,7 +239,7 @@ public class GuiBlankOMatic extends GuiLayer {
             this.states = states;
             
             for (int i = 0; i < states.size(); i++)
-                add(new GuiSlotControlSelect(this, i, new ItemStack(states.get(i).value)).setTooltip(new TextBuilder().translate("gui.blancomatic.cost").text(": " + states.get(
+                add(new GuiSlotControlSelect(this, this, i, new ItemStack(states.get(i).value)).setTooltip(new TextBuilder().translate("gui.blancomatic.cost").text(": " + states.get(
                     i).key.needed).build()));
             
             if (selected >= states.size())
@@ -268,25 +260,6 @@ public class GuiBlankOMatic extends GuiLayer {
             super(parent, stack);
             this.selector = selector;
             this.index = index;
-        }
-        
-        @Override
-        @Environment(EnvType.CLIENT)
-        @OnlyIn(Dist.CLIENT)
-        public StyleDisplay getBorder(GuiStyle style, StyleDisplay display) {
-            if (selected) {
-                if (SELECTED_DISPLAY == null)
-                    SELECTED_DISPLAY = new DisplayColor(ColorUtils.YELLOW);
-                return SELECTED_DISPLAY;
-            }
-            return super.getBorder(style, display);
-        }
-        
-        @Override
-        public boolean mouseClicked(double x, double y, int button) {
-            selector.select(index);
-            playSound(SoundEvents.UI_BUTTON_CLICK);
-            return true;
         }
         
     }

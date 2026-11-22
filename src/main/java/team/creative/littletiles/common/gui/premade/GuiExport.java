@@ -52,7 +52,7 @@ public class GuiExport extends GuiLayer {
         if (isClient())
             row.add(new GuiButton(this, "Copy", x -> Minecraft.getInstance().keyboardHandler.setClipboard(textfield.getText())).setTranslate("gui.copy"));
         
-        add(new GuiPlayerInventoryGrid(this, getPlayer()).setUnexpandableX());
+        add(new GuiPlayerInventoryGrid(this)).setUnexpandableX());
         
     }
     

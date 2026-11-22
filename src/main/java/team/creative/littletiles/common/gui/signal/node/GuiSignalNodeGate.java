@@ -1,5 +1,6 @@
 package team.creative.littletiles.common.gui.signal.node;
 
+import team.creative.littletiles.client.gui.LittleGuiDist;
 import team.creative.creativecore.common.gui.IGuiParent;
 
 import java.util.ArrayList;
@@ -25,12 +26,12 @@ public class GuiSignalNodeGate extends GuiSignalNode {
         
         @Override
         public float x(GuiSignalNodeGate node) {
-            return node.upper.rect.getX();
+            return LittleGuiDist.rect(node.upper).getX();
         }
         
         @Override
         public float y(GuiSignalNodeGate node) {
-            return node.upper.rect.centerY();
+            return LittleGuiDist.rect(node.upper).centerY();
         }
         
     };

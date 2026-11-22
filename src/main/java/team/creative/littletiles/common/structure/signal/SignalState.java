@@ -40,8 +40,8 @@ public abstract class SignalState {
             if (tag instanceof LongTag)
                 throw new UnsupportedOperationException();
             if (tag instanceof ByteTag)
-                return of(number.getAsByte() != 0);
-            return of(number.getAsInt());
+                return of(number.byteValue() != 0);
+            return of(number.intValue());
         }
         return FALSE;
     }
@@ -193,7 +193,7 @@ public abstract class SignalState {
         @Override
         public SignalState load(Tag tag) {
             if (tag instanceof NumericTag num)
-                return num.getAsByte() == 0 ? FALSE : TRUE;
+                return num.byteValue() == 0 ? FALSE : TRUE;
             else
                 return FALSE;
         }
@@ -308,7 +308,7 @@ public abstract class SignalState {
         @Override
         public SignalState load(Tag tag) {
             if (tag instanceof NumericTag num)
-                value = num.getAsInt();
+                value = num.intValue();
             else
                 value = 0;
             return this;

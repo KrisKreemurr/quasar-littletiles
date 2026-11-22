@@ -55,7 +55,7 @@ public class GuiSignalNodeVirtualInput extends GuiSignalNode {
     }
     
     @Override
-    public boolean mouseDoubleClicked(double x, double y, int button) {
+    public boolean doubleClicked() {
         LittleTilesGuiRegistry.VIRTUAL_INPUT_DIALOG.open(getIntegratedParent(), new CompoundTag()).init(controller().inputs, this);
         return true;
     }

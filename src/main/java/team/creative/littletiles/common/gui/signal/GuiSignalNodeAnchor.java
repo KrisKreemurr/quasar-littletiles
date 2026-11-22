@@ -1,5 +1,6 @@
 package team.creative.littletiles.common.gui.signal;
 
+import team.creative.littletiles.client.gui.LittleGuiDist;
 import team.creative.littletiles.common.gui.signal.node.GuiSignalNode;
 
 public abstract class GuiSignalNodeAnchor<T extends GuiSignalNode> {
@@ -8,12 +9,12 @@ public abstract class GuiSignalNodeAnchor<T extends GuiSignalNode> {
         
         @Override
         public float x(GuiSignalNode node) {
-            return node.button.rect.getX();
+            return LittleGuiDist.rect(node.button).getX();
         }
         
         @Override
         public float y(GuiSignalNode node) {
-            return node.button.rect.centerY();
+            return LittleGuiDist.rect(node.button).centerY();
         }
         
     };
@@ -21,12 +22,12 @@ public abstract class GuiSignalNodeAnchor<T extends GuiSignalNode> {
         
         @Override
         public float x(GuiSignalNode node) {
-            return node.button.rect.centerX();
+            return LittleGuiDist.rect(node.button).centerX();
         }
         
         @Override
         public float y(GuiSignalNode node) {
-            return node.button.rect.getY();
+            return LittleGuiDist.rect(node.button).getY();
         }
         
     };
@@ -34,12 +35,12 @@ public abstract class GuiSignalNodeAnchor<T extends GuiSignalNode> {
         
         @Override
         public float x(GuiSignalNode node) {
-            return node.button.rect.getRight();
+            return LittleGuiDist.rect(node.button).getRight();
         }
         
         @Override
         public float y(GuiSignalNode node) {
-            return node.button.rect.centerY();
+            return LittleGuiDist.rect(node.button).centerY();
         }
         
     };
@@ -47,12 +48,12 @@ public abstract class GuiSignalNodeAnchor<T extends GuiSignalNode> {
         
         @Override
         public float x(GuiSignalNode node) {
-            return node.button.rect.centerX();
+            return LittleGuiDist.rect(node.button).centerX();
         }
         
         @Override
         public float y(GuiSignalNode node) {
-            return node.button.rect.getBottom();
+            return LittleGuiDist.rect(node.button).getBottom();
         }
         
     };

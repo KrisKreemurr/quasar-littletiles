@@ -58,7 +58,7 @@ public class GuiBag extends GuiConfigure {
     });
     
     public final GuiSyncLocal<StringTag> DROP_COLOR = getSyncHolder().register("drop_color", nbt -> {
-        ColorIngredientType type = ColorIngredientType.getType(nbt.getAsString());
+        ColorIngredientType type = ColorIngredientType.getType(nbt.asString().orElse(""));
         ColorIngredient color = bag.get(ColorIngredient.class);
         if (color != null && !color.isEmpty()) {
             int amount = Math.min(type.getIngredient(color), ColorIngredient.BOTTLE_SIZE);
@@ -201,7 +201,7 @@ public class GuiBag extends GuiConfigure {
         left.add(bagInventoryGui = new GuiInventoryGrid(this, name, bagInventory, LittleTiles.CONFIG.general.bag.inventoryWidth, LittleTiles.CONFIG.general.bag.inventoryHeight, (c,
                 i) -> new BagSlot(c, i)));
         
-        add(addInventory(new GuiPlayerInventoryGrid(this, getPlayer())).disableSlot(tool.index));
+        add(addInventory(new GuiPlayerInventoryGrid(this))).disableSlot(tool.index));
         
         addInventory(inputInventory);
         addInventory(bagInventoryGui);

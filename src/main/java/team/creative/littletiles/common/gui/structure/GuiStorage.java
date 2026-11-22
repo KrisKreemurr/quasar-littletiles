@@ -61,7 +61,7 @@ public class GuiStorage extends GuiLayer {
         if (size.sort)
             add(new GuiButton(this, "sort", x -> SORT.send(EndTag.INSTANCE)).setTranslate("gui.sort"));
         
-        GuiPlayerInventoryGrid playerGrid = new GuiPlayerInventoryGrid(this, getPlayer());
+        GuiPlayerInventoryGrid playerGrid = new GuiPlayerInventoryGrid(this));
         if (!size.expanded)
             playerGrid.setUnexpandableX();
         add(playerGrid);

@@ -125,7 +125,7 @@ public class GuiSignalNodeInput extends GuiSignalNodeComponent {
     }
     
     @Override
-    public boolean mouseDoubleClicked(double x, double y, int button) {
+    public boolean doubleClicked() {
         LittleTilesGuiRegistry.INPUT_DIALOG.open(getIntegratedParent(), new CompoundTag()).init(this);
         return true;
     }
@@ -228,6 +228,10 @@ public class GuiSignalNodeInput extends GuiSignalNodeComponent {
     
     public static abstract class GuiSignalInputConfig extends GuiParent {
         
+        public GuiSignalInputConfig(IGuiParent parent) {
+            super(parent);
+        }
+        
         public abstract SignalState get();
         
         public abstract void set(SignalState state);
@@ -241,6 +245,7 @@ public class GuiSignalNodeInput extends GuiSignalNodeComponent {
         private boolean preventUpdate;
         
         public GuiSignalInputBitToggle(IGuiParent parent, int bandwidth) {
+            super(parent);
             this.bandwidth = bandwidth;
             setSpacing(0);
             setScale(0.5);
@@ -283,6 +288,7 @@ public class GuiSignalNodeInput extends GuiSignalNodeComponent {
         private boolean preventUpdate;
         
         public GuiSignalInputNumber(IGuiParent parent, int bandwidth) {
+            super(parent);
             this.bandwidth = bandwidth;
             add(textfield = new GuiTextfield(this, "").setDim(50).setNumbersIncludingNegativeOnly());
             setScale(0.5);
@@ -296,7 +302,7 @@ public class GuiSignalNodeInput extends GuiSignalNodeComponent {
         @Override
         public void set(SignalState state) {
             preventUpdate = true;
-            if (!textfield.isFocused())
+            if (textfield.dist() == null || !textfield.dist().isFocused())
                 textfield.setText(state.number() + "", false);
             preventUpdate = false;
         }
@@ -306,11 +312,6 @@ public class GuiSignalNodeInput extends GuiSignalNodeComponent {
             return SignalState.of(textfield.parseInteger(), bandwidth);
         }
         
-        @Override
-        public void looseFocus() {
-            super.looseFocus();
-            if (get().number() != textfield.parseInteger())
-                set(get());
-        }
+        // TODO(quasar): 1.21 re-normalized the number when the field lost focus (client-only looseFocus); needs a client dist for this config if it matters.
     }
 }

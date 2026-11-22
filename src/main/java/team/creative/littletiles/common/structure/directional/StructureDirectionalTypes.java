@@ -103,7 +103,7 @@ public class StructureDirectionalTypes {
             @Override
             public Facing read(Tag nbt) {
                 if (nbt instanceof IntTag)
-                    return Facing.values()[((IntTag) nbt).getAsInt()];
+                    return Facing.values()[((IntTag) nbt).value()];
                 return null;
             }
             
@@ -132,7 +132,7 @@ public class StructureDirectionalTypes {
             @Override
             public Axis read(Tag nbt) {
                 if (nbt instanceof IntTag)
-                    return Axis.values()[((IntTag) nbt).getAsInt()];
+                    return Axis.values()[((IntTag) nbt).value()];
                 return null;
             }
             

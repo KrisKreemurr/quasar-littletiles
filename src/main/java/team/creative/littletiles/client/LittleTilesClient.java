@@ -1,5 +1,6 @@
 package team.creative.littletiles.client;
 
+import team.creative.littletiles.client.gui.LittleGuiClientRegistry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -230,6 +231,7 @@ public class LittleTilesClient {
     }
     
     private static void setup(final FMLClientSetupEvent event) {
+        LittleGuiClientRegistry.init();
         MC.getItemColors().register((stack, layer) -> {
             if (layer == 0)
                 return ColorUtils.WHITE;

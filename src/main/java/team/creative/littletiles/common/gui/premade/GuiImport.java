@@ -137,7 +137,7 @@ public class GuiImport extends GuiLayer {
         
         add(new GuiInventoryGrid(this, "import", importSlot));
         
-        add(new GuiPlayerInventoryGrid(this, getPlayer()).setUnexpandableX());
+        add(new GuiPlayerInventoryGrid(this)).setUnexpandableX());
     }
     
 }

@@ -120,7 +120,7 @@ public class GuiWorkbench extends GuiLayer {
         setAlign(Align.CENTER);
         add(new CraftingGrid(this));
         add(new GuiListBoxBase<GuiLabel>(this, "missing", false, new ArrayList<>()).setDim(150, 100));
-        add(new GuiPlayerInventoryGrid(this, getPlayer()).setUnexpandableX());
+        add(new GuiPlayerInventoryGrid(this)).setUnexpandableX());
     }
     
     @Override

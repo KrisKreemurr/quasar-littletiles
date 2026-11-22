@@ -11,41 +11,20 @@ import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
-import org.joml.Matrix4f;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import team.creative.creativecore.client.render.GuiRenderHelper;
 import team.creative.creativecore.common.gui.GuiControl;
-import team.creative.creativecore.common.gui.GuiControlRect;
 import team.creative.creativecore.common.gui.GuiParent;
 import team.creative.creativecore.common.gui.event.GuiControlChangedEvent;
 import team.creative.creativecore.common.gui.event.GuiEvent;
 import team.creative.creativecore.common.gui.style.ControlFormatting;
-import team.creative.creativecore.common.util.math.geo.Rect;
 import team.creative.creativecore.common.util.math.vec.SmoothValue;
 import team.creative.creativecore.common.util.mc.ColorUtils;
 import team.creative.creativecore.common.util.type.itr.ConsecutiveIterator;
-import team.creative.creativecore.common.util.type.itr.ConsecutiveListIterator;
 import team.creative.creativecore.common.util.type.itr.FilterIterator;
-import team.creative.creativecore.common.util.type.itr.FilterListIterator;
 import team.creative.creativecore.common.util.type.itr.NestedIterator;
 import team.creative.littletiles.LittleTiles;
 import team.creative.littletiles.common.gui.signal.dialog.GuiDialogSignal;
@@ -81,8 +60,8 @@ import team.creative.littletiles.common.structure.signal.logic.SignalTarget;
 
 public class GuiSignalController extends GuiParent implements SignalContext {
     
-    protected int cellWidth = 60;
-    protected int cellHeight = 40;
+    public int cellWidth = 60;
+    public int cellHeight = 40;
     public SmoothValue scrolledX = new SmoothValue(200);
     public SmoothValue scrolledY = new SmoothValue(200);
     public SmoothValue zoom = new SmoothValue(200, 1);
@@ -92,24 +71,23 @@ public class GuiSignalController extends GuiParent implements SignalContext {
     public int dragY;
     public boolean scrolling;
     
-    private List<List<GuiControl>> grid = new ArrayList<>();
+    public final List<List<GuiControl>> grid = new ArrayList<>();
     
     public final List<GuiSignalComponent> inputs;
     private final Map<String, ISignalComponent> testComponents = new Object2ObjectArrayMap<>();
     private GuiSignalNodeOutput output;
     
-    private GuiSignalNode dragged;
-    private boolean startedDragging = false;
+    public GuiSignalNode dragged;
+    public boolean startedDragging = false;
     private GuiSignalNode selected;
-    private Function<Boolean, GuiSignalNodeAnchor> selectedAnchor;
-    
-    private Rect controllerRect;
+    public Function<Boolean, GuiSignalNodeAnchor> selectedAnchor;
     
     private boolean testing;
     private boolean displayNumbers;
     
     public GuiSignalController(IGuiParent parent, String name, GuiSignalComponent output, List<GuiSignalComponent> inputs) {
         super(parent, name);
+        setFormatting(ControlFormatting.NESTED_NO_PADDING);
         this.inputs = inputs;
         setOutput(4, output, null);
     }
@@ -197,204 +175,8 @@ public class GuiSignalController extends GuiParent implements SignalContext {
     }
     
     @Override
-    public double getOffsetX() {
-        return -scrolledX.current();
-    }
-    
-    @Override
-    public double getOffsetY() {
-        return -scrolledY.current();
-    }
-    
-    @Override
     public Iterator<GuiControl> iterator() {
-        return new ConsecutiveIterator<>(hoverControls.iterator(), controls.iterator(), FilterIterator.skipNull(new NestedIterator<>(grid)));
-    }
-    
-    @Override
-    public ControlFormatting getControlFormatting() {
-        return ControlFormatting.NESTED_NO_PADDING;
-    }
-    
-    @Override
-    @Environment(EnvType.CLIENT)
-    @OnlyIn(Dist.CLIENT)
-    protected void renderContent(GuiGraphics graphics, Rect contentRect, Rect realContentRect, double scale, int mouseX, int mouseY) {
-        if (realContentRect == null)
-            return;
-        
-        scrolledX.tick();
-        scrolledY.tick();
-        zoom.tick();
-        
-        setScale(zoom.current());
-        
-        float controlScale = (float) scaleFactor();
-        scale *= scaleFactor();
-        double xOffset = getOffsetX();
-        double yOffset = getOffsetY();
-        
-        PoseStack pose = graphics.pose();
-        pose.pushPose();
-        pose.scale(controlScale, controlScale, 1);
-        controllerRect = realContentRect;
-        renderControls(graphics, contentRect, realContentRect, mouseX, mouseY, FilterListIterator.skipNull(new ConsecutiveListIterator<>(grid).goEnd()), scale, xOffset, yOffset,
-            false);
-        controllerRect = null;
-        pose.popPose();
-        
-        super.renderContent(graphics, contentRect, realContentRect, scale, mouseX, mouseY);
-    }
-    
-    @Override
-    @Environment(EnvType.CLIENT)
-    @OnlyIn(Dist.CLIENT)
-    protected void renderControl(GuiGraphics graphics, GuiControl control, Rect controlRect, Rect realRect, double scale, int mouseX, int mouseY, boolean hover) {
-        if (control instanceof GuiSignalNode com) {
-            controllerRect.scissor();
-            RenderSystem.disableDepthTest();
-            if (com.hasUnderline()) {
-                Font font = GuiRenderHelper.getFont();
-                String underline = com.getUnderline();
-                graphics.drawString(font, underline, control.rect.getWidth() / 2 - font.width(underline) / 2, control.rect.getHeight() + 4, ColorUtils.WHITE);
-            }
-            
-            renderConnections(graphics.pose().last().pose(), com, scale, realRect.inside(mouseX, mouseY), mouseX, mouseY);
-            RenderSystem.enableDepthTest();
-            realRect.scissor();
-        }
-        
-        super.renderControl(graphics, control, controlRect, realRect, scale, mouseX, mouseY, hover);
-    }
-    
-    @Environment(EnvType.CLIENT)
-    @OnlyIn(Dist.CLIENT)
-    private void renderConnections(Matrix4f matrix, GuiSignalNode node, double scale, boolean hover, double mouseX, double mouseY) {
-        RenderSystem.disableCull();
-        RenderSystem.lineWidth((float) (2 * scale));
-        RenderSystem.setShader(GameRenderer::getRendertypeLinesShader);
-        float originX = node.rect.getX() - getContentOffset();
-        float originY = node.rect.getY() - getContentOffset();
-        for (GuiSignalConnection connection : node.toConnections()) {
-            GuiControl other = connection.from();
-            if (!hover)
-                hover = other.toScreenRect(new Rect(0, 0, other.rect.getWidth(), other.rect.getHeight())).inside(mouseX, mouseY);
-            renderConnection(matrix, connection, hover, originX, originY);
-        }
-    }
-    
-    @Environment(EnvType.CLIENT)
-    @OnlyIn(Dist.CLIENT)
-    private void renderConnection(Matrix4f matrix, GuiSignalConnection connection, boolean hover, float originX, float originY) {
-        int color = hover ? ColorUtils.WHITE : ColorUtils.BLACK;
-        Tesselator tesselator = Tesselator.getInstance();
-        BufferBuilder builder = tesselator.begin(Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL);
-        builder.addVertex(matrix, connection.fromX() - originX, connection.fromY() - originY, 0).setColor(color).setNormal(1, 0, 0);
-        builder.addVertex(matrix, connection.toX() - originX, connection.toY() - originY, 0).setColor(color).setNormal(1, 0, 0);
-        BufferUploader.drawWithShader(builder.buildOrThrow());
-    }
-    
-    private void flowCell(GuiControlRect child, int x, int y) {
-        if (getParent() == null)
-            return;
-        
-        int widthNode = Math.min(cellWidth, child.getPreferredWidth(cellWidth));
-        child.setWidth(widthNode, cellWidth);
-        child.setX(cellWidth * x + cellWidth / 2 - child.getWidth() / 2);
-        child.flowX();
-        int heightNode = Math.min(cellHeight, child.getPreferredHeight(cellHeight));
-        child.setHeight(heightNode, cellHeight);
-        child.setY(cellHeight * y + cellHeight / 2 - child.getHeight() / 2);
-        child.flowY();
-    }
-    
-    @Override
-    public void flowX(int width, int preferred) {
-        super.flowX(width, preferred);
-        for (int x = 0; x < grid.size(); x++) {
-            List<GuiControl> rows = grid.get(x);
-            for (int y = 0; y < rows.size(); y++) {
-                GuiControl child = rows.get(y);
-                if (child == null)
-                    continue;
-                int widthNode = Math.min(cellWidth, child.rect.getPreferredWidth(cellWidth));
-                child.rect.setWidth(widthNode, cellWidth);
-                child.rect.setX(cellWidth * x + cellWidth / 2 - child.rect.getWidth() / 2);
-                child.rect.flowX();
-            }
-        }
-    }
-    
-    @Override
-    public void flowY(int width, int height, int preferred) {
-        super.flowX(width, preferred);
-        for (int x = 0; x < grid.size(); x++) {
-            List<GuiControl> rows = grid.get(x);
-            for (int y = 0; y < rows.size(); y++) {
-                GuiControl child = rows.get(y);
-                if (child == null)
-                    continue;
-                int heightNode = Math.min(cellHeight, child.rect.getPreferredHeight(cellHeight));
-                child.rect.setHeight(heightNode, cellHeight);
-                child.rect.setY(cellHeight * y + cellHeight / 2 - child.rect.getHeight() / 2);
-                child.rect.flowY();
-            }
-        }
-    }
-    
-    @Override
-    public boolean mouseClicked(double x, double y, int button) {
-        startedDragging = false;
-        if (button == 2) {
-            zoom.set(1);
-            scrolledX.set(0);
-            scrolledY.set(0);
-            return true;
-        }
-        if (!super.mouseClicked(x, y, button)) {
-            select(null, null);
-            scrolling = true;
-            dragX = (int) x;
-            dragY = (int) y;
-            startScrollX = scrolledX.current();
-            startScrollY = scrolledY.current();
-        }
-        return true;
-    }
-    
-    @Override
-    public boolean mouseScrolled(double x, double y, double delta) {
-        if (!super.mouseScrolled(x, y, delta))
-            zoom.set(Mth.clamp(zoom.aimed() + delta * 0.2, 0.1, 2));
-        return true;
-    }
-    
-    @Override
-    public void mouseDragged(double x, double y, int button, double dragX, double dragY, double time) {
-        super.mouseDragged(x, y, button, dragX, dragY, time);
-        if (time > 0.2 && dragged != null) {
-            set(dragged, (int) Math.max(0, (x * scaleFactorInv() + scrolledX.current()) / cellWidth), (int) Math.max(0, (y * scaleFactorInv() + scrolledY.current()) / cellHeight));
-            startedDragging = true;
-        }
-    }
-    
-    @Override
-    public void mouseMoved(double x, double y) {
-        if (scrolling) {
-            scrolledX.set(Mth.clamp(dragX - x + startScrollX, -40, sizeX() * cellWidth));
-            scrolledY.set(Mth.clamp(dragY - y + startScrollY, -40, sizeY() * cellHeight));
-        }
-        super.mouseMoved(x, y);
-    }
-    
-    @Override
-    public void mouseReleased(double x, double y, int button) {
-        super.mouseReleased(x, y, button);
-        scrolling = false;
-        if (dragged != null && !startedDragging)
-            select(dragged, selectedAnchor);
-        startedDragging = false;
-        dragged = null;
+        return new ConsecutiveIterator<>(super.iterator(), FilterIterator.skipNull(new NestedIterator<>(grid)));
     }
     
     public void setOutput(int cell, GuiSignalComponent output, @Nullable SignalPosition position) {
@@ -634,12 +416,13 @@ public class GuiSignalController extends GuiParent implements SignalContext {
                 child = node;
             rows.set(row, child);
             node.updatePosition(col, row);
-            flowCell(child.rect, col, row);
+            if (dist() instanceof GridLayout layout)
+                layout.flowCell(child, col, row);
         }
     }
     
     public void reset() {
-        controls.clear();
+        clear();
         grid.clear();
         output.remove();
         dragged = null;
@@ -669,6 +452,13 @@ public class GuiSignalController extends GuiParent implements SignalContext {
     @Override
     public ISignalComponent getOutput(int id, boolean external) {
         return testComponents.get(SignalTarget.name(external, false, id));
+    }
+    
+    /** Implemented by the client dist: places a node inside its grid cell. */
+    public static interface GridLayout {
+        
+        public void flowCell(GuiControl child, int col, int row);
+        
     }
     
     public static class TestingSignalComponent implements ISignalComponent {

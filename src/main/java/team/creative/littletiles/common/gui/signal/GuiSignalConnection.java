@@ -1,5 +1,6 @@
 package team.creative.littletiles.common.gui.signal;
 
+import team.creative.littletiles.client.gui.LittleGuiDist;
 import javax.annotation.Nullable;
 
 import team.creative.creativecore.common.gui.event.GuiControlChangedEvent;
@@ -27,19 +28,19 @@ public record GuiSignalConnection(GuiSignalNode from, GuiSignalNodeAnchor fromAn
     }
     
     public float fromX() {
-        return fromAnchor.x(from) + from.rect.getX();
+        return fromAnchor.x(from) + LittleGuiDist.rect(from).getX();
     }
     
     public float fromY() {
-        return fromAnchor.y(from) + from.rect.getY();
+        return fromAnchor.y(from) + LittleGuiDist.rect(from).getY();
     }
     
     public float toX() {
-        return toAnchor.x(to) + to.rect.getX();
+        return toAnchor.x(to) + LittleGuiDist.rect(to).getX();
     }
     
     public float toY() {
-        return toAnchor.y(to) + to.rect.getY();
+        return toAnchor.y(to) + LittleGuiDist.rect(to).getY();
     }
     
     public void disconnect(GuiSignalController controller) {

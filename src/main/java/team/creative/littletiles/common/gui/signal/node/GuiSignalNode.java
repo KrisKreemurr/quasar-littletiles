@@ -104,9 +104,9 @@ public abstract class GuiSignalNode extends GuiParent {
         button.setDefaultColor(ColorUtils.RED);
     }
     
-    @Override
-    public boolean testForDoubleClick(double x, double y, int button) {
-        return button != 1;
+    /** Called by the client dist on a double click; return true when handled. */
+    public boolean doubleClicked() {
+        return false;
     }
     
     public boolean removable() {

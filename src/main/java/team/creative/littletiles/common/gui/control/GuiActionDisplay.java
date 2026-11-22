@@ -5,71 +5,23 @@ import team.creative.creativecore.common.gui.IGuiParent;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import team.creative.creativecore.client.render.text.CompiledText;
 import team.creative.creativecore.common.gui.GuiControl;
-import team.creative.creativecore.common.gui.style.ControlFormatting;
 
 public class GuiActionDisplay extends GuiControl {
     
-    protected List<ActionMessage> messages = new ArrayList<>();
+    public List<ActionMessage> messages = new ArrayList<>();
     
     private int maxActions;
-    private int displayTime;
-    private int fadeTime;
-    private int totalTime;
+    public int displayTime;
+    public int fadeTime;
+    public int totalTime;
     
     public GuiActionDisplay(IGuiParent parent, String name) {
         super(parent, name);
         setTimer(5, 1);
         setMessageCount(6);
-    }
-    
-    @Override
-    public ControlFormatting getControlFormatting() {
-        return ControlFormatting.TRANSPARENT;
-    }
-    
-    @Override
-    public void flowX(int width, int preferred) {
-        for (int i = 0; i < messages.size(); i++)
-            messages.get(i).setDimension(width, Integer.MAX_VALUE);
-    }
-    
-    @Override
-    public void flowY(int width, int height, int preferred) {}
-    
-    @Override
-    protected int minWidth(int availableWidth) {
-        return 10;
-    }
-    
-    @Override
-    public int preferredWidth(int availableWidth) {
-        int max = 0;
-        for (int i = 0; i < messages.size(); i++)
-            max = Math.max(max, messages.get(i).getTotalWidth());
-        return max;
-    }
-    
-    @Override
-    protected int minHeight(int width, int availableHeight) {
-        return Minecraft.getInstance().font.lineHeight;
-    }
-    
-    @Override
-    public int preferredHeight(int width, int availableHeight) {
-        int height = 0;
-        for (int i = 0; i < messages.size(); i++)
-            height += messages.get(i).getTotalHeight();
-        return height;
     }
     
     public GuiActionDisplay setMessageCount(int count) {
@@ -104,32 +56,9 @@ public class GuiActionDisplay extends GuiControl {
         reflow();
     }
     
-    protected void removeMessage(int index) {
+    public void removeMessage(int index) {
         messages.remove(index);
         reflow();
-    }
-    
-    @Override
-    @OnlyIn(value = Dist.CLIENT)
-    protected void renderContent(GuiGraphics graphics, int mouseX, int mouseY) {
-        int i = 0;
-        PoseStack pose = graphics.pose();
-        pose.pushPose();
-        while (i < messages.size()) {
-            ActionMessage message = messages.get(i);
-            
-            long timer = System.currentTimeMillis() - message.timestamp;
-            if (timer >= totalTime)
-                removeMessage(i);
-            else {
-                
-                float alpha = timer > displayTime ? (1 - Math.max(0F, timer - displayTime) / fadeTime) : 1;
-                message.render(graphics, Math.max(0.05F, alpha));
-                i++;
-                pose.translate(0, message.getTotalHeight(), 0);
-            }
-        }
-        pose.popPose();
     }
     
     @Override
@@ -141,19 +70,16 @@ public class GuiActionDisplay extends GuiControl {
     @Override
     public void tick() {}
     
-    private static class ActionMessage extends CompiledText {
+    /** Plain data so the class stays loadable on a dedicated server; the client compiles and caches the text. */
+    public static class ActionMessage {
         
-        long timestamp;
+        public final List<Component> text;
+        public final long timestamp;
+        public Object clientCache;
         
         public ActionMessage(List<Component> message) {
-            super(Integer.MAX_VALUE, Integer.MAX_VALUE);
-            setText(message);
+            this.text = message;
             this.timestamp = System.currentTimeMillis();
-        }
-        
-        public void render(GuiGraphics graphics, float alpha) {
-            RenderSystem.setShaderColor(1, 1, 1, alpha);
-            super.render(graphics);
         }
         
     }

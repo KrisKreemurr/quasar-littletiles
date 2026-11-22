@@ -10,7 +10,7 @@ public class ChildDoorEvent extends AnimationEvent<IntTag> {
     public final int childId;
     
     public ChildDoorEvent(IntTag tag) {
-        childId = tag.getAsInt();
+        childId = tag.intValue();
     }
     
     public ChildDoorEvent(int childId) {
