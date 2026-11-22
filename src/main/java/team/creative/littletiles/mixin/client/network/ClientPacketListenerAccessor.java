@@ -1,5 +1,6 @@
 package team.creative.littletiles.mixin.client.network;
 
+import net.minecraft.client.multiplayer.ClientLevel;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
@@ -21,4 +22,10 @@ public interface ClientPacketListenerAccessor {
     @Invoker
     public void callApplyLightData(int x, int z, ClientboundLightUpdatePacketData data);
     
+    // Quasar MC: lets LittleTiles run vanilla's own handler against a sub-level (see LittleClientPlayerHandler.inSubLevel)
+    @Accessor("level")
+    public ClientLevel littletiles$getLevel();
+    
+    @Accessor("level")
+    public void littletiles$setLevel(ClientLevel level);
 }

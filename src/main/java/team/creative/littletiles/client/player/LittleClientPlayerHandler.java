@@ -123,6 +123,20 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
         return Minecraft.getInstance().getConnection();
     }
     
+    /** Quasar MC: run vanilla's own 26.3 packet handler with this sub-level as its level, then restore the real one.
+     * Vanilla's handlers act on their "level" field, so this applies the packet to the sub-level without copying
+     * vanilla's code (which 26.3 rewrote). Only used for packets that don't answer the server. */
+    public void inSubLevel(Runnable action) {
+        ClientPacketListenerAccessor accessor = vanillaAccessor();
+        ClientLevel real = accessor.littletiles$getLevel();
+        accessor.littletiles$setLevel(requiresClientLevel());
+        try {
+            action.run();
+        } finally {
+            accessor.littletiles$setLevel(real);
+        }
+    }
+    
     public ClientPacketListenerAccessor vanillaAccessor() {
         return (ClientPacketListenerAccessor) Minecraft.getInstance().getConnection();
     }
@@ -176,22 +190,13 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
     @Override
     public void handleExplosion(ClientboundExplodePacket packet) {
         ensureRunningOnSameThread(packet);
-        Explosion explosion = new Explosion(level, (Entity) null, packet.getX(), packet.getY(), packet.getZ(), packet.getPower(), packet.getToBlow(), packet
-                .getBlockInteraction(), packet.getSmallExplosionParticles(), packet.getLargeExplosionParticles(), packet.getExplosionSound());
-        explosion.finalizeExplosion(true);
-        mc.player.setDeltaMovement(mc.player.getDeltaMovement().add(packet.getKnockbackX(), packet.getKnockbackY(), packet.getKnockbackZ()));
+        inSubLevel(() -> vanilla().handleExplosion(packet));
     }
     
     @Override
     public void handleBlockEntityData(ClientboundBlockEntityDataPacket packet) {
         ensureRunningOnSameThread(packet);
-        BlockPos blockpos = packet.getPos();
-        level.getBlockEntity(blockpos, packet.getType()).ifPresent((x) -> {
-            x.onDataPacket(vanilla().getConnection(), packet, level.registryAccess());
-            
-            if (x instanceof CommandBlockEntity && mc.gui.screen() instanceof CommandBlockEditScreen screen)
-                screen.updateGui();
-        });
+        inSubLevel(() -> vanilla().handleBlockEntityData(packet));
     }
     
     @Override
@@ -273,9 +278,7 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
     @Override
     public void handleSetEntityMotion(ClientboundSetEntityMotionPacket packet) {
         ensureRunningOnSameThread(packet);
-        Entity entity = this.level.getEntity(packet.getId());
-        if (entity != null)
-            entity.lerpMotion(packet.getXa() / 8000.0D, packet.getYa() / 8000.0D, packet.getZa() / 8000.0D);
+        inSubLevel(() -> vanilla().handleSetEntityMotion(packet));
     }
     
     @Override
@@ -289,46 +292,14 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
     @Override
     public void handleTeleportEntity(ClientboundTeleportEntityPacket packet) {
         ensureRunningOnSameThread(packet);
-        Entity entity = this.level.getEntity(packet.getId());
-        if (entity != null) {
-            double d0 = packet.getX();
-            double d1 = packet.getY();
-            double d2 = packet.getZ();
-            entity.syncPacketPositionCodec(d0, d1, d2);
-            if (!entity.isControlledByLocalInstance()) {
-                float f = packet.getyRot() * 360 / 256.0F;
-                float f1 = packet.getxRot() * 360 / 256.0F;
-                entity.lerpTo(d0, d1, d2, f, f1, 3);
-                entity.setOnGround(packet.isOnGround());
-            }
-            
-        }
+        inSubLevel(() -> vanilla().handleTeleportEntity(packet));
     }
     
     
     @Override
     public void handleMoveEntity(ClientboundMoveEntityPacket packet) {
         ensureRunningOnSameThread(packet);
-        Entity entity = packet.getEntity(this.level);
-        if (entity != null) {
-            if (!entity.isControlledByLocalInstance()) {
-                if (packet.hasPosition()) {
-                    VecDeltaCodec vecdeltacodec = entity.getPositionCodec();
-                    Vec3 vec3 = vecdeltacodec.decode(packet.getXa(), packet.getYa(), packet.getZa());
-                    vecdeltacodec.setBase(vec3);
-                    float f = packet.hasRotation() ? packet.getyRot() * 360 / 256.0F : entity.getYRot();
-                    float f1 = packet.hasRotation() ? packet.getxRot() * 360 / 256.0F : entity.getXRot();
-                    entity.lerpTo(vec3.x(), vec3.y(), vec3.z(), f, f1, 3);
-                } else if (packet.hasRotation()) {
-                    float f2 = packet.getyRot() * 360 / 256.0F;
-                    float f3 = packet.getxRot() * 360 / 256.0F;
-                    entity.lerpTo(entity.getX(), entity.getY(), entity.getZ(), f2, f3, 3);
-                }
-                
-                entity.setOnGround(packet.isOnGround());
-            }
-            
-        }
+        inSubLevel(() -> vanilla().handleMoveEntity(packet));
     }
     
     @Override
@@ -344,7 +315,7 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
     @Override
     public void handleRemoveEntities(ClientboundRemoveEntitiesPacket packet) {
         ensureRunningOnSameThread(packet);
-        packet.getEntityIds().forEach(id -> ((LittleLevel) level).removeEntityById(id, Entity.RemovalReason.DISCARDED));
+        inSubLevel(() -> vanilla().handleRemoveEntities(packet));
     }
     
     @Override
@@ -431,27 +402,13 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
     @Override
     public void handleLevelChunkWithLight(ClientboundLevelChunkWithLightPacket packet) {
         ensureRunningOnSameThread(packet);
-        ClientLevel level = requiresClientLevel();
-        this.updateLevelChunk(level, packet.getX(), packet.getZ(), packet.getChunkData());
-        this.queueLightUpdate(level, packet.getX(), packet.getZ(), packet.getLightData());
+        inSubLevel(() -> vanilla().handleLevelChunkWithLight(packet));
     }
     
     @Override
     public void handleChunksBiomes(ClientboundChunksBiomesPacket packet) {
         ensureRunningOnSameThread(packet);
-        LittleClientLevel level = requiresClientLevel();
-        for (ClientboundChunksBiomesPacket.ChunkBiomeData clientboundchunksbiomespacket$chunkbiomedata : packet.chunkBiomeData())
-            level.getChunkSource().replaceBiomes(clientboundchunksbiomespacket$chunkbiomedata.pos().x(), clientboundchunksbiomespacket$chunkbiomedata.pos().z(),
-                clientboundchunksbiomespacket$chunkbiomedata.getReadBuffer());
-        
-        for (ClientboundChunksBiomesPacket.ChunkBiomeData clientboundchunksbiomespacket$chunkbiomedata1 : packet.chunkBiomeData())
-            level.onChunkLoaded(new ChunkPos(clientboundchunksbiomespacket$chunkbiomedata1.pos().x(), clientboundchunksbiomespacket$chunkbiomedata1.pos().z()));
-        
-        for (ClientboundChunksBiomesPacket.ChunkBiomeData clientboundchunksbiomespacket$chunkbiomedata2 : packet.chunkBiomeData())
-            for (int i = -1; i <= 1; ++i)
-                for (int j = -1; j <= 1; ++j)
-                    for (int k = this.level.getMinSection(); k < this.level.getMaxSection(); ++k)
-                        level.setSectionDirty(clientboundchunksbiomespacket$chunkbiomedata2.pos().x() + i, k, clientboundchunksbiomespacket$chunkbiomedata2.pos().z() + j);
+        inSubLevel(() -> vanilla().handleChunksBiomes(packet));
     }
     
     private void updateLevelChunk(ClientLevel level, int x, int z, ClientboundLevelChunkPacketData data) {
@@ -545,31 +502,7 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
     @Override
     public void handleTakeItemEntity(ClientboundTakeItemEntityPacket packet) {
         ensureRunningOnSameThread(packet);
-        ClientLevel level = requiresClientLevel();
-        Entity entity = level.getEntity(packet.getItemId());
-        LivingEntity livingentity = (LivingEntity) this.level.getEntity(packet.getPlayerId());
-        if (livingentity == null)
-            livingentity = mc.player;
-        
-        if (entity != null) {
-            RandomSource random = vanillaAccessor().getRandom();
-            if (entity instanceof ExperienceOrb)
-                level.playLocalSound(entity.getX(), entity.getY(), entity.getZ(), SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.1F, (random.nextFloat() - random
-                        .nextFloat()) * 0.35F + 0.9F, false);
-            else
-                level.playLocalSound(entity.getX(), entity.getY(), entity.getZ(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.2F, (random.nextFloat() - random
-                        .nextFloat()) * 1.4F + 2.0F, false);
-            
-            mc.particleEngine.add(new ItemPickupParticle(mc.getEntityRenderDispatcher(), mc.renderBuffers(), mc.level, entity, livingentity));
-            if (entity instanceof ItemEntity itemEntity) {
-                ItemStack itemstack = itemEntity.getItem();
-                itemstack.shrink(packet.getAmount());
-                if (itemstack.isEmpty())
-                    level.removeEntity(packet.getItemId(), Entity.RemovalReason.DISCARDED);
-            } else if (!(entity instanceof ExperienceOrb))
-                level.removeEntity(packet.getItemId(), Entity.RemovalReason.DISCARDED);
-        }
-        
+        inSubLevel(() -> vanilla().handleTakeItemEntity(packet));
     }
     
     @Override
@@ -595,19 +528,7 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
     @Override
     public void handleAnimate(ClientboundAnimatePacket packet) {
         ensureRunningOnSameThread(packet);
-        Entity entity = this.level.getEntity(packet.getId());
-        if (entity != null) {
-            if (packet.getAction() == 0)
-                ((LivingEntity) entity).swing(InteractionHand.MAIN_HAND);
-            else if (packet.getAction() == 3)
-                ((LivingEntity) entity).swing(InteractionHand.OFF_HAND);
-            else if (packet.getAction() == 2)
-                ((Player) entity).stopSleepInBed(false, false);
-            else if (packet.getAction() == 4)
-                mc.particleEngine.createTrackingEmitter(entity, ParticleTypes.CRIT);
-            else if (packet.getAction() == 5)
-                mc.particleEngine.createTrackingEmitter(entity, ParticleTypes.ENCHANTED_HIT);
-        }
+        inSubLevel(() -> vanilla().handleAnimate(packet));
     }
     
     @Override
@@ -631,34 +552,7 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
     @Override
     public void handleSetEntityPassengersPacket(ClientboundSetPassengersPacket packet) {
         ensureRunningOnSameThread(packet);
-        Entity entity = this.level.getEntity(packet.getVehicle());
-        if (entity == null) {
-            LOGGER.warn("Received passengers for unknown entity");
-            return;
-        }
-        
-        Player player = mc.player;
-        boolean flag = entity.hasIndirectPassenger(player);
-        entity.ejectPassengers();
-        
-        for (int i : packet.getPassengers()) {
-            Entity entity1 = this.level.getEntity(i);
-            if (entity1 != null) {
-                entity1.startRiding(entity, true);
-                if (entity1 == player && !flag) {
-                    if (entity instanceof Boat) {
-                        player.yRotO = entity.getYRot();
-                        player.setYRot(entity.getYRot());
-                        player.setYHeadRot(entity.getYRot());
-                    }
-                    
-                    Component component = Component.translatable("mount.onboard", mc.options.keyShift.getTranslatedKeyMessage());
-                    mc.gui.setOverlayMessage(component, false);
-                    mc.getNarrator().sayNow(component);
-                }
-            }
-            
-        }
+        inSubLevel(() -> vanilla().handleSetEntityPassengersPacket(packet));
     }
     
     @Override
@@ -683,19 +577,7 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
     @Override
     public void handleEntityEvent(ClientboundEntityEventPacket packet) {
         ensureRunningOnSameThread(packet);
-        Entity entity = packet.getEntity(this.level);
-        if (entity != null) {
-            if (packet.getEventId() == 21)
-                mc.getSoundManager().play(new GuardianAttackSoundInstance((Guardian) entity));
-            else if (packet.getEventId() == 35) {
-                mc.particleEngine.createTrackingEmitter(entity, ParticleTypes.TOTEM_OF_UNDYING, 30);
-                this.level.playLocalSound(entity.getX(), entity.getY(), entity.getZ(), SoundEvents.TOTEM_USE, entity.getSoundSource(), 1.0F, 1.0F, false);
-                if (entity == mc.player)
-                    mc.gameRenderer.displayItemActivation(findTotem(mc.player));
-            } else
-                entity.handleEntityEvent(packet.getEventId());
-        }
-        
+        inSubLevel(() -> vanilla().handleEntityEvent(packet));
     }
     
     @Override
@@ -735,15 +617,7 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
     @Override
     public void handleOpenSignEditor(ClientboundOpenSignEditorPacket packet) {
         ensureRunningOnSameThread(packet);
-        BlockPos blockpos = packet.getPos();
-        BlockEntity blockentity = this.level.getBlockEntity(blockpos);
-        if (!(blockentity instanceof SignBlockEntity)) {
-            BlockState blockstate = this.level.getBlockState(blockpos);
-            blockentity = new SignBlockEntity(blockpos, blockstate);
-            blockentity.setLevel(this.level);
-        }
-        
-        mc.player.openTextEdit((SignBlockEntity) blockentity, packet.isFrontText());
+        inSubLevel(() -> vanilla().handleOpenSignEditor(packet));
     }
     
     @Override
@@ -1012,35 +886,7 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
     @Override
     public void handleParticleEvent(ClientboundLevelParticlesPacket packet) {
         ensureRunningOnSameThread(packet);
-        if (packet.getCount() == 0) {
-            double d0 = packet.getMaxSpeed() * packet.getXDist();
-            double d2 = packet.getMaxSpeed() * packet.getYDist();
-            double d4 = packet.getMaxSpeed() * packet.getZDist();
-            
-            try {
-                this.level.addParticle(packet.getParticle(), packet.isOverrideLimiter(), packet.getX(), packet.getY(), packet.getZ(), d0, d2, d4);
-            } catch (Throwable throwable1) {
-                LOGGER.warn("Could not spawn particle effect {}", packet.getParticle());
-            }
-        } else {
-            RandomSource random = vanillaAccessor().getRandom();
-            for (int i = 0; i < packet.getCount(); ++i) {
-                double d1 = random.nextGaussian() * packet.getXDist();
-                double d3 = random.nextGaussian() * packet.getYDist();
-                double d5 = random.nextGaussian() * packet.getZDist();
-                double d6 = random.nextGaussian() * packet.getMaxSpeed();
-                double d7 = random.nextGaussian() * packet.getMaxSpeed();
-                double d8 = random.nextGaussian() * packet.getMaxSpeed();
-                
-                try {
-                    this.level.addParticle(packet.getParticle(), packet.isOverrideLimiter(), packet.getX() + d1, packet.getY() + d3, packet.getZ() + d5, d6, d7, d8);
-                } catch (Throwable throwable) {
-                    LOGGER.warn("Could not spawn particle effect {}", packet.getParticle());
-                    return;
-                }
-            }
-        }
-        
+        inSubLevel(() -> vanilla().handleParticleEvent(packet));
     }
     
     @Override
@@ -1081,8 +927,7 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
     @Override
     public void handleLightUpdatePacket(ClientboundLightUpdatePacket packet) {
         ensureRunningOnSameThread(packet);
-        ClientLevel level = requiresClientLevel();
-        level.queueLightUpdate(() -> vanillaAccessor().callApplyLightData(packet.getX(), packet.getZ(), packet.getLightData()));
+        inSubLevel(() -> vanilla().handleLightUpdatePacket(packet));
     }
     
     @Override
@@ -1211,8 +1056,8 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
     
     @Override
     public void handleProjectilePowerPacket(ClientboundProjectilePowerPacket packet) {
-        if (level.getEntity(packet.getId()) instanceof AbstractHurtingProjectile abstracthurtingprojectile)
-            abstracthurtingprojectile.accelerationPower = packet.getAccelerationPower();
+        ensureRunningOnSameThread(packet);
+        inSubLevel(() -> vanilla().handleProjectilePowerPacket(packet));
     }
     
     // ===== Quasar MC: listener methods added in 26.3 (delegating to vanilla like the rest of this handler) =====
