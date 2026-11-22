@@ -12,7 +12,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.MultiBufferSource;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.network.chat.Component;
@@ -158,7 +158,7 @@ public class LittleToolWrench extends LittleTool {
             }
         }
         
-        public void render(PoseStack pose, MultiBufferSource buffer, Font font, Quaternionf cameraOrientation) {
+        public void render(PoseStack pose, Object submitter, Font font, Quaternionf cameraOrientation) {
             // TODO(quasar): render code parked for the render rewrite (see src/parked / upstream 1.21).
         }
         

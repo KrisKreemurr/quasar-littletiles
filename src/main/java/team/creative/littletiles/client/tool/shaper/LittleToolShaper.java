@@ -11,11 +11,11 @@ import java.util.concurrent.TimeoutException;
 import org.spongepowered.include.com.google.common.base.Objects;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferUploader;
+
 import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.minecraft.Util;
+
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;

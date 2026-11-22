@@ -19,7 +19,9 @@ import team.creative.creativecore.common.gui.GuiParent;
 import team.creative.creativecore.common.gui.control.menu.GuiMenu;
 import team.creative.creativecore.common.gui.control.menu.GuiMenuRoot;
 import team.creative.creativecore.common.gui.control.simple.GuiLabel;
-import team.creative.creativecore.common.gui.extension.GuiExtensionCreator;
+import team.creative.creativecore.client.gui.extension.GuiExtensionCreator;
+import team.creative.creativecore.client.gui.GuiClientControl;
+import team.creative.littletiles.client.gui.LittleGuiDist;
 import team.creative.creativecore.client.gui.extension.GuiExtensionCreator.ExtensionDirection;
 import team.creative.creativecore.common.util.type.list.Tuple;
 import team.creative.creativecore.common.util.type.tree.NamedTree;
@@ -31,7 +33,7 @@ public class BuildingModeRules extends BuildingModeFeature implements BuildingMo
     
     private static final Minecraft MC = Minecraft.getInstance();
     private GuiLabel label;
-    protected GuiExtensionCreator<GuiLabel, GuiMenuRoot<BooleanSupplier>> ex;
+    protected GuiExtensionCreator<GuiClientControl, GuiMenuRoot<BooleanSupplier>> ex;
     
     private NamedTree<BooleanSupplier> data;
     private List<BuildingModeRule> rules;
@@ -43,7 +45,7 @@ public class BuildingModeRules extends BuildingModeFeature implements BuildingMo
     @Override
     public void createInfo(GuiParent parent) {
         parent.add(label = new GuiLabel(parent, "rules").setTitle(Component.translatable("building.rules").append(" (").append(key.getTranslatedKeyMessage()).append(")")));
-        ex = new GuiExtensionCreator<GuiLabel, GuiMenuRoot<BooleanSupplier>>(label);
+        ex = new GuiExtensionCreator<GuiClientControl, GuiMenuRoot<BooleanSupplier>>(LittleGuiDist.client(label));
     }
     
     @Override
@@ -62,8 +64,8 @@ public class BuildingModeRules extends BuildingModeFeature implements BuildingMo
         data = null;
     }
     
-    protected GuiMenuRoot<BooleanSupplier> createBox(GuiExtensionCreator<GuiLabel, GuiMenuRoot<BooleanSupplier>> creator) {
-        return new GuiMenuRoot<BooleanSupplier>(PARENT_TODO, data, creator, x -> {
+    protected GuiMenuRoot<BooleanSupplier> createBox(GuiExtensionCreator<GuiClientControl, GuiMenuRoot<BooleanSupplier>> creator) {
+        return new GuiMenuRoot<BooleanSupplier>(label.getParent(), data, x -> {
             if (x.equals("info"))
                 return Component.translatable("building." + x, MC.options.keyUp.getTranslatedKeyMessage(), MC.options.keyLeft.getTranslatedKeyMessage(), MC.options.keyDown
                         .getTranslatedKeyMessage(), MC.options.keyRight.getTranslatedKeyMessage(), MC.options.keyJump.getTranslatedKeyMessage());

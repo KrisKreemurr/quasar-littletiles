@@ -521,6 +521,18 @@ public class LittleAnimationLevel extends Level implements LittleSubLevel, Itera
     }
     
     @Override
+    public void explode(net.minecraft.world.entity.Entity source, net.minecraft.world.damagesource.DamageSource damageSource, net.minecraft.world.level.ExplosionDamageCalculator calculator,
+            double x, double y, double z, float radius, boolean fire, Level.ExplosionInteraction interaction, net.minecraft.core.particles.ParticleOptions small,
+            net.minecraft.core.particles.ParticleOptions large, net.minecraft.util.random.WeightedList<net.minecraft.core.particles.ExplosionParticleInfo> particles,
+            net.minecraft.core.Holder<net.minecraft.sounds.SoundEvent> sound) {
+        // Explosions inside an animated structure happen in the real world at the transformed position.
+        if (getOrigin() == null)
+            return;
+        Vector3d vec = getOrigin().pose().transform(new Vector3d(x, y, z));
+        getRealLevel().explode(source, damageSource, calculator, vec.x, vec.y, vec.z, radius, fire, interaction, small, large, particles, sound);
+    }
+    
+    @Override
     public void setRespawnData(LevelData.RespawnData data) {}
     
     @Override
