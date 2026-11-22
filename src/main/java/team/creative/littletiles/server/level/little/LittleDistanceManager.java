@@ -4,7 +4,7 @@ import net.minecraft.server.level.FullChunkStatus;
 import net.minecraft.server.level.ChunkLevel;
 import it.unimi.dsi.fastutil.longs.LongIterators;
 import it.unimi.dsi.fastutil.longs.LongIterator;
-import java.util.function.LongConsumer;
+import it.unimi.dsi.fastutil.longs.LongConsumer;
 import net.minecraft.util.TriState;
 import java.util.concurrent.Executor;
 

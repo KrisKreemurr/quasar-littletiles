@@ -1,5 +1,6 @@
 package team.creative.littletiles.server.level.little;
 
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import it.unimi.dsi.fastutil.longs.LongSets;
 import it.unimi.dsi.fastutil.longs.LongSet;
@@ -30,7 +31,6 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.util.thread.BlockableEventLoop;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.NaturalSpawner;
@@ -44,7 +44,6 @@ import net.minecraft.world.level.chunk.storage.ChunkScanAccess;
 import net.minecraft.world.level.entity.ChunkStatusUpdateListener;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
-import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraft.world.level.storage.LevelStorageSource.LevelStorageAccess;
 import team.creative.creativecore.common.util.type.itr.FunctionIterator;
 import team.creative.littletiles.mixin.server.level.ServerChunkCacheAccessor;
@@ -128,7 +127,6 @@ public class LittleServerChunkCache extends ServerChunkCache implements Iterable
     @Override
     public void tick(BooleanSupplier running, boolean chunks) {
         net.minecraft.util.profiling.Profiler.get().push("purge");
-        ((LittleDistanceManager) this.chunkMap.getDistanceManager()).purgeStaleTickets();
         this.runDistanceManagerUpdates2();
         net.minecraft.util.profiling.Profiler.get().popPush("chunks");
         if (chunks)
@@ -144,7 +142,7 @@ public class LittleServerChunkCache extends ServerChunkCache implements Iterable
         
         ProfilerFiller profilerfiller = net.minecraft.util.profiling.Profiler.get();
         profilerfiller.push("pollingChunks");
-        int k = this.level.getGameRules().getInt(GameRules.RULE_RANDOMTICKING);
+        int k = this.level.getGameRules().get(GameRules.RANDOM_TICK_SPEED);
         
         profilerfiller.popPush("tick");
         for (Entry<Long, LittleChunkHolder> entry : chunks.entrySet())
@@ -179,7 +177,7 @@ public class LittleServerChunkCache extends ServerChunkCache implements Iterable
     
     @Override
     public void blockChanged(BlockPos pos) {
-        LittleChunkHolder chunkholder = chunks.get(ChunkPos.asLong(pos));
+        LittleChunkHolder chunkholder = chunks.get(ChunkPos.pack(pos));
         if (chunkholder != null)
             chunkholder.blockChanged(pos);
     }
@@ -251,7 +249,7 @@ public class LittleServerChunkCache extends ServerChunkCache implements Iterable
     
     
     public void loadLevelChunk(ChunkPos pos, CompoundTag tag) {
-        chunks.put(pos.toLong(), ((LittleChunkMap) chunkMap).createHolder(pos, tag));
+        chunks.put(pos.pack(), ((LittleChunkMap) chunkMap).createHolder(pos, tag));
     }
     
     public Iterable<LevelChunk> all() {
@@ -310,11 +308,11 @@ public class LittleServerChunkCache extends ServerChunkCache implements Iterable
     public final class MainThreadExecutor extends BlockableEventLoop<Runnable> {
         
         public MainThreadExecutor(Level level) {
-            super("Chunk source main thread executor for " + level.dimension().identifier());
+            super("Chunk source main thread executor for " + level.dimension().identifier(), false);
         }
         
         @Override
-        protected Runnable wrapRunnable(Runnable p_8506_) {
+        public Runnable wrapRunnable(Runnable p_8506_) {
             return p_8506_;
         }
         

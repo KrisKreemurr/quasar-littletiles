@@ -1,5 +1,6 @@
 package team.creative.littletiles.server.level.little;
 
+import net.minecraft.world.level.gamerules.GameRules;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -99,9 +100,10 @@ public class LittleAnimationLevelServerCallback extends LittleAnimationLevelCall
     }
     
     private boolean shouldDiscardEntity(Entity entity) {
-        var server = level.getServer();
-        if (server.isSpawningAnimals() || !(entity instanceof Animal) && !(entity instanceof WaterAnimal))
-            return !server.areNpcsEnabled() && entity instanceof Npc;
+        // 26.3: the server-wide animal/NPC switches became the spawnMobs game rule
+        boolean spawnMobs = level.getGameRules().get(GameRules.SPAWN_MOBS);
+        if (spawnMobs || !(entity instanceof Animal) && !(entity instanceof WaterAnimal))
+            return !spawnMobs && entity instanceof Npc;
         return true;
     }
     
