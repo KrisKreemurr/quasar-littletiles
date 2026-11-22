@@ -213,12 +213,12 @@ public class LittleServerChunkCache extends ServerChunkCache implements Iterable
     
     @Override
     public void sendToTrackingPlayersAndSelf(Entity entity, Packet<? super ClientGamePacketListener> packet) {
-        ((LittleChunkMap) chunkMap).broadcastAndSend(entity, packet);
+        ((LittleChunkMap) chunkMap).sendToTrackingPlayersAndSelf(entity, packet);
     }
     
     @Override
     public void sendToTrackingPlayers(Entity entity, Packet<? super ClientGamePacketListener> packet) {
-        ((LittleChunkMap) chunkMap).broadcast(entity, packet);
+        ((LittleChunkMap) chunkMap).sendToTrackingPlayers(entity, packet);
     }
     
     @Override

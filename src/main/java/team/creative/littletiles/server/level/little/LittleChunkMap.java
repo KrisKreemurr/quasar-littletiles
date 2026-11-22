@@ -1,5 +1,7 @@
 package team.creative.littletiles.server.level.little;
 
+import java.util.function.Predicate;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.server.level.ChunkTaskDispatcher;
 import net.minecraft.util.thread.ConsecutiveExecutor;
 import net.minecraft.world.level.TicketStorage;
@@ -43,7 +45,6 @@ import net.minecraft.world.level.chunk.status.ChunkStep;
 import net.minecraft.world.level.chunk.storage.ChunkScanAccess;
 import net.minecraft.world.level.entity.ChunkStatusUpdateListener;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
-import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import team.creative.creativecore.common.util.unsafe.CreativeHackery;
 import team.creative.littletiles.LittleTiles;
@@ -93,7 +94,7 @@ public class LittleChunkMap extends ChunkMap {
     }
     
     @Override
-    protected ChunkHolder getUpdatingChunkIfPresent(long pos) {
+    public ChunkHolder getUpdatingChunkIfPresent(long pos) {
         throw new UnsupportedOperationException();
     }
     
@@ -156,7 +157,7 @@ public class LittleChunkMap extends ChunkMap {
         return null;
     }
     
-    @Override
+    // 26.3: no longer on ChunkMap
     public int getTickingGenerated() {
         return 0;
     }
@@ -184,7 +185,7 @@ public class LittleChunkMap extends ChunkMap {
         return Collections.EMPTY_LIST;
     }
     
-    @Override
+    // 26.3: no longer on ChunkMap
     public String getStorageName() {
         return "";
     }
@@ -204,7 +205,7 @@ public class LittleChunkMap extends ChunkMap {
         return null;
     }
     
-    @Override
+    // 26.3: no longer on ChunkMap
     public void flushWorker() {}
     
     @Override
@@ -222,15 +223,21 @@ public class LittleChunkMap extends ChunkMap {
     public void addEntity(Entity entity) {}
     
     @Override
-    protected void broadcastAndSend(Entity entity, Packet<?> packet) {
+    protected void sendToTrackingPlayersAndSelf(Entity entity, Packet<? super ClientGamePacketListener> packet) {
         LittleLevel level = (LittleLevel) chunkCache.getLevel();
         LittleTiles.NETWORK.sendToClientTrackingAndSelf(new LittleVanillaPacket(level, packet), level.getHolder());
     }
     
     @Override
-    public void broadcast(Entity entity, Packet<?> packet) {
+    public void sendToTrackingPlayers(Entity entity, Packet<? super ClientGamePacketListener> packet) {
         LittleLevel level = (LittleLevel) chunkCache.getLevel();
         LittleTiles.NETWORK.sendToClientTracking(new LittleVanillaPacket(level, packet), level.getHolder());
+    }
+    
+    // 26.3 added a filtered variant; sub-level packets go to everyone tracking the holder entity
+    @Override
+    public void sendToTrackingPlayersFiltered(Entity entity, Packet<? super ClientGamePacketListener> packet, Predicate<ServerPlayer> filter) {
+        sendToTrackingPlayers(entity, packet);
     }
     
 }
