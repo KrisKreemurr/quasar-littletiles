@@ -23,7 +23,7 @@ public class ItemIngredientEntry {
     }
     
     public boolean is(ItemStack stack) {
-        return this.ingredient.is(stack);
+        return this.ingredient.is(null, stack);
     }
     
     public ItemIngredientEntry copy() {

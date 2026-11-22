@@ -123,7 +123,7 @@ public class LittleGrid {
             LittleGrid grid = LittleGrid.get(nbt.getIntOr(GRID_KEY, 0));
             if (grid != null)
                 return grid;
-            throw new RuntimeException("Grid " + nbt.getInt(GRID_KEY) + " is not available.");
+            throw new RuntimeException("Grid " + nbt.getIntOr(GRID_KEY, 0) + " is not available.");
         }
         if (GRID_DEFAULT == null)
             throw new RuntimeException("Grid " + OVERALL_DEFAULT + " is not available.");

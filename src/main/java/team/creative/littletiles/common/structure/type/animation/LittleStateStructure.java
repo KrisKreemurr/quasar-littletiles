@@ -218,7 +218,7 @@ public abstract class LittleStateStructure<T extends AnimationState> extends Lit
             throw new RuntimeException("Invalid state structure! Aimed State " + aimedState + " not found. Only got " + states.size() + " states");
         
         if (nbt.contains("timeline"))
-            timeline = new AnimationTimeline(nbt.getCompound("timeline"));
+            timeline = new AnimationTimeline(nbt.getCompoundOrEmpty("timeline"));
         else
             timeline = null;
         

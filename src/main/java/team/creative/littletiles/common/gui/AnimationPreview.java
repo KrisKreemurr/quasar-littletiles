@@ -73,7 +73,7 @@ public class AnimationPreview {
     
     @OnlyIn(Dist.CLIENT)
     public void setupRendering(PoseStack pose) {
-        animation.getOrigin().pose(Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false)).setup(pose, Vec3.ZERO);
+        animation.getOrigin().pose(Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false)).setup(pose, Vec3.ZERO);
     }
     
     public void unload() {

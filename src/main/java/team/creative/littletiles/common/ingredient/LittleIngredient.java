@@ -203,7 +203,7 @@ public abstract class LittleIngredient<T extends LittleIngredient> extends Littl
             @Override
             public ColorIngredient extract(ItemStack stack) {
                 if (stack.getItem() instanceof DyeItem) {
-                    DyeColor dyeColor = ((DyeItem) stack.getItem()).getDyeColor();
+                    DyeColor dyeColor = stack.get(net.minecraft.core.component.DataComponents.DYE);
                     int rgb = dyeColor.getTextureDiffuseColor();
                     ColorIngredient color = ColorIngredient.getColors(rgb);
                     color.scale(LittleTiles.CONFIG.general.dyeVolume);

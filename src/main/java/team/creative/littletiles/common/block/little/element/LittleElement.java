@@ -79,7 +79,7 @@ public class LittleElement {
     }
     
     public LittleElement(CompoundTag nbt) {
-        this(nbt.getString("s"), nbt.contains("c") ? nbt.getInt("c") : ColorUtils.WHITE);
+        this(nbt.getStringOr("s", ""), nbt.contains("c") ? nbt.getIntOr("c", 0) : ColorUtils.WHITE);
     }
     
     public LittleElement(String name, int color) {

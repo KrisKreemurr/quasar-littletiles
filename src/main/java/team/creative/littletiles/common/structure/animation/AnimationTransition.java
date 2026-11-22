@@ -20,7 +20,7 @@ public class AnimationTransition {
         this.name = nbt.getStringOr("n", "");
         this.start = nbt.getIntOr("f", 0);
         this.end = nbt.getIntOr("t", 0);
-        this.timeline = new AnimationTimeline(nbt.getCompound("a"));
+        this.timeline = new AnimationTimeline(nbt.getCompoundOrEmpty("a"));
     }
     
     public CompoundTag save() {

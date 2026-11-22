@@ -194,7 +194,7 @@ public class LittleAnimationEntity extends LittleEntity<LittleAnimationEntityPhy
         setCenter(center); // center half way loaded due to loadCenter called before
         loadBlocks(nbt);
         
-        this.structure = new StructureConnection((Level) subLevel, nbt.getCompound("s"));
+        this.structure = new StructureConnection((Level) subLevel, nbt.getCompoundOrEmpty("s"));
         recalculateCollisionListener();
     }
     
@@ -239,7 +239,7 @@ public class LittleAnimationEntity extends LittleEntity<LittleAnimationEntityPhy
         ((LittleAnimationLevel) subLevel).renderManager = LittleAnimationRenderManager.of(this);
         loadBlocks(extraData);
         physic.load(extraData.getCompoundOrEmpty("physic"));
-        this.structure = new StructureConnection((Level) subLevel, extraData.getCompound("st"));
+        this.structure = new StructureConnection((Level) subLevel, extraData.getCompoundOrEmpty("st"));
         physic.updateBoundingBox();
     }
     

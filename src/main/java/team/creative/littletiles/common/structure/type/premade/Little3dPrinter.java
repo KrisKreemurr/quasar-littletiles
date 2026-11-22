@@ -147,7 +147,7 @@ public class Little3dPrinter extends LittleStructurePremade {
             var list = nbt.getListOrEmpty("errors");
             errors = new ArrayList<>(list.size());
             for (int i = 0; i < list.size(); i++) {
-                var errorList = list.getList(i);
+                var errorList = list.getListOrEmpty(i);
                 List<Component> error = new ArrayList<>();
                 for (int j = 0; j < errorList.size(); j++)
                     error.add(ComponentSerialization.CODEC.decode(NbtOps.INSTANCE, errorList.get(j)).getOrThrow().getFirst());
@@ -170,7 +170,9 @@ public class Little3dPrinter extends LittleStructurePremade {
         if (nbt.contains("inventory")) {
             var invNBT = nbt.getCompoundOrEmpty("inventory");
             inventory = createInventory();
-            InventoryUtils.load(inventory, provider, invNBT);
+            SimpleContainer loaded = InventoryUtils.load(provider, invNBT, INVENTORY_SIZE);
+            for (int i = 0; i < Math.min(loaded.getContainerSize(), INVENTORY_SIZE); i++)
+                inventory.setItem(i, loaded.getItem(i));
         } else
             inventory = createInventory();
     }
@@ -413,7 +415,7 @@ public class Little3dPrinter extends LittleStructurePremade {
         
         public PlacementTracker(CompoundTag nbt) {
             if (nbt.contains("location")) {
-                location = new StructureLocation(nbt.getCompound("location"));
+                location = new StructureLocation(nbt.getCompoundOrEmpty("location"));
                 structureNBT = nbt.getCompoundOrEmpty("structure");
             }
             doneSelf = nbt.getIntOr("self", 0);

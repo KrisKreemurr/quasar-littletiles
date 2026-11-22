@@ -67,7 +67,7 @@ public class LittleItemHolder extends LittleStructure {
     
     @Override
     protected void loadExtra(CompoundTag nbt, HolderLookup.Provider provider) {
-        stack = ItemStack.parseOptional(provider, nbt.getCompound("stack"));
+        stack = ItemStack.parseOptional(provider, nbt.getCompoundOrEmpty("stack"));
         loadSettings(nbt, provider);
     }
     

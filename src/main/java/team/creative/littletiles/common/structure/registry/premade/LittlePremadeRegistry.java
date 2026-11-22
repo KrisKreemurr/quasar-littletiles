@@ -63,7 +63,7 @@ public class LittlePremadeRegistry {
                 CompoundTag nbt = TagParser.parseTag(IOUtils.toString(LittleStructurePremade.class.getClassLoader().getResourceAsStream(
                     "data/" + type.modid + "/premade/" + (type.path.isBlank() ? type.path : type.path + "/") + type.id + ".struct"), Charsets.UTF_8));
                 
-                CompoundTag originalNBT = nbt.contains(LittleGroup.STRUCTURE_KEY) ? nbt.getCompound(LittleGroup.STRUCTURE_KEY) : null;
+                CompoundTag originalNBT = nbt.contains(LittleGroup.STRUCTURE_KEY) ? nbt.getCompoundOrEmpty(LittleGroup.STRUCTURE_KEY) : null;
                 nbt.put(LittleGroup.STRUCTURE_KEY, structureNBT);
                 if (originalNBT != null)
                     NBTUtils.mergeNotOverwrite(structureNBT, originalNBT);

@@ -42,7 +42,7 @@ public class BlockParentCollection extends ParentCollection {
         structures.clear();
         for (int i = 0; i < list.size(); i++) {
             CompoundTag childNBT = list.getCompoundOrEmpty(i);
-            StructureParentCollection child = previous.remove(childNBT.getInt("index"));
+            StructureParentCollection child = previous.remove(childNBT.getIntOr("index", 0));
             if (child == null)
                 child = new StructureParentCollection(this, childNBT, provider);
             else

@@ -101,15 +101,15 @@ public class ItemMultiTiles extends Item implements ILittlePlacer, IItemTooltip 
     public static String getStructure(ItemStack stack) {
         var data = ILittleTool.getData(stack);
         if (data.contains(LittleGroup.STRUCTURE_KEY))
-            return data.getCompound(LittleGroup.STRUCTURE_KEY).getString("id");
+            return data.getCompoundOrEmpty(LittleGroup.STRUCTURE_KEY).getStringOr("id", "");
         return "";
     }
     
     @Override
     public Component getName(ItemStack stack) {
         var data = ILittleTool.getData(stack);
-        if (data.contains(LittleGroup.STRUCTURE_KEY) && data.getCompound(LittleGroup.STRUCTURE_KEY).contains("n"))
-            return Component.literal(data.getCompound(LittleGroup.STRUCTURE_KEY).getString("n"));
+        if (data.contains(LittleGroup.STRUCTURE_KEY) && data.getCompoundOrEmpty(LittleGroup.STRUCTURE_KEY).contains("n"))
+            return Component.literal(data.getCompoundOrEmpty(LittleGroup.STRUCTURE_KEY).getStringOr("n", ""));
         return super.getName(stack);
     }
     
@@ -133,7 +133,7 @@ public class ItemMultiTiles extends Item implements ILittlePlacer, IItemTooltip 
         String id = "none";
         var data = ILittleTool.getData(stack);
         if (data.contains(LittleGroup.STRUCTURE_KEY))
-            id = data.getCompound(LittleGroup.STRUCTURE_KEY).getString("id");
+            id = data.getCompoundOrEmpty(LittleGroup.STRUCTURE_KEY).getStringOr("id", "");
         tooltip.add(Component.translatable("gui.structure").append(": ").append(Component.translatable("structure." + id)));
         tooltip.add(LittleGroup.printTooltip(data));
     }

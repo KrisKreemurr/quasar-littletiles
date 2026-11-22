@@ -60,8 +60,8 @@ public class ItemLittleBlueprint extends Item implements ILittlePlacer, ILittleS
     @Override
     public Component getName(ItemStack stack) {
         var content = getContent(stack);
-        if (content.contains(LittleGroup.STRUCTURE_KEY) && content.getCompound(LittleGroup.STRUCTURE_KEY).contains("n"))
-            return Component.literal(content.getCompound(LittleGroup.STRUCTURE_KEY).getString("n"));
+        if (content.contains(LittleGroup.STRUCTURE_KEY) && content.getCompoundOrEmpty(LittleGroup.STRUCTURE_KEY).contains("n"))
+            return Component.literal(content.getCompoundOrEmpty(LittleGroup.STRUCTURE_KEY).getStringOr("n", ""));
         return super.getName(stack);
     }
     

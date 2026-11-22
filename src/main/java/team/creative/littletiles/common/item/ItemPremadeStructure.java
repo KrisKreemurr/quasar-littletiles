@@ -48,11 +48,11 @@ public class ItemPremadeStructure extends Item implements ILittlePlacer, IItemTo
     }
     
     public static String getPremadeId(ItemStack stack) {
-        return ILittleTool.getData(stack).getCompound(LittleGroup.STRUCTURE_KEY).getString("id");
+        return ILittleTool.getData(stack).getCompoundOrEmpty(LittleGroup.STRUCTURE_KEY).getStringOr("id", "");
     }
     
     public static LittlePremadeType get(ItemStack stack) {
-        return LittlePremadeRegistry.get(ILittleTool.getData(stack).getCompound(LittleGroup.STRUCTURE_KEY).getString("id"));
+        return LittlePremadeRegistry.get(ILittleTool.getData(stack).getCompoundOrEmpty(LittleGroup.STRUCTURE_KEY).getStringOr("id", ""));
     }
     
     public ItemPremadeStructure() {

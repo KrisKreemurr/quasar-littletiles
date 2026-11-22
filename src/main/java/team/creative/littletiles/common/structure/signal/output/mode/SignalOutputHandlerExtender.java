@@ -19,7 +19,7 @@ public class SignalOutputHandlerExtender extends SignalOutputHandler {
     
     public SignalOutputHandlerExtender(ISignalComponent component, int delay, CompoundTag nbt) {
         super(component, delay, nbt);
-        this.pulseLength = nbt.contains("length") ? nbt.getInt("length") : 10;
+        this.pulseLength = nbt.contains("length") ? nbt.getIntOr("length", 0) : 10;
         this.stateBefore = SignalState.loadFromTag(nbt.get("before"));
     }
     

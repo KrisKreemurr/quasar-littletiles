@@ -15,7 +15,7 @@ public class AnimationSignalTrigger {
         try {
             condition = SignalInputCondition.parseInput(nbt.getStringOr("i", ""));
         } catch (ParseException e) {
-            throw new RuntimeException("Invalid trigger condition found '" + nbt.getString("i") + "'");
+            throw new RuntimeException("Invalid trigger condition found '" + nbt.getStringOr("i", "") + "'");
         }
         transition = nbt.getIntOr("t", 0);
     }

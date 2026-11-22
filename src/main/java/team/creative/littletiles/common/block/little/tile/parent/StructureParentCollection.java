@@ -112,7 +112,7 @@ public class StructureParentCollection extends ParentCollection implements IStru
     }
     
     public LittleStructure setStructureNBT(CompoundTag nbt, HolderLookup.Provider provider, boolean forceCreate) {
-        if (!forceCreate && this.cache instanceof LittleStructure structure && structure.type.id.equals(nbt.getString("id")))
+        if (!forceCreate && this.cache instanceof LittleStructure structure && structure.type.id.equals(nbt.getStringOr("id", "")))
             structure.loadUpdatePacket(nbt, provider);
         else {
             if (this.cache instanceof LittleStructure structure)

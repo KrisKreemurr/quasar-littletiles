@@ -92,8 +92,8 @@ public class LittleStorage extends LittleStructure {
         numberOfSlots = nbt.getIntOr("numberOfSlots", 0);
         lastSlotStackSize = nbt.getIntOr("lastSlot", 0);
         if (nbt.contains("inventory")) {
-            var invNBT = nbt.getCompound("inventory");
-            inventory = new SimpleContainer(invNBT.getInt("size")) {
+            var invNBT = nbt.getCompoundOrEmpty("inventory");
+            inventory = new SimpleContainer(invNBT.getIntOr("size", 0)) {
                 @Override
                 public boolean canPlaceItem(int index, ItemStack stack) {
                     return isValidItem(stack);

@@ -60,7 +60,7 @@ public class LittleGroup implements Bunch<LittleTile>, IGridBased {
     public static Component printTooltip(CompoundTag tag) {
         StringBuilder text = new StringBuilder();
         if (tag.contains(TILES_COUNT_KEY) && tag.contains(BOXES_COUNT_KEY))
-            text.append(tag.getInt(TILES_COUNT_KEY) + " " + LanguageUtils.translate("gui.tile.count") + " " + tag.getInt(BOXES_COUNT_KEY) + " " + LanguageUtils.translate(
+            text.append(tag.getIntOr(TILES_COUNT_KEY, 0) + " " + LanguageUtils.translate("gui.tile.count") + " " + tag.getIntOr(BOXES_COUNT_KEY, 0) + " " + LanguageUtils.translate(
                 "gui.box.count"));
         return Component.literal(text.toString());
     }
@@ -85,7 +85,7 @@ public class LittleGroup implements Bunch<LittleTile>, IGridBased {
     }
     
     public static LittleGroup loadLow(CompoundTag nbt) {
-        if (nbt.getInt(BOXES_COUNT_KEY) > LittleTiles.CONFIG.building.lowResolutionBoxCount) {
+        if (nbt.getIntOr(BOXES_COUNT_KEY, 0) > LittleTiles.CONFIG.building.lowResolutionBoxCount) {
             LittleGroup group = new LittleGroup();
             LittleVecGrid max = getSize(nbt);
             LittleVecGrid min = getMin(nbt);
@@ -257,7 +257,7 @@ public class LittleGroup implements Bunch<LittleTile>, IGridBased {
     public String getStructureName() {
         if (!hasStructure())
             return null;
-        return structure.contains("name") ? structure.getString("name") : null;
+        return structure.contains("name") ? structure.getStringOr("name", "") : null;
     }
     
     public String getStructureId() {

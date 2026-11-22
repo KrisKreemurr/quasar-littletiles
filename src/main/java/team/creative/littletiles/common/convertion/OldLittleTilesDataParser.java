@@ -73,8 +73,8 @@ public class OldLittleTilesDataParser {
         }
         
         String name = nbt.getStringOr("block", "");
-        if (nbt.contains("meta") && nbt.getInt("meta") != 0)
-            name += ":" + nbt.getInt("meta");
+        if (nbt.contains("meta") && nbt.getIntOr("meta", 0) != 0)
+            name += ":" + nbt.getIntOr("meta", 0);
         int color = -1;
         if (nbt.contains("color"))
             color = nbt.getIntOr("color", 0);
@@ -86,7 +86,7 @@ public class OldLittleTilesDataParser {
         try {
             grid = LittleGrid.getOrThrow(nbt);
         } catch (RuntimeException e) {
-            throw new LittleMissingGridException("Invalid grid size " + nbt.getInt("grid"));
+            throw new LittleMissingGridException("Invalid grid size " + nbt.getIntOr("grid", 0));
         }
         return loadGroup(nbt, grid);
     }
@@ -119,7 +119,7 @@ public class OldLittleTilesDataParser {
             for (int i = 0; i < list.size(); i++)
                 children.add(loadGroup(list.getCompoundOrEmpty(i), grid));
         }
-        LittleGroup group = new LittleGroup(convertStructureData(nbt.contains("structure") ? nbt.getCompound("structure") : null), children);
+        LittleGroup group = new LittleGroup(convertStructureData(nbt.contains("structure") ? nbt.getCompoundOrEmpty("structure") : null), children);
         collect(nbt.getListOrEmpty("tiles"), x -> group.addTileFast(grid, x));
         return group;
     }
@@ -134,7 +134,7 @@ public class OldLittleTilesDataParser {
         newData.putBoolean("actP", oldData.getBooleanOr("activateParent", false));
         newData.putBoolean("hand", !oldData.getBooleanOr("disableRightClick", false));
         newData.putBoolean("stay", oldData.getBooleanOr("stayAnimated", false));
-        newData.putBoolean("sound", oldData.contains("sounds") ? oldData.getBoolean("sounds") : true);
+        newData.putBoolean("sound", oldData.contains("sounds") ? oldData.getBooleanOr("sounds", false) : true);
         newData.putBoolean("noClip", oldData.getBooleanOr("noClip", false));
         newData.putInt("du", oldData.getIntOr("duration", 0));
         newData.putInt("in", oldData.getIntOr("interpolation", 0));
@@ -148,10 +148,10 @@ public class OldLittleTilesDataParser {
         List<AnimationEventEntry> events = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             CompoundTag eventTag = list.getCompoundOrEmpty(i);
-            AnimationEvent event = switch (eventTag.getString("id")) {
-                case "sound-event" -> eventTag.getBoolean("opening") == opening ? new PlaySoundEvent(PlaySoundEvent.get(Identifier.parse(eventTag.getString(
-                    "sound"))), eventTag.getFloat("volume"), eventTag.getFloat("pitch")) : null;
-                case "child" -> new ChildDoorEvent(eventTag.getInt("childId"));
+            AnimationEvent event = switch (eventTag.getStringOr("id", "")) {
+                case "sound-event" -> eventTag.getBooleanOr("opening", false) == opening ? new PlaySoundEvent(PlaySoundEvent.get(Identifier.parse(eventTag.getString(
+                    "sound"))), eventTag.getFloatOr("volume", 0F), eventTag.getFloatOr("pitch", 0F)) : null;
+                case "child" -> new ChildDoorEvent(eventTag.getIntOr("childId", 0));
                 default -> null;
             };
             if (event != null)
@@ -271,7 +271,7 @@ public class OldLittleTilesDataParser {
         if (nbt == null)
             return null;
         
-        return switch (nbt.getString("id")) {
+        return switch (nbt.getStringOr("id", "")) {
             case "workbench", "importer", "exporter", "blankomatic", "particle_emitter", "signal_display", "structure_builder", "fixed", "ladder", "bed", "chair", "storage", "noclip", "message", "item_holder" -> convertStructureDataBase(
                 nbt, nbt);
             case "single_cable1", "single_cable4", "single_cable16", "single_input1", "single_input4", "single_input16", "single_output1", "single_output4", "single_output16" -> convertStructureDataBase(
@@ -289,7 +289,7 @@ public class OldLittleTilesDataParser {
                 Axis axis = Axis.values()[nbt.getIntOr("axis", 0)];
                 rotation.putInt("a", axis.ordinal());
                 PhysicalState end = new PhysicalState();
-                if (nbt.getInt("rot-type") == 1) {
+                if (nbt.getIntOr("rot-type", 0) == 1) {
                     double degree = nbt.getDoubleOr("degree", 0D);
                     rotation.putDouble("d", degree);
                     end.rot(axis, degree);
@@ -397,7 +397,7 @@ public class OldLittleTilesDataParser {
                 converted.putString("id", "door");
                 yield converted;
             }
-            default -> throw new LittleMissingStructureException("Cannot convert " + nbt.getString("id") + " yet");
+            default -> throw new LittleMissingStructureException("Cannot convert " + nbt.getStringOr("id", "") + " yet");
         };
     }
     
