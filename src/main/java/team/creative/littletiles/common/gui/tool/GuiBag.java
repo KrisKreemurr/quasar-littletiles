@@ -201,7 +201,7 @@ public class GuiBag extends GuiConfigure {
         left.add(bagInventoryGui = new GuiInventoryGrid(this, name, bagInventory, LittleTiles.CONFIG.general.bag.inventoryWidth, LittleTiles.CONFIG.general.bag.inventoryHeight, (c,
                 i) -> new BagSlot(c, i)));
         
-        add(addInventory(new GuiPlayerInventoryGrid(this))).disableSlot(tool.index));
+        add(addInventory(new GuiPlayerInventoryGrid(this)).disableSlot(tool.index));
         
         addInventory(inputInventory);
         addInventory(bagInventoryGui);
