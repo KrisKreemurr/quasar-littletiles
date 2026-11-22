@@ -137,7 +137,7 @@ public abstract class LittleEntityPhysic<T extends LittleEntity<? extends Little
     public void load(CompoundTag nbt) {
         preventPush = true; // No need to use ignoreCollision here, because it is internal
         var origin = getOrigin();
-        origin.set(nbt.getDouble("offX"), nbt.getDouble("offY"), nbt.getDouble("offZ"), nbt.getDouble("rotX"), nbt.getDouble("rotY"), nbt.getDouble("rotZ"));
+        origin.set(nbt.getDoubleOr("offX", 0D), nbt.getDoubleOr("offY", 0D), nbt.getDoubleOr("offZ", 0D), nbt.getDoubleOr("rotX", 0D), nbt.getDoubleOr("rotY", 0D), nbt.getDoubleOr("rotZ", 0D));
         origin.tick();
         origin.setChanged();
         preventPush = false;

@@ -96,7 +96,7 @@ public class StructureAbsolute extends StructureRelative {
     }
     
     public StructureAbsolute(String name, CompoundTag nbt) {
-        this(getPos(nbt.getIntArray(name + "_pos").orElseGet(() -> new int[0])), LittleBox.create(nbt.getIntArray(name + "_box").orElseGet(() -> new int[0])), LittleGrid.get(nbt.getInt(name + "_grid")));
+        this(getPos(nbt.getIntArray(name + "_pos").orElseGet(() -> new int[0])), LittleBox.create(nbt.getIntArray(name + "_box").orElseGet(() -> new int[0])), LittleGrid.get(nbt.getIntOr(name + "_grid", 0)));
     }
     
     public StructureAbsolute(LittleVecAbsolute axis, LittleVec additional) {

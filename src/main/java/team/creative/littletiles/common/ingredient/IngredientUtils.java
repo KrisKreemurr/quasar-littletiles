@@ -31,7 +31,7 @@ public class IngredientUtils {
     public static BlockIngredientEntry loadBlockIngredient(CompoundTag nbt) {
         if (!nbt.contains("block"))
             return null;
-        LittleBlock block = LittleBlockRegistry.get(nbt.getString("block"));
+        LittleBlock block = LittleBlockRegistry.get(nbt.getStringOr("block", ""));
         if (nbt.getDouble("volume") > 0)
             return new BlockIngredientEntry(block, nbt.getDoubleOr("volume", 0D));
         return null;

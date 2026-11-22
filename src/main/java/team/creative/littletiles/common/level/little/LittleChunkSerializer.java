@@ -74,8 +74,8 @@ public class LittleChunkSerializer {
             int l = level.getSectionIndexFromSectionY(y);
             if (l >= 0 && l < alevelchunksection.length) {
                 PalettedContainer<BlockState> states;
-                if (compoundtag.contains("block_states", 10))
-                    states = BLOCK_STATE_CODEC.parse(NbtOps.INSTANCE, compoundtag.getCompound("block_states")).promotePartial(error -> logErrors(chunkpos, y, error)).getOrThrow(
+                if (compoundtag.contains("block_states"))
+                    states = BLOCK_STATE_CODEC.parse(NbtOps.INSTANCE, compoundtag.getCompoundOrEmpty("block_states")).promotePartial(error -> logErrors(chunkpos, y, error)).getOrThrow(
                         ChunkSerializer.ChunkReadException::new);
                 else
                     states = new PalettedContainer<>(Block.BLOCK_STATE_REGISTRY, Blocks.AIR.defaultBlockState(), PalettedContainer.Strategy.SECTION_STATES);
@@ -86,8 +86,8 @@ public class LittleChunkSerializer {
                 //poiManager.checkConsistencyWithBlocks(pos, levelchunksection);
             }
             
-            boolean hasBlockLight = compoundtag.contains("BlockLight", 7);
-            boolean hasSkyLight = chunkSkyLight && compoundtag.contains("SkyLight", 7);
+            boolean hasBlockLight = compoundtag.contains("BlockLight");
+            boolean hasSkyLight = chunkSkyLight && compoundtag.contains("SkyLight");
             if (hasBlockLight || hasSkyLight) {
                 if (!retained) {
                     levellightengine.retainData(chunkpos, true);
@@ -110,7 +110,7 @@ public class LittleChunkSerializer {
         LevelChunk chunk = new LevelChunk(level.asLevel(), chunkpos, UpgradeData.EMPTY, blockTicks, fluidTicks, nbt.getLongOr("InhabitedTime", 0L), alevelchunksection, postLoadChunk(
             level, nbt), null);
         
-        if (nbt.contains(AttachmentHolder.ATTACHMENTS_NBT_KEY, Tag.TAG_COMPOUND))
+        if (nbt.contains(AttachmentHolder.ATTACHMENTS_NBT_KEY))
             chunk.readAttachmentsFromNBT(level.registryAccess(), nbt.getCompoundOrEmpty(AttachmentHolder.ATTACHMENTS_NBT_KEY));
         
         chunk.setLightCorrect(nbt.getBooleanOr("isLightOn", false));
@@ -120,7 +120,7 @@ public class LittleChunkSerializer {
         
         for (Heightmap.Types type : chunk.getPersistedStatus().heightmapsAfter()) {
             String s = type.getSerializationKey();
-            if (heightmaps.contains(s, 12))
+            if (heightmaps.contains(s))
                 chunk.setHeightmap(type, heightmaps.getLongArray(s).orElseGet(() -> new long[0]));
             else
                 enumset.add(type);

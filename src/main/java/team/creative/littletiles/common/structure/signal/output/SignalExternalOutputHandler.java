@@ -48,10 +48,10 @@ public class SignalExternalOutputHandler implements ISignalComponent {
         }
         SignalMode mode = SignalMode.EQUAL;
         if (nbt.contains("mode"))
-            mode = SignalMode.valueOf(nbt.getString("mode"));
+            mode = SignalMode.valueOf(nbt.getStringOr("mode", ""));
         int delay = nbt.getIntOr("delay", 0);
         if (condition != null)
-            delay = Math.max((int) Math.ceil(condition.calculateDelay()), nbt.getInt("delay"));
+            delay = Math.max((int) Math.ceil(condition.calculateDelay()), nbt.getIntOr("delay", 0));
         handler = SignalOutputHandler.create(this, mode, delay, nbt, structure);
         if (nbt.contains("x"))
             outputPosition = new SignalPosition(nbt.getIntOr("x", 0), nbt.getIntOr("y", 0));

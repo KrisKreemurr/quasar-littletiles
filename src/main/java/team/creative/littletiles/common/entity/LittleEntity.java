@@ -225,7 +225,7 @@ public abstract class LittleEntity<T extends LittleEntityPhysic> extends Entity 
             entitiesToAdd = new ArrayList<>();
             ListTag list = nbt.getListOrEmpty("entities");
             for (int i = 0; i < list.size(); i++)
-                EntityType.create(list.getCompound(i), (Level) subLevel).ifPresent(entitiesToAdd::add);
+                EntityType.create(list.getCompoundOrEmpty(i), (Level) subLevel).ifPresent(entitiesToAdd::add);
         } else
             entitiesToAdd = null;
     }

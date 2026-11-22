@@ -61,7 +61,7 @@ public class TileSelectionMode extends SelectionMode {
         if (boxes.isEmpty())
             return null;
         if (nbt.contains("level"))
-            return ILittleLevelContext.of(level, nbt.getString("level"));
+            return ILittleLevelContext.of(level, nbt.getStringOr("level", ""));
         return ILittleLevelContext.of(level, boxes.pos);
     }
     

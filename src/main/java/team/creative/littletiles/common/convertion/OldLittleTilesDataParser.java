@@ -48,7 +48,7 @@ public class OldLittleTilesDataParser {
     public static final HashMap<String, String> BLOCK_MAP = new HashMap<>();
     
     public static boolean isOld(CompoundTag nbt) {
-        return nbt.contains("tiles", Tag.TAG_LIST);
+        return nbt.contains("tiles");
     }
     
     public static LittleTile createTile(CompoundTag nbt) {
@@ -132,7 +132,7 @@ public class OldLittleTilesDataParser {
             newData.put("state", state);
         
         newData.putBoolean("actP", oldData.getBooleanOr("activateParent", false));
-        newData.putBoolean("hand", !oldData.getBoolean("disableRightClick"));
+        newData.putBoolean("hand", !oldData.getBooleanOr("disableRightClick", false));
         newData.putBoolean("stay", oldData.getBooleanOr("stayAnimated", false));
         newData.putBoolean("sound", oldData.contains("sounds") ? oldData.getBoolean("sounds") : true);
         newData.putBoolean("noClip", oldData.getBooleanOr("noClip", false));
@@ -162,8 +162,8 @@ public class OldLittleTilesDataParser {
     
     private static void saveDoor(CompoundTag nbt, PhysicalState start, PhysicalState end, AnimationTimeline opening, AnimationTimeline closing) {
         List<AnimationState> states = new ArrayList<>();
-        states.add(new AnimationState("closed", start, !nbt.getBoolean("stay")));
-        states.add(new AnimationState("opened", end, !nbt.getBoolean("stay")));
+        states.add(new AnimationState("closed", start, !nbt.getBooleanOr("stay", false)));
+        states.add(new AnimationState("opened", end, !nbt.getBooleanOr("stay", false)));
         
         ListTag stateList = new ListTag();
         for (int i = 0; i < states.size(); i++)
@@ -278,7 +278,7 @@ public class OldLittleTilesDataParser {
                 nbt, nbt);
             case "light" -> {
                 convertStructureDataBase(nbt, nbt);
-                nbt.putBoolean("right", !nbt.getBoolean("disableRightClick"));
+                nbt.putBoolean("right", !nbt.getBooleanOr("disableRightClick", false));
                 nbt.remove("disableRightClick");
                 yield nbt;
             }
@@ -376,7 +376,7 @@ public class OldLittleTilesDataParser {
                 PhysicalState start = new PhysicalState();
                 PhysicalState end = new PhysicalState();
                 
-                LittleGrid grid = LittleGrid.get(animation.getInt("offGrid"));
+                LittleGrid grid = LittleGrid.get(animation.getIntOr("offGrid", 0));
                 
                 HashMap<PhysicalPart, ValueCurveInterpolation<Vec1d>> curves = new HashMap<>();
                 for (PhysicalPart part : PhysicalPart.values())

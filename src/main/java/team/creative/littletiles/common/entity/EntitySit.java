@@ -96,10 +96,10 @@ public class EntitySit extends Entity implements ILevelPositionProvider, INoPush
     
     @Override
     protected void readAdditionalSaveData(CompoundTag nbt) {
-        entityData.set(CONNECTION, nbt.getCompound("connection"));
-        entityData.set(CHAIRX, nbt.getFloat("chairX"));
-        entityData.set(CHAIRY, nbt.getFloat("chairY"));
-        entityData.set(CHAIRZ, nbt.getFloat("chairZ"));
+        entityData.set(CONNECTION, nbt.getCompoundOrEmpty("connection"));
+        entityData.set(CHAIRX, nbt.getFloatOr("chairX", 0F));
+        entityData.set(CHAIRY, nbt.getFloatOr("chairY", 0F));
+        entityData.set(CHAIRZ, nbt.getFloatOr("chairZ", 0F));
     }
     
     @Override

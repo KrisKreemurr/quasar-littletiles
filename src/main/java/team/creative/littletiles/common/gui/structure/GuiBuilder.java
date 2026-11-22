@@ -41,7 +41,7 @@ public class GuiBuilder extends GuiLayer {
             int height = nbt.getIntOr("height", 0);
             int thickness = nbt.getIntOr("thickness", 0);
             Block block = BuiltInRegistries.BLOCK.get(Identifier.parse(nbt.getStringOr("block", "")));
-            LittleGrid grid = LittleGrid.get(nbt.getInt("grid"));
+            LittleGrid grid = LittleGrid.get(nbt.getIntOr("grid", 0));
             
             builder.lastBlockState = block.defaultBlockState();
             builder.lastSizeX = width;

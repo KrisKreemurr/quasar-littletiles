@@ -80,8 +80,8 @@ public class Gui3dPrinter extends GuiLayer {
         sendUpdate();
     });
     public final GuiSyncLocal<CompoundTag> SAVE = getSyncHolder().register("save", nbt -> {
-        printer.ticksToSkip = Math.max(0, nbt.getInt("skip"));
-        printer.amountPerTick = Math.max(1, nbt.getInt("amount"));
+        printer.ticksToSkip = Math.max(0, nbt.getIntOr("skip", 0));
+        printer.amountPerTick = Math.max(1, nbt.getIntOr("amount", 0));
         
         printer.continueOnError = nbt.getBooleanOr("continue", false);
         printer.rememberStructures = nbt.getBooleanOr("remember", false);

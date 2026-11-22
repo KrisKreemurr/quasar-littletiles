@@ -471,7 +471,7 @@ public class BETiles extends BlockEntityCreative implements IGridBased, ILittleB
         
         grid = LittleGrid.getOrThrow(nbt);
         
-        tiles.load(nbt.getCompound("content"), provider);
+        tiles.load(nbt.getCompoundOrEmpty("content"), provider);
         sideCache.load(nbt);
         
         if (level != null && !level.isClientSide()) {

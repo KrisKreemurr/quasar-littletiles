@@ -120,7 +120,7 @@ public class LittleGrid {
     
     public static LittleGrid getOrThrow(CompoundTag nbt) {
         if (nbt != null && nbt.contains(GRID_KEY)) {
-            LittleGrid grid = LittleGrid.get(nbt.getInt(GRID_KEY));
+            LittleGrid grid = LittleGrid.get(nbt.getIntOr(GRID_KEY, 0));
             if (grid != null)
                 return grid;
             throw new RuntimeException("Grid " + nbt.getInt(GRID_KEY) + " is not available.");
@@ -136,7 +136,7 @@ public class LittleGrid {
     
     public static LittleGrid get(CompoundTag nbt) {
         if (nbt != null && nbt.contains(GRID_KEY)) {
-            LittleGrid grid = LittleGrid.get(nbt.getInt(GRID_KEY));
+            LittleGrid grid = LittleGrid.get(nbt.getIntOr(GRID_KEY, 0));
             if (grid != null)
                 return grid;
         }

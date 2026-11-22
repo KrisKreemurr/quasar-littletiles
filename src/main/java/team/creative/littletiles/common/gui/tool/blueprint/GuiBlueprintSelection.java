@@ -49,9 +49,9 @@ public class GuiBlueprintSelection extends GuiConfigure {
             tool.get().set(LittleTilesRegistry.SELECTION, component);
             LittleGroup previews = mode.select(getPlayer().level(), (LittleActionSource) getPlayer(), selection, tool.get(), component);
             if (nbt.contains("grid")) {
-                LittleGrid grid = LittleGrid.get(nbt.getInt("grid"));
+                LittleGrid grid = LittleGrid.get(nbt.getIntOr("grid", 0));
                 previews.convertTo(grid);
-                LittleGrid aimedGrid = LittleGrid.get(nbt.getInt("aimedGrid"));
+                LittleGrid aimedGrid = LittleGrid.get(nbt.getIntOr("aimedGrid", 0));
                 if (aimedGrid.count > grid.count)
                     LittleGroup.setGridSecretly(previews, aimedGrid);
                 else

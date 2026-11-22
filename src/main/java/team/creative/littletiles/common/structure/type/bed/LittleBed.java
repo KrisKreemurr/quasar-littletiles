@@ -62,7 +62,7 @@ public class LittleBed extends LittleStructure {
     @Override
     protected Object failedLoadingRelative(CompoundTag nbt, StructureDirectionalField field) {
         if (field.key.equals("facing"))
-            return Facing.get(nbt.getInt("direction"));
+            return Facing.get(nbt.getIntOr("direction", 0));
         return super.failedLoadingRelative(nbt, field);
     }
     
