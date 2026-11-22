@@ -7,7 +7,7 @@ license="LGPL-3.0-only"
     modId="littletiles"
     logoFile="littletiles.png"
     version="1.6.0-pre240"
-    displayName="LittleTiles"
+    displayName="LittleTiles (Quasar MC 26.3 port)"
     displayURL="https://modrinth.com/mod/littletiles"
     authors="CreativeMD, N247S"
     description='''#BuildItYourself'''
@@ -19,14 +19,14 @@ license="LGPL-3.0-only"
 [[dependencies.littletiles]]
     modId="neoforge"
     type="required"
-    versionRange="[21.1,)"
+    versionRange="[26.3,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.littletiles]]
     modId="minecraft"
     type="required"
-    versionRange="[1.21.1,1.22)"
+    versionRange="[26.3,26.4)"
     ordering="NONE"
     side="BOTH"
 
@@ -35,7 +35,7 @@ license="LGPL-3.0-only"
    type="required"
    ordering="NONE"
    side="BOTH"
-   versionRange="[2.13.55,)"
+   versionRange="[2.14.25,)"
 
 [[mixins]]
    config="littletiles.mixins.json"
