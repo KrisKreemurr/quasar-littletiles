@@ -15,7 +15,7 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexSorting;
 
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.SectionBufferBuilderPack;
 import net.minecraft.client.renderer.chunk.RenderChunkRegion;
 import net.minecraft.client.renderer.chunk.SectionCompiler;
@@ -42,7 +42,7 @@ public abstract class SectionCompilerMixin {
             require = 1, locals = LocalCapture.CAPTURE_FAILHARD)
     public void compile(SectionPos pos, RenderChunkRegion region, VertexSorting sorting, SectionBufferBuilderPack pack, List<AdditionalSectionRenderer> additionalRenderers,
             CallbackInfoReturnable<SectionCompiler.Results> info, SectionCompiler.Results results, BlockPos blockpos, BlockPos blockpos1, VisGraph visgraph, PoseStack posestack,
-            Map<RenderType, BufferBuilder> map, RandomSource randomsource, Iterator iterator, BlockPos blockpos2, BlockState blockstate, BlockEntity blockentity) {
+            Map<ChunkSectionLayer, BufferBuilder> map, RandomSource randomsource, Iterator iterator, BlockPos blockpos2, BlockState blockstate, BlockEntity blockentity) {
         if (blockentity instanceof BETiles tiles)
             LittleRenderPipelineType.compile(pos.asLong(), tiles, x -> (ChunkBufferUploader) getOrBeginLayer(map, pack, x), x -> ((SectionCompilerResultsExtender) (Object) results)
                     .getOrCreate(x));
@@ -51,14 +51,14 @@ public abstract class SectionCompilerMixin {
     @Inject(method = COMPILE_CALL, at = @At(value = "INVOKE", target = "Ljava/util/Map;entrySet()Ljava/util/Set;"), require = 1, locals = LocalCapture.CAPTURE_FAILHARD)
     public void compileEnd(SectionPos pos, RenderChunkRegion region, VertexSorting sorting, SectionBufferBuilderPack pack, List<AdditionalSectionRenderer> additionalRenderers,
             CallbackInfoReturnable<SectionCompiler.Results> info, SectionCompiler.Results results, BlockPos blockpos, BlockPos blockpos1, VisGraph visgraph, PoseStack posestack,
-            Map<RenderType, BufferBuilder> map) {
+            Map<ChunkSectionLayer, BufferBuilder> map) {
         var level = ((RenderChunkRegionAccessor) region).getLevel();
         LittleRenderPipelineType.beforeCompileEnds(RenderingLevelHandler.of(level, blockpos1).getRenderChunk(level, pos.asLong()), x -> (ChunkBufferUploader) getOrBeginLayer(map,
             pack, x), x -> ((SectionCompilerResultsExtender) (Object) results).getOrCreate(x));
     }
     
     @Shadow
-    public abstract BufferBuilder getOrBeginLayer(Map<RenderType, BufferBuilder> map, SectionBufferBuilderPack pack, RenderType type);
+    public abstract BufferBuilder getOrBeginLayer(Map<ChunkSectionLayer, BufferBuilder> map, SectionBufferBuilderPack pack, ChunkSectionLayer type);
     
     @Shadow
     public abstract <E extends BlockEntity> void handleBlockEntity(SectionCompiler.Results results, E blockEntity);

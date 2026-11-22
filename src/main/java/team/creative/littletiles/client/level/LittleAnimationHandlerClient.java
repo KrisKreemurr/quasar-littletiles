@@ -1,5 +1,6 @@
 package team.creative.littletiles.client.level;
 
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -381,15 +382,15 @@ public class LittleAnimationHandlerClient extends LittleAnimationHandler impleme
         RenderType layer = null;
         
         if (event.getStage() == Stage.AFTER_SOLID_BLOCKS)
-            layer = RenderType.solid();
+            layer = ChunkSectionLayer.SOLID;
         else if (event.getStage() == Stage.AFTER_CUTOUT_BLOCKS)
-            layer = RenderType.cutout();
+            layer = ChunkSectionLayer.CUTOUT;
         else if (event.getStage() == Stage.AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS)
-            layer = RenderType.cutoutMipped();
+            layer = ChunkSectionLayer.CUTOUT;
         else if (event.getStage() == Stage.AFTER_TRANSLUCENT_BLOCKS)
-            layer = RenderType.translucent();
+            layer = ChunkSectionLayer.TRANSLUCENT;
         else if (event.getStage() == Stage.AFTER_TRIPWIRE_BLOCKS)
-            layer = RenderType.tripwire();
+            layer = ChunkSectionLayer.TRANSLUCENT;
         
         if (layer == null)
             return;

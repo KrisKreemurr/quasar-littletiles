@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 import com.mojang.blaze3d.vertex.MeshData;
 
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.chunk.SectionRenderDispatcher.CompiledSection;
 import net.minecraft.client.renderer.chunk.VisibilitySet;
 
@@ -21,7 +21,7 @@ public interface CompiledSectionAccessor {
     public void setTransparencyState(MeshData.SortState state);
     
     @Accessor
-    public Set<RenderType> getHasBlocks();
+    public Set<ChunkSectionLayer> getHasBlocks();
     
     @Accessor
     public VisibilitySet getVisibilitySet();

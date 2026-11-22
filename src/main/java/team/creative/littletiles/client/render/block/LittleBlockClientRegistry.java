@@ -1,5 +1,6 @@
 package team.creative.littletiles.client.render.block;
 
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +15,7 @@ import team.creative.littletiles.api.common.block.LittleBlock;
 
 public class LittleBlockClientRegistry {
     
-    private static final ChunkRenderTypeSet SOLID = ChunkRenderTypeSet.of(RenderType.solid());
+    private static final ChunkRenderTypeSet SOLID = ChunkRenderTypeSet.of(ChunkSectionLayer.SOLID);
     private static final Map<LittleBlock, ChunkRenderTypeSet> CACHED_LAYERS = Collections.synchronizedMap(new HashMap<>());
     
     private static final Map<LittleBlock, Boolean> GUI_TRANSLUCENT = Collections.synchronizedMap(new HashMap<>());

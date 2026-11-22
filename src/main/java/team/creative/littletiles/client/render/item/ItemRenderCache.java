@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.spongepowered.include.com.google.common.base.Objects;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
@@ -157,7 +157,7 @@ public class ItemRenderCache implements LevelAwareHandler {
                         if (translucent) {
                             quads = new ArrayList<>();
                             for (int j = 0; j < Facing.VALUES.length; j++)
-                                CreativeBakedBoxItemLayer.compileBoxes(renderer.getBoxes(pair.key, true), Facing.VALUES[j], RenderTypeHelper.getEntityRenderType(RenderType
+                                CreativeBakedBoxItemLayer.compileBoxes(renderer.getBoxes(pair.key, true), Facing.VALUES[j], RenderTypeHelper.getEntityRenderType(ChunkSectionLayer
                                         .translucent(), false), rand, true, quads);
                             pair.value.setQuads(true, quads);
                         }

@@ -8,7 +8,7 @@ import com.mojang.blaze3d.vertex.MeshData.SortState;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.blaze3d.vertex.VertexSorting;
 
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.chunk.SectionRenderDispatcher.CompiledSection;
 import net.minecraft.client.renderer.chunk.SectionRenderDispatcher.RenderSection;
 import net.minecraft.core.BlockPos;
@@ -65,7 +65,7 @@ public abstract class RenderChunkMixin implements RenderChunkExtender {
     
     @Override
     @Invoker("getBuffer")
-    public abstract VertexBuffer getVertexBuffer(RenderType layer);
+    public abstract VertexBuffer getVertexBuffer(ChunkSectionLayer layer);
     
     @Override
     @Invoker("setDirty")
@@ -82,14 +82,14 @@ public abstract class RenderChunkMixin implements RenderChunkExtender {
     }
     
     @Override
-    public void setHasBlock(RenderType layer) {
+    public void setHasBlock(ChunkSectionLayer layer) {
         CompiledSection compiled = as().getCompiled();
         if (compiled != CompiledSection.UNCOMPILED)
             ((CompiledSectionAccessor) compiled).getHasBlocks().add(layer);
     }
     
     @Override
-    public boolean isEmpty(RenderType layer) {
+    public boolean isEmpty(ChunkSectionLayer layer) {
         return as().getCompiled().isEmpty(layer);
     }
     

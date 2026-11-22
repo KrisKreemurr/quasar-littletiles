@@ -11,7 +11,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap.Entry;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
@@ -44,7 +44,7 @@ public class LittleRenderPipelineForge extends LittleRenderPipeline {
     private final ChunkLayerMap<IntArrayList> indexes = new ChunkLayerMap<>(layer -> new IntArrayList());
     private final MutableBlockPos modelOffset = new MutableBlockPos();
     
-    private ByteBufferBuilder getOrCreate(RenderType layer) {
+    private ByteBufferBuilder getOrCreate(ChunkSectionLayer layer) {
         ByteBufferBuilder buffer = byteBuilder.get(layer);
         if (buffer == null)
             byteBuilder.put(layer, buffer = new ByteBufferBuilder(layer.bufferSize()));
@@ -81,7 +81,7 @@ public class LittleRenderPipelineForge extends LittleRenderPipeline {
             if (structureMap == null || structureMap.isEmpty())
                 continue;
             
-            for (Tuple<RenderType, List<LittleRenderBox>> tuple : structureMap.tuples()) {
+            for (Tuple<ChunkSectionLayer, List<LittleRenderBox>> tuple : structureMap.tuples()) {
                 var cubes = tuple.value;
                 if (cubes.isEmpty())
                     continue;
@@ -151,7 +151,7 @@ public class LittleRenderPipelineForge extends LittleRenderPipeline {
             }
         }
         
-        for (RenderType layer : RenderType.CHUNK_BUFFER_LAYERS) {
+        for (ChunkSectionLayer layer : ChunkLayerMap.LAYERS) {
             var builder = builders.get(layer);
             if (builder == null)
                 continue;

@@ -3,7 +3,7 @@ package team.creative.littletiles.mixin.client.render;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.chunk.SectionCompiler;
 import team.creative.creativecore.common.util.type.map.ChunkLayerMap;
 import team.creative.littletiles.client.render.cache.buffer.BufferCollection;
@@ -16,7 +16,7 @@ public class SectionCompilerResultsMixin implements SectionCompilerResultsExtend
     public ChunkLayerMap<BufferCollection> caches;
     
     @Override
-    public BufferCollection getOrCreate(RenderType layer) {
+    public BufferCollection getOrCreate(ChunkSectionLayer layer) {
         if (caches == null)
             caches = new ChunkLayerMap<>();
         BufferCollection cache = caches.get(layer);

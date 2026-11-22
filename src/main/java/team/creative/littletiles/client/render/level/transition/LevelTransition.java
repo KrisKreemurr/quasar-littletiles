@@ -1,5 +1,6 @@
 package team.creative.littletiles.client.render.level.transition;
 
+import team.creative.creativecore.common.util.type.map.ChunkLayerMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,7 +13,7 @@ import javax.annotation.Nullable;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.Level;
@@ -115,7 +116,7 @@ public class LevelTransition {
                 markReadyForUpdate();
         }
         
-        public synchronized void onSectionUploads(@Nullable Function<RenderType, ChunkBufferUploader> builderSupplier, Function<RenderType, BufferCollection> bufferSupplier) {
+        public synchronized void onSectionUploads(@Nullable Function<ChunkSectionLayer, ChunkBufferUploader> builderSupplier, Function<ChunkSectionLayer, BufferCollection> bufferSupplier) {
             if (deleteAndRemoveIfEmpty())
                 sections.remove(pos.asLong());
             else if (LittleTiles.CONFIG.rendering.uploadToVBODirectly)
@@ -177,7 +178,7 @@ public class LevelTransition {
             Vec3 vec = RenderingLevelHandler.offsetCorrection(target, targetLevel, origin, originLevel, pos);
             int sectionIndex = target.sectionIndex(targetLevel, pos.asLong());
             LayeredBufferCache layers = new LayeredBufferCache();
-            for (RenderType layer : RenderType.CHUNK_BUFFER_LAYERS) {
+            for (ChunkSectionLayer layer : ChunkLayerMap.LAYERS) {
                 BufferCache holder = cache.getIncludingAdditional(layer);
                 if (holder == null || !holder.isAvailable())
                     continue;

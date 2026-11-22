@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.SectionBufferBuilderPack;
 import net.minecraft.client.renderer.chunk.RenderChunkRegion;
 import net.minecraft.client.renderer.chunk.SectionCompiler;
@@ -51,7 +51,7 @@ public abstract class RebuildTaskMixin {
                 ((RenderChunkExtender) this$1).prepareUpload();
                 var caches = ((SectionCompilerResultsExtender) (Object) results).getCaches();
                 if (caches != null)
-                    for (Tuple<RenderType, BufferCollection> tuple : caches.tuples())
+                    for (Tuple<ChunkSectionLayer, BufferCollection> tuple : caches.tuples())
                         ((RenderChunkExtender) this$1).uploaded(tuple.key, tuple.value);
             }
         }));

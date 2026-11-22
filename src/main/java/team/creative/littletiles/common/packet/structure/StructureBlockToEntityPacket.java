@@ -1,10 +1,11 @@
 package team.creative.littletiles.common.packet.structure;
 
+import team.creative.creativecore.common.util.type.map.ChunkLayerMap;
 import java.util.UUID;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -57,7 +58,7 @@ public class StructureBlockToEntityPacket extends StructurePacket {
                     continue;
                 targetBE.render.additionalBuffers(x -> {
                     LayeredBufferCache layers = new LayeredBufferCache();
-                    for (RenderType layer : RenderType.CHUNK_BUFFER_LAYERS) {
+                    for (ChunkSectionLayer layer : ChunkLayerMap.LAYERS) {
                         BufferCache holder = be.render.buffers().extract(layer, structure.getIndex());
                         if (holder == null)
                             continue;
