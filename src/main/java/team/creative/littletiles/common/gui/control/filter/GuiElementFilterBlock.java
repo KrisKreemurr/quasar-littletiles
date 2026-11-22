@@ -19,6 +19,7 @@ public class GuiElementFilterBlock extends GuiElementFilter {
     protected GuiStackSelector selector;
     
     public GuiElementFilterBlock(IGuiParent parent, Player player, Block block) {
+        super(parent);
         add(selector = new GuiStackSelector(this, "filter", player, LittleGuiUtils.getCollector(player), true));
         if (block != null)
             selector.setSelectedForce(new ItemStack(block));

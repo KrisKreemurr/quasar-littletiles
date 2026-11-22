@@ -29,6 +29,7 @@ public class GuiElementFilterGroup extends GuiElementFilter {
     protected GuiStateButton<GuiElementFilterOperator> operator;
     
     public GuiElementFilterGroup(IGuiParent parent, Player player, GuiElementFilterOperator operator, BiFilter<IParentCollection, LittleTile>... filters) {
+        super(parent);
         add(list = new GuiListBoxBase<>(this, "list", true, new ArrayList<>(Stream.of(filters).map(x -> GuiElementFilter.of(player, x)).toList())));
         list.setExpandable();
         list.setDim(new GuiSizeRules().minHeight(40));

@@ -14,6 +14,7 @@ public class GuiElementFilterColor extends GuiElementFilter {
     protected GuiColorPicker color;
     
     public GuiElementFilterColor(IGuiParent parent, int color) {
+        super(parent);
         add(this.color = new GuiColorPicker(this, "name", new Color(color), true, 0));
     }
     

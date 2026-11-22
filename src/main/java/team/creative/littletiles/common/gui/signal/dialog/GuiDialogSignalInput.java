@@ -65,7 +65,7 @@ public class GuiDialogSignalInput extends GuiLayer {
             @Override
             public void load(GuiSignalNodeInput input, GuiParent panel) {
                 panel.add(
-                    new GuiStateButton<SignalLogicOperator>(this, "operation", input.logic == null ? SignalLogicOperator.AND : input.logic, new TextMapBuilder<SignalLogicOperator>()
+                    new GuiStateButton<SignalLogicOperator>(panel, "operation", input.logic == null ? SignalLogicOperator.AND : input.logic, new TextMapBuilder<SignalLogicOperator>()
                             .addComponent(SignalLogicOperator.NON_BITWISE_OPERATORS, x -> Component.literal(x.display))));
             }
             
@@ -80,14 +80,14 @@ public class GuiDialogSignalInput extends GuiLayer {
             @Override
             public void load(GuiSignalNodeInput input, GuiParent panel) {
                 for (int i = 0; i < bandwidth; i++) {
-                    GuiParent line = new GuiParent(this, GuiFlow.STACK_X);
+                    GuiParent line = new GuiParent(panel, GuiFlow.STACK_X);
                     panel.add(line.setExpandableX());
                     int state = 2;
                     if (input.pattern != null && input.pattern.length > i)
                         state = input.pattern[i];
                     
-                    line.add(new GuiLabel(this, "label" + i).setTitle(Component.literal(i + ":")));
-                    line.add(new GuiStateButton<Integer>(this, i + "", state, new TextMapBuilder<Integer>().addComponent(0, Component.translatable("gui.false")).addComponent(1, Component
+                    line.add(new GuiLabel(panel, "label" + i).setTitle(Component.literal(i + ":")));
+                    line.add(new GuiStateButton<Integer>(panel, i + "", state, new TextMapBuilder<Integer>().addComponent(0, Component.translatable("gui.false")).addComponent(1, Component
                             .translatable("gui.true")).addComponent(2, Component.translatable("gui.ignore"))));
                 }
             }
@@ -107,10 +107,10 @@ public class GuiDialogSignalInput extends GuiLayer {
             
             @Override
             public void load(GuiSignalNodeInput input, GuiParent panel) {
-                GuiParent line = new GuiParent(this, GuiFlow.STACK_X);
+                GuiParent line = new GuiParent(panel, GuiFlow.STACK_X);
                 panel.add(line.setExpandableX());
-                line.add(new GuiLabel(this, "label").setTitle(Component.literal("d<index>")));
-                line.add(new GuiTextfield(this, "equation", input.equation != null ? input.equation.write() : "").setDim(100));
+                line.add(new GuiLabel(panel, "label").setTitle(Component.literal("d<index>")));
+                line.add(new GuiTextfield(panel, "equation", input.equation != null ? input.equation.write() : "").setDim(100));
                 
             }
             

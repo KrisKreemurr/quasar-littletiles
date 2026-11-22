@@ -323,6 +323,7 @@ public class LittleDoorAdvancedGui extends LittleStructureGuiControl {
         public GuiAnimationTimelinePanel closing;
         
         public GuiTimelineConfigDifferent(IGuiParent parent, GuiTreeItemStructure item, GuiBlueprintAnimationHandler handler, PhysicalState closedState, PhysicalState openedState, int duration, AnimationTimeline opening, AnimationTimeline closing) {
+            super(parent);
             setFlow(GuiFlow.STACK_Y);
             
             GuiParent stateConfig = new GuiParent(this);
@@ -382,7 +383,7 @@ public class LittleDoorAdvancedGui extends LittleStructureGuiControl {
         private GuiTimelineKey<Double> end;
         
         public GuiAdvancedTimelineChannel(IGuiParent parent, GuiTimeline timeline, boolean distance, boolean limited) {
-            super(parent, timeline);
+            super(timeline);
             this.distance = distance;
             this.limited = limited;
             updateFixedKeys();

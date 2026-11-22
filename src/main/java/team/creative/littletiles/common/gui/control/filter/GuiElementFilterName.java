@@ -13,6 +13,7 @@ public class GuiElementFilterName extends GuiElementFilter {
     protected GuiTextfield textfield;
     
     public GuiElementFilterName(IGuiParent parent, String name) {
+        super(parent);
         add(textfield = new GuiTextfield(this, "name").setText(name));
         textfield.setExpandableX();
     }

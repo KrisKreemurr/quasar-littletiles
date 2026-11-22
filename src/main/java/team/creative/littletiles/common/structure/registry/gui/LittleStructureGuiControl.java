@@ -17,6 +17,7 @@ public abstract class LittleStructureGuiControl extends GuiParent {
     public final GuiTreeItemStructure item;
     
     public LittleStructureGuiControl(IGuiParent parent, LittleStructureGui gui, GuiTreeItemStructure item) {
+        super(parent);
         this.gui = gui;
         this.item = item;
     }

@@ -14,6 +14,7 @@ import team.creative.littletiles.common.math.box.LittleBox;
 public class GuiIsoAnimationPanel extends GuiParent {
     
     public GuiIsoAnimationPanel(IGuiParent parent, GuiTreeItemStructure item, LittleBox box, LittleGrid grid, boolean even) {
+        super(parent);
         setFlow(GuiFlow.STACK_Y);
         setAlign(Align.STRETCH);
         GuiIsoAnimationViewer viewer = new GuiIsoAnimationViewer(this, "viewer", item, box, grid, even);

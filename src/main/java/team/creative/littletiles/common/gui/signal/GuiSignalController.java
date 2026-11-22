@@ -399,7 +399,7 @@ public class GuiSignalController extends GuiParent implements SignalContext {
     
     public void set(GuiSignalNode node, int col, int row) {
         boolean added = node.added();
-        node.setParent(this);
+        GuiControl.setParent(node, this);
         if (added)
             if (node.x() == col && node.y() == row)
                 return;

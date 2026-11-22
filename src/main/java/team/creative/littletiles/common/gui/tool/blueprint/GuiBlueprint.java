@@ -145,7 +145,7 @@ public class GuiBlueprint extends GuiConfigure {
         copy.addAll(group.getGrid(), new FunctionIterator<>(group, x -> x.copy()));
         for (Entry<String, LittleGroup> extension : group.children.extensionEntries())
             copy.children.addExtension(extension.getKey(), extension.getValue().copy());
-        GuiTreeItemStructure item = new GuiTreeItemStructure(this, tree, copy, index);
+        GuiTreeItemStructure item = new GuiTreeItemStructure(tree, this, tree, copy, index);
         parent.addItem(item);
         
         int i = 0;

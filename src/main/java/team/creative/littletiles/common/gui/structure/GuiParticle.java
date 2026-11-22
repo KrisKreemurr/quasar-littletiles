@@ -56,29 +56,29 @@ public class GuiParticle extends GuiLayer {
             
             @Override
             public void load(GuiParent parent, ParticleSpread spread) {
-                GuiTable table = new GuiTable(this);
+                GuiTable table = new GuiTable(parent);
                 parent.add(table);
-                GuiRow row = new GuiRow(this);
+                GuiRow row = new GuiRow(parent);
                 table.addRow(row);
-                GuiColumn col = new GuiColumn(this);
+                GuiColumn col = new GuiColumn(parent);
                 row.addColumn(col);
-                col.add(new GuiLabeledControl(this, "gui.particle.spread.speedy", new GuiCounterDecimal(this, "speedy", spread.speedY).setStep(0.05)));
+                col.add(new GuiLabeledControl(parent, "gui.particle.spread.speedy", new GuiCounterDecimal(parent, "speedy", spread.speedY).setStep(0.05)));
                 
-                col = new GuiColumn(this);
+                col = new GuiColumn(parent);
                 row.addColumn(col);
-                col.add(new GuiLabeledControl(this, "gui.particle.spread.spread", new GuiCounterDecimal(this, "deviation", spread.spread).setStep(0.05)));
+                col.add(new GuiLabeledControl(parent, "gui.particle.spread.spread", new GuiCounterDecimal(parent, "deviation", spread.spread).setStep(0.05)));
                 
-                row = new GuiRow(this);
+                row = new GuiRow(parent);
                 table.addRow(row);
                 
-                col = new GuiColumn(this);
+                col = new GuiColumn(parent);
                 row.addColumn(col);
-                col.add(new GuiLabeledControl(this, "gui.particle.spread.speedx", new GuiCounterDecimal(this, "speedx", spread instanceof ParticleSpreadRandom r ? r.speedX : 0.05).setStep(
+                col.add(new GuiLabeledControl(parent, "gui.particle.spread.speedx", new GuiCounterDecimal(parent, "speedx", spread instanceof ParticleSpreadRandom r ? r.speedX : 0.05).setStep(
                     0.1)));
                 
-                col = new GuiColumn(this);
+                col = new GuiColumn(parent);
                 row.addColumn(col);
-                col.add(new GuiLabeledControl(this, "gui.particle.spread.speedz", new GuiCounterDecimal(this, "speedz", spread instanceof ParticleSpreadRandom r ? r.speedZ : 0.05).setStep(
+                col.add(new GuiLabeledControl(parent, "gui.particle.spread.speedz", new GuiCounterDecimal(parent, "speedz", spread instanceof ParticleSpreadRandom r ? r.speedZ : 0.05).setStep(
                     0.1)));
             }
         });
@@ -96,29 +96,29 @@ public class GuiParticle extends GuiLayer {
             
             @Override
             public void load(GuiParent parent, ParticleSpread spread) {
-                GuiTable table = new GuiTable(this);
+                GuiTable table = new GuiTable(parent);
                 parent.add(table);
-                GuiRow row = new GuiRow(this);
+                GuiRow row = new GuiRow(parent);
                 table.addRow(row);
-                GuiColumn col = new GuiColumn(this);
+                GuiColumn col = new GuiColumn(parent);
                 row.addColumn(col);
-                col.add(new GuiLabeledControl(this, "gui.particle.spread.speedy", new GuiCounterDecimal(this, "speedy", spread.speedY).setStep(0.05)));
+                col.add(new GuiLabeledControl(parent, "gui.particle.spread.speedy", new GuiCounterDecimal(parent, "speedy", spread.speedY).setStep(0.05)));
                 
-                col = new GuiColumn(this);
+                col = new GuiColumn(parent);
                 row.addColumn(col);
-                col.add(new GuiLabeledControl(this, "gui.particle.spread.spread", new GuiCounterDecimal(this, "deviation", spread.spread).setStep(0.05)));
+                col.add(new GuiLabeledControl(parent, "gui.particle.spread.spread", new GuiCounterDecimal(parent, "deviation", spread.spread).setStep(0.05)));
                 
-                row = new GuiRow(this);
+                row = new GuiRow(parent);
                 table.addRow(row);
                 
-                col = new GuiColumn(this);
+                col = new GuiColumn(parent);
                 row.addColumn(col);
-                col.add(new GuiLabeledControl(this, "gui.particle.spread.radius", new GuiCounterDecimal(this, "radius", spread instanceof ParticleSpreadCircular c ? c.radius : 0.05).setStep(
+                col.add(new GuiLabeledControl(parent, "gui.particle.spread.radius", new GuiCounterDecimal(parent, "radius", spread instanceof ParticleSpreadCircular c ? c.radius : 0.05).setStep(
                     0.1)));
                 
-                col = new GuiColumn(this);
+                col = new GuiColumn(parent);
                 row.addColumn(col);
-                col.add(new GuiLabeledControl(this, "gui.particle.spread.steps", new GuiCounter(this, "steps", spread instanceof ParticleSpreadCircular c ? c.steps : 30)));
+                col.add(new GuiLabeledControl(parent, "gui.particle.spread.steps", new GuiCounter(parent, "steps", spread instanceof ParticleSpreadCircular c ? c.steps : 30)));
             }
         });
     }
@@ -203,6 +203,7 @@ public class GuiParticle extends GuiLayer {
         public ParticleSpread particleSpread;
         
         public GuiParticleControl(IGuiParent parent, ParticleSpread particleSpread, ParticleSettings settings, int particleCount, int particleDelay, boolean particleLocked) {
+            super(parent);
             this.particleSpread = particleSpread;
             this.setFlow(GuiFlow.STACK_Y);
             this.setAlign(Align.STRETCH);

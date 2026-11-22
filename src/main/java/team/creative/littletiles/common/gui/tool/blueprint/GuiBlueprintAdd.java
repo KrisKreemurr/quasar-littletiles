@@ -251,6 +251,7 @@ public class GuiBlueprintAdd extends GuiLayer implements GuiAnimationViewerStora
         public final ItemStack stack;
         
         public GuiBlueprintAddEntry(IGuiParent parent, ItemStack stack, Player player) {
+            super(parent);
             this.stack = stack;
             setFlow(GuiFlow.STACK_X);
             

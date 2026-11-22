@@ -59,6 +59,7 @@ public abstract class GuiElementFilter extends GuiParent {
     }
     
     public GuiElementFilter(IGuiParent parent) {
+        super(parent);
         setFlow(GuiFlow.STACK_Y);
         setAlign(Align.STRETCH);
     }

@@ -61,6 +61,7 @@ public class GuiMesaurementTape extends GuiConfigure {
         public final GuiColorPicker picker;
         
         public GuiMeasurement(IGuiParent parent, LittleMeasurement measurement) {
+            super(parent);
             this.measurement = measurement;
             this.picker = new GuiColorPicker(this, "color", new Color(measurement.color), true, 0);
             add(picker);
