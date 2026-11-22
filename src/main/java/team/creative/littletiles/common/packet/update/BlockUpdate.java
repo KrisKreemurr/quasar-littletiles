@@ -55,7 +55,7 @@ public class BlockUpdate extends CreativePacket {
         else
             level.setBlock(pos, state, 3);
         if (tag != null)
-            level.getBlockEntity(pos).loadWithComponents(tag, level.registryAccess());
+            level.getBlockEntity(pos).loadWithComponents(net.minecraft.world.level.storage.TagValueInput.create(net.minecraft.util.ProblemReporter.DISCARDING, level.registryAccess(), tag));
     }
     
     @Override

@@ -79,11 +79,11 @@ public class BlocksUpdate extends CreativePacket {
             if (level instanceof ClientLevel c) {
                 c.setBlocksDirty(positions.get(i), states.get(i), states.get(i));
                 if (tags.get(i) != null)
-                    level.getBlockEntity(positions.get(i)).loadWithComponents(tags.get(i), level.registryAccess());
+                    level.getBlockEntity(positions.get(i)).loadWithComponents(net.minecraft.world.level.storage.TagValueInput.create(net.minecraft.util.ProblemReporter.DISCARDING, level.registryAccess(), tags.get(i)));
             } else {
                 level.setBlock(positions.get(i), states.get(i), 3);
                 if (tags.get(i) != null)
-                    level.getBlockEntity(positions.get(i)).loadWithComponents(tags.get(i), level.registryAccess());
+                    level.getBlockEntity(positions.get(i)).loadWithComponents(net.minecraft.world.level.storage.TagValueInput.create(net.minecraft.util.ProblemReporter.DISCARDING, level.registryAccess(), tags.get(i)));
             }
             
         }

@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.entity;
 
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.server.level.ServerLevel;
 import team.creative.littletiles.common.util.QuasarNbtBridge;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
@@ -127,5 +129,11 @@ public class EntitySit extends Entity implements ILevelPositionProvider, INoPush
         CompoundTag nbt = new CompoundTag();
         addAdditionalSaveData(nbt);
         QuasarNbtBridge.write(output, nbt);
+    }
+
+    // Quasar MC: 26.3 makes every entity implement server-side damage. LittleTiles' technical entities never take damage.
+    @Override
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
+        return false;
     }
 }

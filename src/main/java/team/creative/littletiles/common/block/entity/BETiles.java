@@ -1,5 +1,8 @@
 package team.creative.littletiles.common.block.entity;
 
+import team.creative.littletiles.common.util.QuasarNbtBridge;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -458,10 +461,32 @@ public class BETiles extends BlockEntityCreative implements IGridBased, ILittleB
         return isSpaceFor(box, (Predicate<LittleTile>) null);
     }
     
+    // Quasar MC: 26.3 block entities save through ValueInput/ValueOutput. The tile data keeps its exact
+    // 1.21.1 CompoundTag layout (QuasarNbtBridge), so old worlds load unchanged.
     @Override
-    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider provider) {
-        super.loadAdditional(nbt, provider);
-        
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        loadTiles(QuasarNbtBridge.read(input), input.lookup());
+    }
+    
+    @Override
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        CompoundTag nbt = new CompoundTag();
+        saveTiles(nbt, quasar$registries());
+        QuasarNbtBridge.write(output, nbt);
+    }
+    
+    private HolderLookup.Provider quasar$registries() {
+        if (level != null)
+            return level.registryAccess();
+        var server = net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer();
+        if (server != null)
+            return server.registryAccess();
+        return net.minecraft.core.RegistryAccess.EMPTY;
+    }
+    
+    protected void loadTiles(CompoundTag nbt, HolderLookup.Provider provider) {
         if (tiles == null)
             init();
         
@@ -490,9 +515,7 @@ public class BETiles extends BlockEntityCreative implements IGridBased, ILittleB
         return new int[] { box.minX, box.minY, box.minZ };
     }
     
-    @Override
-    protected void saveAdditional(CompoundTag nbt, Provider provider) {
-        super.saveAdditional(nbt, provider);
+    protected void saveTiles(CompoundTag nbt, Provider provider) {
         grid.set(nbt);
         //add null value when tiles is null,this will cause NPE in some hybrid server
         if (tiles == null)
@@ -503,9 +526,13 @@ public class BETiles extends BlockEntityCreative implements IGridBased, ILittleB
     }
     
     @Override
+    public void handleUpdate(ValueInput input, boolean chunkUpdate) {
+        handleUpdate(QuasarNbtBridge.read(input), chunkUpdate);
+    }
+    
     @OnlyIn(Dist.CLIENT)
     public void handleUpdate(CompoundTag nbt, boolean chunkUpdate) {
-        loadAdditional(nbt, level.registryAccess());
+        loadTiles(nbt, level.registryAccess());
         if (!chunkUpdate)
             updateTiles(false, false);
     }
