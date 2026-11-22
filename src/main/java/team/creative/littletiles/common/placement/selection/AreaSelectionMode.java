@@ -1,5 +1,6 @@
 package team.creative.littletiles.common.placement.selection;
 
+import team.creative.littletiles.common.mod.sable.SableManager;
 import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nullable;
 
@@ -24,7 +25,6 @@ import team.creative.littletiles.common.grid.LittleGrid;
 import team.creative.littletiles.common.item.component.SelectionComponent;
 import team.creative.littletiles.common.level.context.ILittleLevelContext;
 import team.creative.littletiles.common.math.vec.BlockPosLevel;
-import team.creative.littletiles.common.mod.sable.SableContext;
 
 public class AreaSelectionMode extends SelectionMode {
     
@@ -112,7 +112,7 @@ public class AreaSelectionMode extends SelectionMode {
         BlockPos realMin = BlockPos.containing(pos.context.toRealWorld(Vec3.atCenterOf(pos.pos)));
         BlockPos realMax = BlockPos.containing(pos2.context.toRealWorld(Vec3.atCenterOf(pos2.pos)));
         AABB bb = new AABB(realMin.getX(), realMin.getY(), realMin.getZ(), realMax.getX() + 1, realMax.getY() + 1, realMax.getZ() + 1);
-        if (!(pos.context instanceof SableContext)) {
+        if (!(SableManager.isSableContext(pos.context))) {
             minX = Math.min(realMin.getX(), realMax.getX());
             minY = Math.min(realMin.getY(), realMax.getY());
             minZ = Math.min(realMin.getZ(), realMax.getZ());

@@ -142,6 +142,18 @@ public non-sealed class LittleFace implements ILittleFace {
         return true;
     }
     
+    /** 26.x FaceInfo uses an Extent enum; LittleTiles indexes by the old direction ids (FaceInfo.Constants). */
+    private static int index(FaceInfo.Extent extent) {
+        return switch (extent) {
+            case MIN_X -> 4;
+            case MIN_Y -> 0;
+            case MIN_Z -> 2;
+            case MAX_X -> 5;
+            case MAX_Y -> 1;
+            case MAX_Z -> 3;
+        };
+    }
+    
     private float get(LittleBox box, int index) {
         Facing direction = Facing.get(index);
         if (direction.axis == one)
@@ -209,9 +221,9 @@ public non-sealed class LittleFace implements ILittleFace {
             for (int i = 0; i < coords.length; i++) {
                 VertexInfo info = face.getVertexInfo(i);
                 Vec3f vec = new Vec3f();
-                vec.x = get(box, info.xFace());
-                vec.y = get(box, info.yFace());
-                vec.z = get(box, info.zFace());
+                vec.x = get(box, index(info.xFace()));
+                vec.y = get(box, index(info.yFace()));
+                vec.z = get(box, index(info.zFace()));
                 coords[i] = vec;
             }
             fans.add(new VectorFan(coords));

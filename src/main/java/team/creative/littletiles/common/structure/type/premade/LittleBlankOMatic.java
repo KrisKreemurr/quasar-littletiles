@@ -24,8 +24,15 @@ public class LittleBlankOMatic extends LittleStructurePremade {
     
     @Override
     protected void loadExtra(CompoundTag nbt, HolderLookup.Provider provider) {
-        inventory = InventoryUtils.load(getStructureLevel().registryAccess(), nbt.getCompoundOrEmpty("inv"), 1);
-        inventory.addListener(x -> markDirty());
+        SimpleContainer loaded = InventoryUtils.load(getStructureLevel().registryAccess(), nbt.getCompoundOrEmpty("inv"), 1);
+        inventory = new SimpleContainer(1) {
+            @Override
+            public void setChanged() {
+                super.setChanged();
+                markDirty();
+            }
+        };
+        inventory.setItem(0, loaded.getItem(0));
         whiteColor = nbt.getIntOr("white", 0);
     }
     

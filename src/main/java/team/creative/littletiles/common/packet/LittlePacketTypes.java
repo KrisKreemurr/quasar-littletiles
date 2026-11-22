@@ -457,9 +457,7 @@ public class LittlePacketTypes {
             @Override
             protected PlacementPreview readContent(RegistryFriendlyByteBuf buffer) {
                 if (buffer.readBoolean())
-                    return new PlacementPreviewAdd(NetworkFieldTypes.read(StructureLocation.class, (CreativeByteBuf) buffer, null), buffer.readBoolean() ? buffer.readUUID() : null, NetworkFieldTypes
-                            .read(LittleGroup.class, buffer, null), NetworkFieldTypes.read(PlacementMode.class, (CreativeByteBuf) buffer, null), NetworkFieldTypes.read(PlacementPosition.class,
-                                buffer, null));
+                    return new PlacementPreviewAdd(NetworkFieldTypes.read(StructureLocation.class, (CreativeByteBuf) buffer, null), buffer.readBoolean() ? buffer.readUUID() : null, NetworkFieldTypes.read(LittleGroup.class, (CreativeByteBuf) buffer, null), NetworkFieldTypes.read(PlacementMode.class, (CreativeByteBuf) buffer, null), NetworkFieldTypes.read(PlacementPosition.class, (CreativeByteBuf) buffer, null));
                 return PlacementPreview.load(buffer.readBoolean() ? buffer.readUUID() : null, NetworkFieldTypes.read(LittleGroup.class, (CreativeByteBuf) buffer, null), NetworkFieldTypes.read(
                     PlacementMode.class, (CreativeByteBuf) buffer, null), NetworkFieldTypes.read(PlacementPosition.class, (CreativeByteBuf) buffer, null));
             }

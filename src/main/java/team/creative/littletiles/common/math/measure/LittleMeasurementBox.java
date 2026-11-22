@@ -56,7 +56,6 @@ public class LittleMeasurementBox extends LittleMeasurementSimple {
         matrix.pushMatrix();
         var pos = box.pos;
         box.context.transformMatrix(matrix, pos.getX(), pos.getY(), pos.getZ(), cam, partialTickTime);
-        RenderSystem.applyModelViewMatrix();
         
         cam = box.context.toFakeWorld(cam, partialTickTime);
         Facing x = cam.x < bb.maxX ? Facing.WEST : null;
@@ -75,7 +74,6 @@ public class LittleMeasurementBox extends LittleMeasurementSimple {
         
         displayLine(renderer, overlay, cam, bb, x, y, z);
         matrix.popMatrix();
-        RenderSystem.applyModelViewMatrix();
     }
     
     @Override

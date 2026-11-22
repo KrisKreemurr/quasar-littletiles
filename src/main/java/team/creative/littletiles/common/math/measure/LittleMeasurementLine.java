@@ -51,7 +51,6 @@ public class LittleMeasurementLine extends LittleMeasurementSimple {
         
         matrix.pushMatrix();
         first.context.transformMatrix(matrix, pos.getX(), pos.getY(), pos.getZ(), cam, partialTickTime);
-        RenderSystem.applyModelViewMatrix();
         
         cam = first.context.toFakeWorld(cam, partialTickTime);
         cam = cam.subtract(cam.x - pos.getX(), cam.y - pos.getY(), cam.z - pos.getZ());
@@ -59,7 +58,6 @@ public class LittleMeasurementLine extends LittleMeasurementSimple {
         overlay.renderLabel(cam, center, displayLength(length), ColorUtils.WHITE);
         
         matrix.popMatrix();
-        RenderSystem.applyModelViewMatrix();
     }
     
     @Override
@@ -114,12 +112,8 @@ public class LittleMeasurementLine extends LittleMeasurementSimple {
     
     @Override
     public RenderMeasurementResult build(PreviewRenderer renderer, PoseStack pose, BufferBuilder builder, Vec3 cam) {
-        var pos = first.pos;
-        Vec3f normal = new Vec3f();
-        VectorFan.setLineNormal(normal, (float) start.x, (float) start.y, (float) start.z, (float) end.x, (float) end.y, (float) end.z);
-        builder.addVertex(pose.last().pose(), (float) start.x, (float) start.y, (float) start.z).setColor(color).setNormal(pose.last(), normal.x, normal.y, normal.z);
-        builder.addVertex(pose.last().pose(), (float) end.x, (float) end.y, (float) end.z).setColor(color).setNormal(pose.last(), normal.x, normal.y, normal.z);
-        return new RenderMeasurementResult(first.context, pos, builder);
+        // TODO(quasar): line drawing parked for the render rewrite (see upstream 1.21 LittleMeasurementLine.build)
+        return null;
     }
     
 }

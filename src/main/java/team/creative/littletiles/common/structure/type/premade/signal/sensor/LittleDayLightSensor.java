@@ -20,7 +20,7 @@ public class LittleDayLightSensor extends LittleStructurePremade {
     
     @Override
     public void tick() {
-        getInput(0).updateState(SignalState.of(getComponentLevel().isDay()));
+        getInput(0).updateState(SignalState.of(getComponentLevel().isBrightOutside()));
     }
     
 }

@@ -98,7 +98,7 @@ public class LittleParticleEmitter extends LittleStructurePremade {
             AABB bb = getSurroundingBox().getAABB();
             Vec3d pos = new Vec3d(0, 0.5, 0);
             Vec3d speed = spread.generate();
-            float partialTick = mc.getTimer().getGameTimeDeltaPartialTick(false);
+            float partialTick = mc.getDeltaTracker().getGameTimeDeltaPartialTick(false);
             
             Rotation rotation = null;
             switch (facing) {

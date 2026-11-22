@@ -316,7 +316,7 @@ public abstract class LittleStateStructure<T extends AnimationState> extends Lit
     private void playClient(SoundEvent event, float volume, float pitch) {
         var entity = getAnimationEntity();
         if (entity != null)
-            GuiControl.playSound(new EntitySound(event, getAnimationEntity(), volume, pitch, SoundSource.BLOCKS));
+            net.minecraft.client.Minecraft.getInstance().getSoundManager().play(new EntitySound(event, getAnimationEntity(), volume, pitch, SoundSource.BLOCKS));
         else
             getStructureLevel().playLocalSound(getStructurePos(), event, SoundSource.BLOCKS, volume, pitch, false);
     }

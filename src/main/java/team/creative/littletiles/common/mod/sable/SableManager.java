@@ -38,6 +38,11 @@ public class SableManager {
         return ILittleLevelContext.STANDARD;
     }
     
+    /** Quasar: Sable isn't in the build, so no context is ever a Sable context. */
+    public static boolean isSableContext(Object context) {
+        return false;
+    }
+    
     public static boolean isSubLevel(LevelAccessor level, BlockPos pos) {
         if (INSTALLED)
             throw new IllegalStateException("Sable compat is not built");

@@ -2,7 +2,6 @@ package team.creative.littletiles.common.structure.type.premade;
 
 import java.util.function.BiFunction;
 
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.core.component.DataComponents;
@@ -58,7 +57,7 @@ public abstract class LittleStructurePremade extends LittleStructure {
         public boolean snapToGrid = true;
         public boolean itemTexture = false;
         @OnlyIn(Dist.CLIENT)
-        private ModelResourceLocation texture;
+        private Identifier texture;
         
         public <T extends LittleStructurePremade> LittlePremadeType(String id, String path, Class<T> structureClass, BiFunction<? extends LittlePremadeType, IStructureParentCollection, T> factory, LittleAttributeBuilder attribute, String modid) {
             super(id, structureClass, factory, attribute.premade());
@@ -76,9 +75,9 @@ public abstract class LittleStructurePremade extends LittleStructure {
         }
         
         @OnlyIn(Dist.CLIENT)
-        public ModelResourceLocation getItemTexture() {
+        public Identifier getItemTexture() {
             if (texture == null)
-                texture = new ModelResourceLocation(Identifier.tryBuild(modid, "item/premade/" + path + "" + id), ModelResourceLocation.STANDALONE_VARIANT);
+                texture = Identifier.tryBuild(modid, "item/premade/" + path + "" + id);
             return texture;
         }
         

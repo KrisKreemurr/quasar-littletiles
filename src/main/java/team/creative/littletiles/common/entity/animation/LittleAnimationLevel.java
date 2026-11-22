@@ -1,5 +1,6 @@
 package team.creative.littletiles.common.entity.animation;
 
+import net.minecraft.world.level.storage.LevelData;
 import net.neoforged.neoforge.entity.PartEntity;
 import java.util.Collection;
 import net.minecraft.world.clock.ClockManager;
@@ -517,6 +518,14 @@ public class LittleAnimationLevel extends Level implements LittleSubLevel, Itera
     @Override
     public Collection<? extends PartEntity<?>> dragonParts() {
         return Collections.emptyList();
+    }
+    
+    @Override
+    public void setRespawnData(LevelData.RespawnData data) {}
+    
+    @Override
+    public LevelData.RespawnData getRespawnData() {
+        return parentLevel.getRespawnData();
     }
     
     @Override

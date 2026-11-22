@@ -234,7 +234,7 @@ public abstract class LittleEntity<T extends LittleEntityPhysic> extends Entity 
             entitiesToAdd = new ArrayList<>();
             ListTag list = nbt.getListOrEmpty("entities");
             for (int i = 0; i < list.size(); i++)
-                EntityType.create(TagValueInput.create(ProblemReporter.DISCARDING, registryAccess(), list.getCompoundOrEmpty(i)), (Level) subLevel, new EntitySpawnRequest(EntitySpawnReason.LOAD)).ifPresent(entitiesToAdd::add);
+                EntityType.create(TagValueInput.create(ProblemReporter.DISCARDING, registryAccess(), list.getCompoundOrEmpty(i)), (Level) subLevel, new EntitySpawnRequest(EntitySpawnReason.LOAD, false)).ifPresent(entitiesToAdd::add);
         } else
             entitiesToAdd = null;
     }

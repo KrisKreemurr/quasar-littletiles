@@ -144,12 +144,7 @@ public enum TransformMode implements StringRepresentable {
         
         @Override
         public void render(PreviewRenderer renderer, PoseStack pose, BlockPos pos, int marked, LittleBoxLevel box, LittleBoxAbsolute[] corners) {
-            var builder = renderer.createTesselatorBuilder(true);
-            if (marked >= 0 && marked < Facing.VALUES.length) {
-                var bb = box.getRenderingBoxWithoutOffset();
-                bb.buildLinesFace(pose, builder, 255, Facing.VALUES[marked], bb.getCenter(), 0.001, true);
-                renderer.drawLines(builder.build(), true);
-            }
+            // TODO(quasar): marked-face outline parked for the render rewrite (RenderBox.buildLinesFace)
         }
     };
     

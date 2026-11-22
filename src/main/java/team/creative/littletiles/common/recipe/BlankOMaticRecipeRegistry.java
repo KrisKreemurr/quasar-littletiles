@@ -53,11 +53,11 @@ public class BlankOMaticRecipeRegistry {
     static {
         registerBleacher(new CreativeIngredientItem(Items.BONE_MEAL), 4);
         registerBleacher(new CreativeIngredientItem(BuiltInRegistries.ITEM.getValue(Identifier.withDefaultNamespace("white_dye"))), 4);
-        registerBleacher(new CreativeIngredientItem(Items.LIGHT_GRAY_DYE), 2);
-        registerBleacher(new CreativeIngredientItem(Items.GRAY_DYE), 1);
-        registerBleacher(new CreativeIngredientBlock(Blocks.WHITE_WOOL), 8);
-        registerBleacher(new CreativeIngredientBlock(Blocks.LIGHT_GRAY_WOOL), 4);
-        registerBleacher(new CreativeIngredientBlock(Blocks.GRAY_WOOL), 2);
+        registerBleacher(new CreativeIngredientItem(BuiltInRegistries.ITEM.getValue(Identifier.withDefaultNamespace("light_gray_dye"))), 2);
+        registerBleacher(new CreativeIngredientItem(BuiltInRegistries.ITEM.getValue(Identifier.withDefaultNamespace("gray_dye"))), 1);
+        registerBleacher(new CreativeIngredientBlock(BuiltInRegistries.BLOCK.getValue(Identifier.withDefaultNamespace("white_wool"))), 8);
+        registerBleacher(new CreativeIngredientBlock(BuiltInRegistries.BLOCK.getValue(Identifier.withDefaultNamespace("light_gray_wool"))), 4);
+        registerBleacher(new CreativeIngredientBlock(BuiltInRegistries.BLOCK.getValue(Identifier.withDefaultNamespace("gray_wool"))), 2);
         registerBleacher(new CreativeIngredientItem(Items.AZURE_BLUET), 4); // Azure Bluet
         registerBleacher(new CreativeIngredientItem(Items.OXEYE_DAISY), 4); // Oxeye Daisy
         registerBleacher(new CreativeIngredientItem(Items.WHITE_TULIP), 4);

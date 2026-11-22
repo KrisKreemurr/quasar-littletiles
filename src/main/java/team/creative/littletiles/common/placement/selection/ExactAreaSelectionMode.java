@@ -1,5 +1,6 @@
 package team.creative.littletiles.common.placement.selection;
 
+import team.creative.littletiles.common.mod.sable.SableManager;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.item.ItemStack;
@@ -25,7 +26,6 @@ import team.creative.littletiles.common.level.context.ILittleLevelContext;
 import team.creative.littletiles.common.math.box.LittleBoxLevel;
 import team.creative.littletiles.common.math.vec.LittleVec;
 import team.creative.littletiles.common.math.vec.LittleVecGrid;
-import team.creative.littletiles.common.mod.sable.SableContext;
 import team.creative.littletiles.common.placement.PlacementHelper;
 
 public class ExactAreaSelectionMode extends SelectionMode {
@@ -124,7 +124,7 @@ public class ExactAreaSelectionMode extends SelectionMode {
         
         level = pos1.context.asLevel(level);
         AABB bb;
-        if (pos1.context instanceof SableContext)
+        if (SableManager.isSableContext(pos1.context))
             bb = pos1.toAABB();
         else
             bb = new AABB(pos1.context.toRealWorld(pos1.getMin().getVec3()), pos1.context.toRealWorld(pos1.getMax().getVec3()));

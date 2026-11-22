@@ -39,7 +39,6 @@ public class LittleMeasurementArea extends LittleMeasurementBox {
         matrix.pushMatrix();
         var pos = first.pos;
         first.context.transformMatrix(matrix, pos.getX(), pos.getY(), pos.getZ(), cam, partialTickTime);
-        RenderSystem.applyModelViewMatrix();
         
         var center = bb.getCenter();
         var camFake = box.context.toFakeWorld(cam, partialTickTime);
@@ -61,7 +60,6 @@ public class LittleMeasurementArea extends LittleMeasurementBox {
             displayFace(renderer, overlay, cam, bb, center, Facing.NORTH);
         
         matrix.popMatrix();
-        RenderSystem.applyModelViewMatrix();
     }
     
     private void displayFace(PreviewRenderer renderer, OverlayRenderer overlay, Vec3 cam, AABB bb, Vec3 center, Facing facing) {

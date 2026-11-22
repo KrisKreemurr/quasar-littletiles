@@ -38,12 +38,10 @@ public class LittleMeasurementVolume extends LittleMeasurementBox {
         matrix.pushMatrix();
         var pos = box.pos;
         first.context.transformMatrix(matrix, pos.getX(), pos.getY(), pos.getZ(), cam, partialTickTime);
-        RenderSystem.applyModelViewMatrix();
         
         cam = box.context.toFakeWorld(cam, partialTickTime);
         cam = cam.subtract(cam.x - pos.getX(), cam.y - pos.getY(), cam.z - pos.getZ());
         overlay.renderLabel(cam, new Vec3d(center), displayVolume(bb.getXsize() * bb.getYsize() * bb.getZsize()), ColorUtils.WHITE);
         matrix.popMatrix();
-        RenderSystem.applyModelViewMatrix();
     }
 }

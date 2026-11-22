@@ -64,7 +64,7 @@ public class LittleBlockRegistry {
         StringBuilder name = new StringBuilder();
         name.append(state.getBlock().builtInRegistryHolder().key().identifier());
         if (!state.getValues().toList().isEmpty())
-            name.append('[').append(state.getValues().map(StateHolderAccessor.getPROPERTY_ENTRY_TO_STRING_FUNCTION()).collect(Collectors.joining(","))).append(
+            name.append('[').append(state.getValues().map(v -> v.property().getName() + "=" + v.valueName()).collect(Collectors.joining(","))).append(
                 ']');
         return name.toString();
     }
@@ -87,7 +87,7 @@ public class LittleBlockRegistry {
         } catch (IdentifierException e) {
             return LittleTilesRegistry.MISSING.value().defaultBlockState();
         }
-        Block block = BuiltInRegistries.BLOCK.get(location);
+        Block block = BuiltInRegistries.BLOCK.getValue(location);
         if (block == null || block instanceof AirBlock) {
             if (checkOld) {
                 String converted = OldLittleTilesDataParser.BLOCK_MAP.get(name);

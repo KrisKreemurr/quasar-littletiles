@@ -16,6 +16,9 @@ public class LittleBlockClientRegistry {
 
     public static synchronized boolean isTranslucentInGui(LittleBlock block) { return false; }
 
+    /** Quasar placeholder: everything opaque goes to SOLID until the render rewrite asks the block model for its layer. */
+    public static synchronized boolean canRenderInLayer(LittleBlock block, ChunkSectionLayer layer) { return layer == ChunkSectionLayer.SOLID; }
+
     public static synchronized void clearCache() {}
 
 }
