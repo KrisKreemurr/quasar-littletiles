@@ -674,7 +674,7 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
         Entity entity = this.level.getEntity(packet.playerId());
         if (entity == mc.player)
             if (mc.player.shouldShowDeathScreen())
-                mc.setScreen(new DeathScreen(packet.message(), this.level.getLevelData().isHardcore(), mc.player));
+                mc.gui.setScreen(new DeathScreen(packet.message(), this.level.getLevelData().isHardcore(), mc.player));
             else
                 mc.player.respawn();
     }
