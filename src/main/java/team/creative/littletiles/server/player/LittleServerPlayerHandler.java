@@ -1,5 +1,8 @@
 package team.creative.littletiles.server.player;
 
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.server.permissions.Permissions;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -16,7 +19,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
-import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -52,7 +55,6 @@ import net.minecraft.network.protocol.game.ServerboundContainerButtonClickPacket
 import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
 import net.minecraft.network.protocol.game.ServerboundContainerSlotStateChangedPacket;
-import net.minecraft.network.protocol.game.ServerboundDebugSampleSubscriptionPacket;
 import net.minecraft.network.protocol.game.ServerboundEditBookPacket;
 import net.minecraft.network.protocol.game.ServerboundEntityTagQueryPacket;
 import net.minecraft.network.protocol.game.ServerboundInteractPacket;
@@ -61,7 +63,6 @@ import net.minecraft.network.protocol.game.ServerboundLockDifficultyPacket;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.network.protocol.game.ServerboundMoveVehiclePacket;
 import net.minecraft.network.protocol.game.ServerboundPaddleBoatPacket;
-import net.minecraft.network.protocol.game.ServerboundPickItemPacket;
 import net.minecraft.network.protocol.game.ServerboundPlaceRecipePacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerAbilitiesPacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
@@ -80,7 +81,6 @@ import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket;
 import net.minecraft.network.protocol.game.ServerboundSetJigsawBlockPacket;
 import net.minecraft.network.protocol.game.ServerboundSetStructureBlockPacket;
 import net.minecraft.network.protocol.game.ServerboundSignUpdatePacket;
-import net.minecraft.network.protocol.game.ServerboundSwingPacket;
 import net.minecraft.network.protocol.game.ServerboundTeleportToEntityPacket;
 import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket;
 import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
@@ -97,8 +97,6 @@ import net.minecraft.util.StringUtil;
 import net.minecraft.util.thread.ReentrantBlockableEventLoop;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -124,7 +122,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.CommonHooks;
-import net.neoforged.neoforge.common.util.TriState;
+import net.minecraft.util.TriState;
 import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.network.connection.ConnectionType;
@@ -153,7 +151,7 @@ public class LittleServerPlayerHandler implements ServerPlayerConnection, Tickab
     private Object2IntMap<Level> ackBlockChanges = new Object2IntArrayMap<>();
     
     LittleServerPlayerHandler(ServerPlayer player) {
-        this.server = player.getServer();
+        this.server = player.level().getServer();
         this.player = player;
     }
     
@@ -217,7 +215,7 @@ public class LittleServerPlayerHandler implements ServerPlayerConnection, Tickab
     @Override
     public void handleSetCommandBlock(ServerboundSetCommandBlockPacket packet) {
         ensureRunningOnSameThread(packet);
-        if (!this.server.isCommandBlockEnabled())
+        if (!this.player.level().isCommandBlockEnabled())
             this.player.sendSystemMessage(Component.translatable("advMode.notEnabled"));
         else if (!this.player.canUseGameMasterBlocks())
             this.player.sendSystemMessage(Component.translatable("advMode.notAllowed"));
@@ -260,7 +258,7 @@ public class LittleServerPlayerHandler implements ServerPlayerConnection, Tickab
                 if (commandblockentity$mode != packet.getMode())
                     commandblockentity.onModeSwitch();
                 
-                basecommandblock.onUpdated();
+                basecommandblock.onUpdated(this.player.level());
                 if (!StringUtil.isNullOrEmpty(s))
                     this.player.sendSystemMessage(Component.translatable("advMode.setCommand.success", s));
             }
@@ -271,7 +269,7 @@ public class LittleServerPlayerHandler implements ServerPlayerConnection, Tickab
     @Override
     public void handleSetCommandMinecart(ServerboundSetCommandMinecartPacket packet) {
         ensureRunningOnSameThread(packet);
-        if (!this.server.isCommandBlockEnabled())
+        if (!this.player.level().isCommandBlockEnabled())
             this.player.sendSystemMessage(Component.translatable("advMode.notEnabled"));
         else if (!this.player.canUseGameMasterBlocks())
             this.player.sendSystemMessage(Component.translatable("advMode.notAllowed"));
@@ -283,7 +281,7 @@ public class LittleServerPlayerHandler implements ServerPlayerConnection, Tickab
                 if (!packet.isTrackOutput())
                     basecommandblock.setLastOutput((Component) null);
                 
-                basecommandblock.onUpdated();
+                basecommandblock.onUpdated(this.player.level());
                 this.player.sendSystemMessage(Component.translatable("advMode.setCommand.success", packet.getCommand()));
             }
             
@@ -395,17 +393,21 @@ public class LittleServerPlayerHandler implements ServerPlayerConnection, Tickab
     @Override
     public void handleEntityTagQuery(ServerboundEntityTagQueryPacket packet) {
         ensureRunningOnSameThread(packet);
-        if (this.player.hasPermissions(2)) {
+        if (this.player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
             Entity entity = level.getEntity(packet.getEntityId());
             if (entity != null)
-                send(new ClientboundTagQueryPacket(packet.getTransactionId(), entity.saveWithoutId(new CompoundTag())));
+                {
+                TagValueOutput output = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, level.registryAccess());
+                entity.saveWithoutId(output);
+                send(new ClientboundTagQueryPacket(packet.getTransactionId(), output.buildResult()));
+            }
         }
     }
     
     @Override
     public void handleBlockEntityTagQuery(ServerboundBlockEntityTagQueryPacket packet) {
         ensureRunningOnSameThread(packet);
-        if (this.player.hasPermissions(2)) {
+        if (this.player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
             BlockEntity blockentity = level.getBlockEntity(packet.getPos());
             CompoundTag compoundtag = blockentity != null ? blockentity.saveWithoutMetadata(level.registryAccess()) : null;
             send(new ClientboundTagQueryPacket(packet.getTransactionId(), compoundtag));
@@ -432,7 +434,7 @@ public class LittleServerPlayerHandler implements ServerPlayerConnection, Tickab
             case START_DESTROY_BLOCK:
             case ABORT_DESTROY_BLOCK:
             case STOP_DESTROY_BLOCK:
-                handleBlockBreakAction(blockpos, packet.getAction(), packet.getDirection(), level.getMaxBuildHeight(), packet.getSequence());
+                handleBlockBreakAction(blockpos, packet.getAction(), packet.getDirection(), (level.getMaxY() + 1), packet.getSequence());
                 ackBlockChangesUpTo(level, packet.getSequence());
                 return;
             default:
@@ -444,35 +446,35 @@ public class LittleServerPlayerHandler implements ServerPlayerConnection, Tickab
         if (stack.isEmpty())
             return false;
         Item item = stack.getItem();
-        return (item instanceof BlockItem || item instanceof BucketItem) && !player.getCooldowns().isOnCooldown(item);
+        return (item instanceof BlockItem || item instanceof BucketItem) && !player.getCooldowns().isOnCooldown(stack);
     }
     
     @Override
     public void handleUseItemOn(ServerboundUseItemOnPacket packet) {
         ensureRunningOnSameThread(packet);
-        ackBlockChangesUpTo(level, packet.getSequence());
-        this.player.connection.ackBlockChangesUpTo(packet.getSequence());
-        InteractionHand interactionhand = packet.getHand();
+        ackBlockChangesUpTo(level, packet.sequence());
+        this.player.connection.ackBlockChangesUpTo(packet.sequence());
+        InteractionHand interactionhand = packet.hand();
         ItemStack itemstack = this.player.getItemInHand(interactionhand);
         if (itemstack.isItemEnabled(level.enabledFeatures())) {
-            BlockHitResult blockhitresult = packet.getHitResult();
+            BlockHitResult blockhitresult = packet.hitResult();
             Vec3 vec3 = blockhitresult.getLocation();
             BlockPos blockpos = blockhitresult.getBlockPos();
             Vec3 vec31 = Vec3.atCenterOf(blockpos);
-            if (this.player.canInteractWithBlock(blockpos, 1.0)) {
+            if (this.player.isWithinBlockInteractionRange(blockpos, 1.0)) {
                 Vec3 vec32 = vec3.subtract(vec31);
                 if (Math.abs(vec32.x()) < 1.0000001D && Math.abs(vec32.y()) < 1.0000001D && Math.abs(vec32.z()) < 1.0000001D) {
                     Direction direction = blockhitresult.getDirection();
                     this.player.resetLastActionTime();
-                    int i = level.getMaxBuildHeight();
+                    int i = level.getMaxY() + 1; // 26.3: getMaxY is inclusive (old getMaxBuildHeight was exclusive)
                     if (blockpos.getY() < i) {
                         if (((ServerGamePacketListenerImplAccessor) getVanilla()).getAwaitingPositionFromClient() == null && level.mayInteract(this.player, blockpos)) {
                             InteractionResult interactionresult = this.player.gameMode.useItemOn(this.player, level, itemstack, interactionhand, blockhitresult);
                             if (direction == Direction.UP && !interactionresult.consumesAction() && blockpos.getY() >= i - 1 && wasBlockPlacementAttempt(this.player, itemstack)) {
                                 Component component = Component.translatable("build.tooHigh", i - 1).withStyle(ChatFormatting.RED);
                                 this.player.sendSystemMessage(component, true);
-                            } else if (interactionresult.shouldSwing()) {
-                                this.player.swing(interactionhand, true);
+                            } else if (interactionresult instanceof InteractionResult.Success success && success.shouldSwing()) {
+                                this.player.swingAndResetAttackStrength(interactionhand, itemstack.getInteractAnimation(), true);
                             }
                         }
                     } else {
@@ -483,7 +485,7 @@ public class LittleServerPlayerHandler implements ServerPlayerConnection, Tickab
                     send(level, new ClientboundBlockUpdatePacket(level, blockpos));
                     send(level, new ClientboundBlockUpdatePacket(level, blockpos.relative(direction)));
                 } else {
-                    LOGGER.warn("Rejecting UseItemOnPacket from {}: Location {} too far away from hit block {}.", this.player.getGameProfile().getName(), vec3, blockpos);
+                    LOGGER.warn("Rejecting UseItemOnPacket from {}: Location {} too far away from hit block {}.", this.player.getGameProfile().name(), vec3, blockpos);
                 }
             }
         }
@@ -492,13 +494,13 @@ public class LittleServerPlayerHandler implements ServerPlayerConnection, Tickab
     @Override
     public void handleUseItem(ServerboundUseItemPacket packet) {
         ensureRunningOnSameThread(packet);
-        this.ackBlockChangesUpTo(level, packet.getSequence());
-        InteractionHand interactionhand = packet.getHand();
+        this.ackBlockChangesUpTo(level, packet.sequence());
+        InteractionHand interactionhand = packet.hand();
         ItemStack itemstack = this.player.getItemInHand(interactionhand);
         this.player.resetLastActionTime();
         if (!itemstack.isEmpty() && itemstack.isItemEnabled(level.enabledFeatures()))
-            if (useItem(level, itemstack, interactionhand).shouldSwing())
-                this.player.swing(interactionhand, true);
+            if (useItem(level, itemstack, interactionhand) instanceof InteractionResult.Success success && success.shouldSwing())
+                this.player.swingAndResetAttackStrength(interactionhand, itemstack.getInteractAnimation(), true);
     }
     
     @Override
@@ -615,20 +617,20 @@ public class LittleServerPlayerHandler implements ServerPlayerConnection, Tickab
     
     @Override
     public void handleSignUpdate(ServerboundSignUpdatePacket packet) {
-        List<String> list = Stream.of(packet.getLines()).map(ChatFormatting::stripFormatting).collect(Collectors.toList());
+        List<String> list = packet.lines().stream().map(ChatFormatting::stripFormatting).collect(Collectors.toList());
         ((ServerGamePacketListenerImplAccessor) getVanilla()).callFilterTextPacket(list).thenAcceptAsync((lines) -> this.updateSignText(packet, lines), this.server);
     }
     
     private void updateSignText(ServerboundSignUpdatePacket packet, List<FilteredText> lines) {
         this.player.resetLastActionTime();
-        BlockPos blockpos = packet.getPos();
+        BlockPos blockpos = packet.pos();
         if (level.hasChunkAt(blockpos)) {
             BlockEntity blockentity = level.getBlockEntity(blockpos);
             if (!(blockentity instanceof SignBlockEntity))
                 return;
             
             SignBlockEntity signblockentity = (SignBlockEntity) blockentity;
-            signblockentity.updateSignText(this.player, packet.isFrontText(), lines);
+            signblockentity.updateSignText(this.player, packet.slot(), lines);
         }
         
     }
@@ -729,7 +731,7 @@ public class LittleServerPlayerHandler implements ServerPlayerConnection, Tickab
         if (event.isCanceled())
             return;
         
-        if (!this.player.canInteractWithBlock(pos, 1.0))
+        if (!this.player.isWithinBlockInteractionRange(pos, 1.0))
             this.debugLogging(pos, false, sequence, "too far");
         else if (pos.getY() >= buildHeight) {
             send(new ClientboundBlockUpdatePacket(pos, level.getBlockState(pos)));
@@ -868,7 +870,7 @@ public class LittleServerPlayerHandler implements ServerPlayerConnection, Tickab
         boolean flag = removeBlock(level, pos, blockstate, flag1);
         
         if (flag1 && flag)
-            block.playerDestroy(level, this.player, pos, blockstate, blockentity, itemstack1);
+            block.playerDestroy((ServerLevel) level, this.player, pos, blockstate, blockentity, itemstack1);
         
         // Neo: Fire the PlayerDestroyItemEvent if the tool was broken at any point during the break process
         if (itemstack.isEmpty() && !itemstack1.isEmpty())
@@ -887,7 +889,7 @@ public class LittleServerPlayerHandler implements ServerPlayerConnection, Tickab
      *            If the player breaking the block can harvest the drops of the block
      * @return If the block was removed, as reported by {@link BlockState#onDestroyedByPlayer}. */
     private boolean removeBlock(Level level, BlockPos pos, BlockState state, boolean canHarvest) {
-        boolean removed = state.onDestroyedByPlayer(level, pos, this.player, canHarvest, level.getFluidState(pos));
+        boolean removed = state.onDestroyedByPlayer(level, pos, this.player, this.player.getMainHandItem(), canHarvest, level.getFluidState(pos));
         if (removed)
             state.getBlock().destroy(level, pos, state);
         return removed;
@@ -896,7 +898,7 @@ public class LittleServerPlayerHandler implements ServerPlayerConnection, Tickab
     public InteractionResult useItem(Level level, ItemStack stack, InteractionHand hand) {
         if (this.getGameMode() == GameType.SPECTATOR)
             return InteractionResult.PASS;
-        if (player.getCooldowns().isOnCooldown(stack.getItem()))
+        if (player.getCooldowns().isOnCooldown(stack))
             return InteractionResult.PASS;
         
         InteractionResult cancelResult = CommonHooks.onItemRightClick(player, hand);
@@ -905,13 +907,15 @@ public class LittleServerPlayerHandler implements ServerPlayerConnection, Tickab
         
         int i = stack.getCount();
         int j = stack.getDamageValue();
-        InteractionResultHolder<ItemStack> result = stack.use(level, player, hand);
-        ItemStack itemstack = result.getObject();
+        // 26.3: InteractionResultHolder is gone; a Success may carry the transformed held item (same as vanilla)
+        InteractionResult result = stack.use(level, player, hand);
+        ItemStack itemstack = result instanceof InteractionResult.Success success && success.heldItemTransformedTo() != null ? success.heldItemTransformedTo() : player
+                .getItemInHand(hand);
         if (itemstack == stack && itemstack.getCount() == i && itemstack.getUseDuration(player) <= 0 && itemstack.getDamageValue() == j)
-            return result.getResult();
+            return result;
         
-        if (result.getResult() == InteractionResult.FAIL && itemstack.getUseDuration(player) > 0 && !player.isUsingItem())
-            return result.getResult();
+        if (result instanceof InteractionResult.Fail && itemstack.getUseDuration(player) > 0 && !player.isUsingItem())
+            return result;
         
         if (stack != itemstack)
             player.setItemInHand(hand, itemstack);
@@ -928,7 +932,7 @@ public class LittleServerPlayerHandler implements ServerPlayerConnection, Tickab
         if (!player.isUsingItem())
             player.inventoryMenu.sendAllDataToRemote();
         
-        return result.getResult();
+        return result;
     }
     
     public InteractionResult useItemOn(Level level, ItemStack stack, InteractionHand hand, BlockHitResult hit) {
@@ -962,13 +966,14 @@ public class LittleServerPlayerHandler implements ServerPlayerConnection, Tickab
                 .doesSneakBypassUse(level, blockpos, player));
         ItemStack itemstack = stack.copy();
         if (event.getUseBlock().isTrue() || (event.getUseBlock().isDefault() && !flag1)) {
-            ItemInteractionResult iteminteractionresult = blockstate.useItemOn(player.getItemInHand(hand), level, player, hand, hit);
+            InteractionResult iteminteractionresult = blockstate.useItemOn(player.getItemInHand(hand), level, player, hand, hit);
             if (iteminteractionresult.consumesAction()) {
                 CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(player, blockpos, itemstack);
-                return iteminteractionresult.result();
+                return iteminteractionresult;
             }
             
-            if (iteminteractionresult == ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION && hand == InteractionHand.MAIN_HAND) {
+            // 26.3: ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION is InteractionResult.TRY_WITH_EMPTY_HAND
+            if (iteminteractionresult instanceof InteractionResult.TryEmptyHandInteraction && hand == InteractionHand.MAIN_HAND) {
                 InteractionResult interactionresult = blockstate.useWithoutItem(level, player, hit);
                 if (interactionresult.consumesAction()) {
                     CriteriaTriggers.DEFAULT_BLOCK_USE.trigger(player, blockpos);
@@ -977,7 +982,7 @@ public class LittleServerPlayerHandler implements ServerPlayerConnection, Tickab
             }
         }
         
-        if (event.getUseItem().isTrue() || (!stack.isEmpty() && !player.getCooldowns().isOnCooldown(stack.getItem()))) {
+        if (event.getUseItem().isTrue() || (!stack.isEmpty() && !player.getCooldowns().isOnCooldown(stack))) {
             if (event.getUseItem().isFalse())
                 return InteractionResult.PASS;
             InteractionResult interactionresult1;

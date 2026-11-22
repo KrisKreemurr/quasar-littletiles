@@ -53,11 +53,11 @@ import net.minecraft.world.TickRateManager;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.PositionMoveRotation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.RelativeMovement;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -322,74 +322,23 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
     public void handleMovePlayer(ClientboundPlayerPositionPacket packet) {
         ensureRunningOnSameThread(packet);
         Player player = mc.player;
-        Vec3 vec3 = player.getDeltaMovement();
-        boolean flag = packet.getRelativeArguments().contains(RelativeMovement.X);
-        boolean flag1 = packet.getRelativeArguments().contains(RelativeMovement.Y);
-        boolean flag2 = packet.getRelativeArguments().contains(RelativeMovement.Z);
-        double d0;
-        double d1;
-        if (flag) {
-            d0 = vec3.x();
-            d1 = player.getX() + packet.getX();
-            player.xOld += packet.getX();
-            player.xo += packet.getX();
-        } else {
-            d0 = 0.0D;
-            d1 = packet.getX();
-            player.xOld = d1;
-            player.xo = d1;
-        }
-        
-        double d2;
-        double d3;
-        if (flag1) {
-            d2 = vec3.y();
-            d3 = player.getY() + packet.getY();
-            player.yOld += packet.getY();
-            player.yo += packet.getY();
-        } else {
-            d2 = 0.0D;
-            d3 = packet.getY();
-            player.yOld = d3;
-            player.yo = d3;
-        }
-        
-        double d4;
-        double d5;
-        if (flag2) {
-            d4 = vec3.z();
-            d5 = player.getZ() + packet.getZ();
-            player.zOld += packet.getZ();
-            player.zo += packet.getZ();
-        } else {
-            d4 = 0.0D;
-            d5 = packet.getZ();
-            player.zOld = d5;
-            player.zo = d5;
-        }
-        
-        player.setPos(d1, d3, d5);
-        player.setDeltaMovement(d0, d2, d4);
-        float f = packet.getYRot();
-        float f1 = packet.getXRot();
-        if (packet.getRelativeArguments().contains(RelativeMovement.X_ROT)) {
-            player.setXRot(player.getXRot() + f1);
-            player.xRotO += f1;
-        } else {
-            player.setXRot(f1);
-            player.xRotO = f1;
-        }
-        
-        if (packet.getRelativeArguments().contains(RelativeMovement.Y_ROT)) {
-            player.setYRot(player.getYRot() + f);
-            player.yRotO += f;
-        } else {
-            player.setYRot(f);
-            player.yRotO = f;
-        }
-        
-        send(new ServerboundAcceptTeleportationPacket(packet.getId()));
-        send(new ServerboundMovePlayerPacket.PosRot(player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot(), false));
+        PositionMoveRotation current = PositionMoveRotation.of(player);
+        PositionMoveRotation target = PositionMoveRotation.calculateAbsolute(current, packet.change(), packet.relatives());
+        Vec3 delta = target.position().subtract(current.position());
+        player.xOld += delta.x;
+        player.yOld += delta.y;
+        player.zOld += delta.z;
+        player.xo += delta.x;
+        player.yo += delta.y;
+        player.zo += delta.z;
+        player.setPos(target.position());
+        player.setDeltaMovement(target.deltaMovement());
+        player.xRotO += target.xRot() - player.getXRot();
+        player.yRotO += target.yRot() - player.getYRot();
+        player.setXRot(target.xRot());
+        player.setYRot(target.yRot());
+        // 26.3 merged the position echo into the teleport ack
+        send(new ServerboundAcceptTeleportationPacket(packet.id(), player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot()));
     }
     
     @Override
@@ -487,7 +436,7 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
                 levellightengine.queueSectionData(LightLayer.SKY, sectionpos, (DataLayer) null);
             }
             
-            for (int j = this.level.getMinSection(); j < this.level.getMaxSection(); ++j)
+            for (int j = this.level.getMinSectionY(); j < this.level.getMaxSection(); ++j)
                 levellightengine.updateSectionStatus(SectionPos.of(chunkpos, j), true);
         });
     }
@@ -847,9 +796,12 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
     public void handleMoveVehicle(ClientboundMoveVehiclePacket packet) {
         ensureRunningOnSameThread(packet);
         Entity entity = mc.player.getRootVehicle();
-        if (entity != mc.player && entity.isControlledByLocalInstance()) {
-            entity.absMoveTo(packet.getX(), packet.getY(), packet.getZ(), packet.getYRot(), packet.getXRot());
-            send(new ServerboundMoveVehiclePacket(entity));
+        if (entity != mc.player && entity.isLocalInstanceAuthoritative()) {
+            Vec3 pos = packet.movingTo().position();
+            if (entity.isInterpolating())
+                entity.getInterpolation().cancel();
+            entity.absSnapTo(pos.x, pos.y, pos.z, packet.movingTo().yRot(), packet.movingTo().xRot());
+            send(ServerboundMoveVehiclePacket.fromEntity(entity));
         }
     }
     
