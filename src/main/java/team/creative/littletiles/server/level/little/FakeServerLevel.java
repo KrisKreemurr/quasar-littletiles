@@ -69,28 +69,7 @@ public class FakeServerLevel extends LittleServerLevel {
         return this.registryAccess().lookupOrThrow(Registries.BIOME).getOrThrow(Biomes.PLAINS);
     }
     
-    @Override
-    public float getShade(Direction p_230487_1_, boolean p_230487_2_) {
-        boolean flag = effects.constantAmbientLight();
-        if (!p_230487_2_) {
-            return flag ? 0.9F : 1.0F;
-        } else {
-            switch (p_230487_1_) {
-                case DOWN:
-                    return flag ? 0.9F : 0.5F;
-                case UP:
-                    return flag ? 0.9F : 1.0F;
-                case NORTH:
-                case SOUTH:
-                    return 0.8F;
-                case WEST:
-                case EAST:
-                    return 0.6F;
-                default:
-                    return 1.0F;
-            }
-        }
-    }
+    // 26.3: Level.getShade is gone (shading comes from environment attributes)
     
     @Override
     public void playSound(Entity p_184148_1_, double p_184148_2_, double p_184148_4_, double p_184148_6_, SoundEvent p_184148_8_, SoundSource p_184148_9_, float p_184148_10_,
