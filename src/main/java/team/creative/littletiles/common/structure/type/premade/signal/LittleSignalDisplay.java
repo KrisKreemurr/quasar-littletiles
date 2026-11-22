@@ -67,7 +67,9 @@ public class LittleSignalDisplay extends LittleStructurePremade {
     
     @Override
     public void receiveInternalOutputChange(InternalSignalOutput output) {
-        if (output.component.is("pixels") && isClient())
+        if (output.component.is("pixels") && isClient()) {
+            // TODO(quasar): updateTexture() parked for the render rewrite
+        }
     }
     
     // TODO(quasar): signal display texture upload + renderTick (GL texture quad) parked for the render rewrite.
@@ -90,7 +92,9 @@ public class LittleSignalDisplay extends LittleStructurePremade {
     @Override
     public void paint(int color) {
         this.color = color;
-        if (isClient())
+        if (isClient()) {
+            // TODO(quasar): updateTexture() parked for the render rewrite
+        }
     }
     
     @Override
