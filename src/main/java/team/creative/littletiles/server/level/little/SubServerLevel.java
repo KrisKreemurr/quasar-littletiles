@@ -90,14 +90,14 @@ public class SubServerLevel extends LittleServerLevel implements LittleSubLevel 
     }
     
     @Override
-    public void playSound(@Nullable Player p_184133_1_, BlockPos pos, SoundEvent p_184133_3_, SoundSource p_184133_4_, float p_184133_5_, float p_184133_6_) {
+    public void playSound(@Nullable Entity p_184133_1_, BlockPos pos, SoundEvent p_184133_3_, SoundSource p_184133_4_, float p_184133_5_, float p_184133_6_) {
         if (getOrigin() == null)
             return;
         getRealLevel().playSound(p_184133_1_, getOrigin().pose().transform(pos), p_184133_3_, p_184133_4_, p_184133_5_, p_184133_6_);
     }
     
     @Override
-    public void playSound(@Nullable Player p_184148_1_, double x, double y, double z, SoundEvent p_184148_8_, SoundSource p_184148_9_, float p_184148_10_, float p_184148_11_) {
+    public void playSound(@Nullable Entity p_184148_1_, double x, double y, double z, SoundEvent p_184148_8_, SoundSource p_184148_9_, float p_184148_10_, float p_184148_11_) {
         if (getOrigin() == null)
             return;
         Vector3d vec = new Vector3d(x, y, z);
@@ -106,7 +106,7 @@ public class SubServerLevel extends LittleServerLevel implements LittleSubLevel 
     }
     
     @Override
-    public void playSound(@Nullable Player p_217384_1_, Entity entity, SoundEvent p_217384_3_, SoundSource p_217384_4_, float p_217384_5_, float p_217384_6_) {
+    public void playSound(@Nullable Entity p_217384_1_, Entity entity, SoundEvent p_217384_3_, SoundSource p_217384_4_, float p_217384_5_, float p_217384_6_) {
         if (getOrigin() == null)
             return;
         Vec3 vec = getOrigin().pose().transform(entity.getPosition(1.0F));
@@ -122,7 +122,7 @@ public class SubServerLevel extends LittleServerLevel implements LittleSubLevel 
     }
     
     @Override
-    public void playSeededSound(Player player, double x, double y, double z, SoundEvent event, SoundSource source, float p_220369_, float p_220370_, long p_220371_) {
+    public void playSeededSound(Entity player, double x, double y, double z, SoundEvent event, SoundSource source, float p_220369_, float p_220370_, long p_220371_) {
         if (getOrigin() == null)
             return;
         Vec3 vec = getOrigin().pose().transform(new Vec3(x, y, z));
@@ -130,7 +130,7 @@ public class SubServerLevel extends LittleServerLevel implements LittleSubLevel 
     }
     
     @Override
-    public void playSeededSound(Player player, Entity entity, Holder<SoundEvent> event, SoundSource source, float p_220376_, float p_220377_, long p_220378_) {
+    public void playSeededSound(Entity player, Entity entity, Holder<SoundEvent> event, SoundSource source, float p_220376_, float p_220377_, long p_220378_) {
         if (getOrigin() == null)
             return;
         Vec3 vec = getOrigin().pose().transform(entity.getEyePosition());
@@ -192,7 +192,7 @@ public class SubServerLevel extends LittleServerLevel implements LittleSubLevel 
     }
     
     @Override
-    public void levelEvent(Player player, int p_217378_2_, BlockPos pos, int p_217378_4_) {
+    public void levelEvent(Entity player, int p_217378_2_, BlockPos pos, int p_217378_4_) {
         getRealLevel().levelEvent(player, p_217378_2_, pos, p_217378_4_);
     }
     

@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.item;
 
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
@@ -68,7 +70,7 @@ public class ItemLittleChisel extends Item implements ILittleShaper, IItemToolti
     }
     
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
         getShape(stack).appendInformation(stack, context, tooltip, flag);
         tooltip.add(Component.literal(TooltipUtils.printColor(LittleElement.getOrDefault(stack).color)));
     }

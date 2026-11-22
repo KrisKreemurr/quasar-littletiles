@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.item;
 
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
@@ -119,7 +121,7 @@ public class ItemLittleBlueprint extends Item implements ILittlePlacer, ILittleS
     }
     
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> list, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> list, TooltipFlag flag) {
         list.add(LittleGroup.printTooltip(getContent(stack)));
     }
     

@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.item;
 
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 import java.util.List;
 
 import net.minecraft.core.component.DataComponentMap;
@@ -63,7 +65,7 @@ public class ItemPremadeStructure extends Item implements ILittlePlacer, IItemTo
     }
     
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> list, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> list, TooltipFlag flag) {
         if (LanguageUtils.can("structure.description." + getPremadeId(stack)))
             list.addAll(new TextBuilder().translate("structure.description." + getPremadeId(stack)).build());
     }

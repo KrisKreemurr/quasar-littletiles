@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.item;
 
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 import java.util.List;
 
 import net.minecraft.core.BlockPos;
@@ -40,7 +42,7 @@ public class ItemLittleHammer extends Item implements ILittleShaper, IItemToolti
     }
     
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
         LittleShapeInstance shape = getShape(stack);
         shape.appendInformation(stack, context, tooltip, flag);
     }

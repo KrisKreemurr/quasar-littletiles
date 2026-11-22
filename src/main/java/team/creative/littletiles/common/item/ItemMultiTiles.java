@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.item;
 
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -127,7 +129,7 @@ public class ItemMultiTiles extends Item implements ILittlePlacer, IItemTooltip 
     }
     
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
         String id = "none";
         var data = ILittleTool.getData(stack);
         if (data.contains(LittleGroup.STRUCTURE_KEY))

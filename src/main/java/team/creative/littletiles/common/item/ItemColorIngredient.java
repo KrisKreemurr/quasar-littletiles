@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.item;
 
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 import java.util.List;
 
 import net.minecraft.network.chat.Component;
@@ -116,7 +118,7 @@ public class ItemColorIngredient extends Item implements ILittleIngredientInvent
     }
     
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flagIn) {
         ColorIngredient entry = loadIngredient(stack);
         if (entry != null)
             tooltip.add(type.print(entry));
