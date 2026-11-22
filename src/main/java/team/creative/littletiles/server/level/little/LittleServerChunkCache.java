@@ -1,5 +1,9 @@
 package team.creative.littletiles.server.level.little;
 
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import it.unimi.dsi.fastutil.longs.LongSets;
+import it.unimi.dsi.fastutil.longs.LongSet;
+import net.minecraft.server.level.Ticket;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -55,10 +59,6 @@ public class LittleServerChunkCache extends ServerChunkCache implements Iterable
         mainThreadProcessor = new MainThreadExecutor(level);
     }
     
-    @Override
-    public int getTickingGenerated() {
-        return this.chunkMap.getTickingGenerated();
-    }
     
     private ChunkResult<ChunkAccess> getChunkMainThread(int x, int z, boolean create) {
         LittleChunkHolder holder = chunks.get(ChunkPos.pack(x, z));
@@ -193,30 +193,10 @@ public class LittleServerChunkCache extends ServerChunkCache implements Iterable
         });
     }
     
-    @Override
-    public <T> void addRegionTicket(TicketType<T> type, ChunkPos pos, int level, T key) {
-        chunkMap.getDistanceManager().addRegionTicket(type, pos, level, key);
-    }
     
-    @Override
-    public <T> void addRegionTicket(TicketType<T> type, ChunkPos pos, int level, T key, boolean forceTicks) {
-        chunkMap.getDistanceManager().addRegionTicket(type, pos, level, key, forceTicks);
-    }
     
-    @Override
-    public <T> void removeRegionTicket(TicketType<T> type, ChunkPos pos, int level, T key) {
-        chunkMap.getDistanceManager().removeRegionTicket(type, pos, level, key);
-    }
     
-    @Override
-    public <T> void removeRegionTicket(TicketType<T> type, ChunkPos pos, int level, T key, boolean forceTicks) {
-        chunkMap.getDistanceManager().removeRegionTicket(type, pos, level, key, forceTicks);
-    }
     
-    @Override
-    public void updateChunkForced(ChunkPos pos, boolean added) {
-        ((LittleDistanceManager) chunkMap.getDistanceManager()).updateChunkForced(pos, added);
-    }
     
     @Override
     public void move(ServerPlayer player) {
@@ -234,12 +214,12 @@ public class LittleServerChunkCache extends ServerChunkCache implements Iterable
     }
     
     @Override
-    public void broadcastAndSend(Entity entity, Packet<?> packet) {
+    public void sendToTrackingPlayersAndSelf(Entity entity, Packet<? super ClientGamePacketListener> packet) {
         ((LittleChunkMap) chunkMap).broadcastAndSend(entity, packet);
     }
     
     @Override
-    public void broadcast(Entity entity, Packet<?> packet) {
+    public void sendToTrackingPlayers(Entity entity, Packet<? super ClientGamePacketListener> packet) {
         ((LittleChunkMap) chunkMap).broadcast(entity, packet);
     }
     
@@ -250,7 +230,7 @@ public class LittleServerChunkCache extends ServerChunkCache implements Iterable
     public void setSimulationDistance(int distance) {}
     
     @Override
-    public void setSpawnSettings(boolean spawnEnemies, boolean spawnFriendlies) {}
+    public void setSpawnSettings(boolean spawnEnemies) {}
     
     @Override
     public String getChunkDebugData(ChunkPos pos) {
@@ -269,10 +249,6 @@ public class LittleServerChunkCache extends ServerChunkCache implements Iterable
         return null;
     }
     
-    @Override
-    public void removeTicketsOnClosing() {
-        this.chunkMap.getDistanceManager().removeTicketsOnClosing();
-    }
     
     public void loadLevelChunk(ChunkPos pos, CompoundTag tag) {
         chunks.put(pos.toLong(), ((LittleChunkMap) chunkMap).createHolder(pos, tag));
@@ -297,6 +273,40 @@ public class LittleServerChunkCache extends ServerChunkCache implements Iterable
         return null;
     }
     
+    // Quasar MC: 26.3 keeps chunk tickets in TicketStorage. Sub-levels don't load chunks by ticket, and this
+    // cache's ChunkMap never builds one, so every ticket entry point is a no-op here.
+    @Override
+    public void addTicket(Ticket ticket, ChunkPos pos) {}
+    
+    @Override
+    public void addTicketWithRadius(TicketType type, ChunkPos pos, int radius) {}
+    
+    @Override
+    public CompletableFuture<?> addTicketAndLoadWithRadius(TicketType type, ChunkPos pos, int radius) {
+        return CompletableFuture.completedFuture(null);
+    }
+    
+    @Override
+    public void removeTicketWithRadius(TicketType type, ChunkPos pos, int radius) {}
+    
+    @Override
+    public boolean updateChunkForced(ChunkPos pos, boolean added) {
+        return false;
+    }
+    
+    @Override
+    public boolean hasActiveTickets() {
+        return false;
+    }
+    
+    @Override
+    public LongSet getForceLoadedChunks() {
+        return LongSets.EMPTY_SET;
+    }
+    
+    @Override
+    public void deactivateTicketsOnClosing() {}
+
     public final class MainThreadExecutor extends BlockableEventLoop<Runnable> {
         
         public MainThreadExecutor(Level level) {
