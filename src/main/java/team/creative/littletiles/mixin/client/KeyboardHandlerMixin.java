@@ -16,7 +16,7 @@ public class KeyboardHandlerMixin {
             target = "Lcom/mojang/blaze3d/platform/InputConstants;getKey(Lnet/minecraft/client/input/KeyEvent;)Lcom/mojang/blaze3d/platform/InputConstants$Key;"), cancellable = true,
             require = 0)
     private void onKeyPressed(long window, int action, KeyEvent event, CallbackInfo info) {
-        if (LittleTilesClient.PREVIEW_RENDERER != null && LittleTilesClient.PREVIEW_RENDERER.keyPressed(event.key(), event.scancode(), action, event.modifiers()))
+        if (LittleTilesClient.PREVIEW_RENDERER != null && LittleTilesClient.PREVIEW_RENDERER.keyPressed(event.key(), event.keycode(), action, event.modifiers()))
             info.cancel();
     }
     
