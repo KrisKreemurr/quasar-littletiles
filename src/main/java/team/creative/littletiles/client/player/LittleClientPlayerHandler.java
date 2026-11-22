@@ -269,17 +269,6 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
             LOGGER.warn("Skipping Entity with id {}", packet.getType());
     }
     
-    @Override
-    public void handleAddExperienceOrb(ClientboundAddExperienceOrbPacket packet) {
-        ensureRunningOnSameThread(packet);
-        ClientLevel level = requiresClientLevel();
-        Entity entity = new ExperienceOrb(this.level, packet.getX(), packet.getY(), packet.getZ(), packet.getValue());
-        entity.syncPacketPositionCodec(packet.getX(), packet.getY(), packet.getZ());
-        entity.setYRot(0.0F);
-        entity.setXRot(0.0F);
-        entity.setId(packet.getId());
-        level.addEntity(entity);
-    }
     
     @Override
     public void handleSetEntityMotion(ClientboundSetEntityMotionPacket packet) {
@@ -316,10 +305,6 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
         }
     }
     
-    @Override
-    public void handleSetCarriedItem(ClientboundSetCarriedItemPacket packet) {
-        vanilla().handleSetCarriedItem(packet);
-    }
     
     @Override
     public void handleMoveEntity(ClientboundMoveEntityPacket packet) {
@@ -731,19 +716,6 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
         vanilla().handleSetExperience(packet);
     }
     
-    @Override
-    public void handleHorseScreenOpen(ClientboundHorseScreenOpenPacket packet) {
-        ensureRunningOnSameThread(packet);
-        if (this.level.getEntity(packet.getEntityId()) instanceof AbstractHorse horse) {
-            LocalPlayer localplayer = mc.player;
-            int i = packet.getInventoryColumns();
-            SimpleContainer simplecontainer = new SimpleContainer(AbstractHorse.getInventorySize(i));
-            HorseInventoryMenu horseinventorymenu = new HorseInventoryMenu(packet.getContainerId(), localplayer.getInventory(), simplecontainer, horse, i);
-            localplayer.containerMenu = horseinventorymenu;
-            mc.setScreen(new HorseInventoryScreen(horseinventorymenu, localplayer.getInventory(), horse, i));
-        }
-        
-    }
     
     @Override
     public void handleOpenScreen(ClientboundOpenScreenPacket packet) {
@@ -849,10 +821,6 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
         vanilla().handleAwardStats(packet);
     }
     
-    @Override
-    public void handleAddOrRemoveRecipes(ClientboundRecipePacket packet) {
-        vanilla().handleAddOrRemoveRecipes(packet);
-    }
     
     @Override
     public void handleUpdateMobEffect(ClientboundUpdateMobEffectPacket packet) {
@@ -1245,5 +1213,152 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
     public void handleProjectilePowerPacket(ClientboundProjectilePowerPacket packet) {
         if (level.getEntity(packet.getId()) instanceof AbstractHurtingProjectile abstracthurtingprojectile)
             abstracthurtingprojectile.accelerationPower = packet.getAccelerationPower();
+    }
+    
+    // ===== Quasar MC: listener methods added in 26.3 (delegating to vanilla like the rest of this handler) =====
+
+    @Override
+    public void handleSwingAnimation(net.minecraft.network.protocol.game.ClientboundSwingAnimationPacket packet) {
+        // TODO(quasar): 26.3 packet for entities; LittleTiles applies entity packets to the sub-level itself — not ported yet
+    }
+
+    @Override
+    public void handleRecipeBookAdd(net.minecraft.network.protocol.game.ClientboundRecipeBookAddPacket packet) {
+        vanilla().handleRecipeBookAdd(packet);
+    }
+
+    @Override
+    public void handleRecipeBookRemove(net.minecraft.network.protocol.game.ClientboundRecipeBookRemovePacket packet) {
+        vanilla().handleRecipeBookRemove(packet);
+    }
+
+    @Override
+    public void handleRecipeBookSettings(net.minecraft.network.protocol.game.ClientboundRecipeBookSettingsPacket packet) {
+        vanilla().handleRecipeBookSettings(packet);
+    }
+
+    @Override
+    public void handleMountScreenOpen(net.minecraft.network.protocol.game.ClientboundMountScreenOpenPacket packet) {
+        vanilla().handleMountScreenOpen(packet);
+    }
+
+    @Override
+    public void handleAddTransientBlockPacket(net.minecraft.network.protocol.game.ClientboundAddTransientBlockPacket packet) {
+        vanilla().handleAddTransientBlockPacket(packet);
+    }
+
+    @Override
+    public void handleMinecartAlongTrack(net.minecraft.network.protocol.game.ClientboundMoveMinecartPacket packet) {
+        // TODO(quasar): 26.3 packet for entities; LittleTiles applies entity packets to the sub-level itself — not ported yet
+    }
+
+    @Override
+    public void handleRotatePlayer(net.minecraft.network.protocol.game.ClientboundPlayerRotationPacket packet) {
+        vanilla().handleRotatePlayer(packet);
+    }
+
+    @Override
+    public void handleGameRuleValues(net.minecraft.network.protocol.game.ClientboundGameRuleValuesPacket packet) {
+        vanilla().handleGameRuleValues(packet);
+    }
+
+    @Override
+    public void handleSetHeldSlot(net.minecraft.network.protocol.game.ClientboundSetHeldSlotPacket packet) {
+        vanilla().handleSetHeldSlot(packet);
+    }
+
+    @Override
+    public void handleEntityPositionSync(net.minecraft.network.protocol.game.ClientboundEntityPositionSyncPacket packet) {
+        // TODO(quasar): 26.3 packet for entities; LittleTiles applies entity packets to the sub-level itself — not ported yet
+    }
+
+    @Override
+    public void handleSetCursorItem(net.minecraft.network.protocol.game.ClientboundSetCursorItemPacket packet) {
+        vanilla().handleSetCursorItem(packet);
+    }
+
+    @Override
+    public void handleSetPlayerInventory(net.minecraft.network.protocol.game.ClientboundSetPlayerInventoryPacket packet) {
+        vanilla().handleSetPlayerInventory(packet);
+    }
+
+    @Override
+    public void handleTestInstanceBlockStatus(net.minecraft.network.protocol.game.ClientboundTestInstanceBlockStatus packet) {
+        vanilla().handleTestInstanceBlockStatus(packet);
+    }
+
+    @Override
+    public void handleWaypoint(net.minecraft.network.protocol.game.ClientboundTrackedWaypointPacket packet) {
+        vanilla().handleWaypoint(packet);
+    }
+
+    @Override
+    public void handleDebugChunkValue(net.minecraft.network.protocol.game.ClientboundDebugChunkValuePacket packet) {
+        vanilla().handleDebugChunkValue(packet);
+    }
+
+    @Override
+    public void handleDebugBlockValue(net.minecraft.network.protocol.game.ClientboundDebugBlockValuePacket packet) {
+        vanilla().handleDebugBlockValue(packet);
+    }
+
+    @Override
+    public void handleDebugEntityValue(net.minecraft.network.protocol.game.ClientboundDebugEntityValuePacket packet) {
+        vanilla().handleDebugEntityValue(packet);
+    }
+
+    @Override
+    public void handleDebugEvent(net.minecraft.network.protocol.game.ClientboundDebugEventPacket packet) {
+        vanilla().handleDebugEvent(packet);
+    }
+
+    @Override
+    public void handleGameTestHighlightPos(net.minecraft.network.protocol.game.ClientboundGameTestHighlightPosPacket packet) {
+        vanilla().handleGameTestHighlightPos(packet);
+    }
+
+    @Override
+    public void handleLowDiskSpaceWarning(net.minecraft.network.protocol.game.ClientboundLowDiskSpaceWarningPacket packet) {
+        vanilla().handleLowDiskSpaceWarning(packet);
+    }
+
+    @Override
+    public net.minecraft.network.protocol.PacketFlow flow() {
+        return vanilla().flow();
+    }
+
+    @Override
+    public net.minecraft.network.ConnectionProtocol protocol() {
+        return vanilla().protocol();
+    }
+
+    @Override
+    public void handlePostEffects(net.minecraft.network.protocol.common.ClientboundPostEffectsPacket packet) {
+        vanilla().handlePostEffects(packet);
+    }
+
+    @Override
+    public void handleClearDialog(net.minecraft.network.protocol.common.ClientboundClearDialogPacket packet) {
+        vanilla().handleClearDialog(packet);
+    }
+
+    @Override
+    public void handleShowDialog(net.minecraft.network.protocol.common.ClientboundShowDialogPacket packet) {
+        vanilla().handleShowDialog(packet);
+    }
+
+    @Override
+    public void send(net.minecraft.network.protocol.common.custom.CustomPacketPayload packet) {
+        vanilla().send(packet);
+    }
+
+    @Override
+    public void disconnect(net.minecraft.network.chat.Component packet) {
+        // a sub-level handler must never drop the real connection
+    }
+
+    @Override
+    public net.minecraft.network.PacketProcessor getPacketProcessor() {
+        return vanilla().getPacketProcessor();
     }
 }

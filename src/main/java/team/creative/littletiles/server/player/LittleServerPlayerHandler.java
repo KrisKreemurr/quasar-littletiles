@@ -23,7 +23,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.DisconnectionDetails;
-import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.TickablePacketListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -291,10 +290,6 @@ public class LittleServerPlayerHandler implements ServerPlayerConnection, Tickab
         }
     }
     
-    @Override
-    public void handlePickItem(ServerboundPickItemPacket packet) {
-        getVanilla().handlePickItem(packet);
-    }
     
     @Override
     public void handleRenameItem(ServerboundRenameItemPacket packet) {
@@ -546,11 +541,9 @@ public class LittleServerPlayerHandler implements ServerPlayerConnection, Tickab
         send(level, packet, null);
     }
     
-    public void send(Level level, Packet<?> packet, @Nullable PacketSendListener listener) {
+    public void send(Level level, Packet<?> packet, @Nullable io.netty.channel.ChannelFutureListener listener) {
         try {
             LittleTiles.NETWORK.sendToClient(new LittleVanillaPacket((LittleLevel) level, packet), player);
-            if (listener != null)
-                listener.onSuccess();
         } catch (Throwable throwable) {
             CrashReport crashreport = CrashReport.forThrowable(throwable, "Sending packet");
             CrashReportCategory crashreportcategory = crashreport.addCategory("Packet being sent");
@@ -579,10 +572,6 @@ public class LittleServerPlayerHandler implements ServerPlayerConnection, Tickab
         getVanilla().handleChatAck(packet);
     }
     
-    @Override
-    public void handleAnimate(ServerboundSwingPacket packet) {
-        getVanilla().handleAnimate(packet);
-    }
     
     @Override
     public void handlePlayerCommand(ServerboundPlayerCommandPacket packet) {
@@ -1032,20 +1021,12 @@ public class LittleServerPlayerHandler implements ServerPlayerConnection, Tickab
         getVanilla().handleCookieResponse(packet);
     }
     
-    @Override
-    public void send(Packet<?> packet, @org.jetbrains.annotations.Nullable PacketSendListener listener) {
-        send(level, packet, listener);
-    }
     
     @Override
     public Connection getConnection() {
         return getVanilla().getConnection();
     }
     
-    @Override
-    public ReentrantBlockableEventLoop<?> getMainThreadEventLoop() {
-        return getVanilla().getMainThreadEventLoop();
-    }
     
     @Override
     public ConnectionType getConnectionType() {
@@ -1072,9 +1053,100 @@ public class LittleServerPlayerHandler implements ServerPlayerConnection, Tickab
         getVanilla().handleChunkBatchReceived(packet);
     }
     
+    // ===== Quasar MC: listener methods added in 26.3 (delegating to vanilla like the rest of this handler) =====
+
     @Override
-    public void handleDebugSampleSubscription(ServerboundDebugSampleSubscriptionPacket packet) {
-        getVanilla().handleDebugSampleSubscription(packet);
+    public void handlePunch(net.minecraft.network.protocol.game.ServerboundPunchPacket packet) {
+        getVanilla().handlePunch(packet);
     }
-    
+
+    @Override
+    public void handleAttack(net.minecraft.network.protocol.game.ServerboundAttackPacket packet) {
+        getVanilla().handleAttack(packet);
+    }
+
+    @Override
+    public void handleSpectatorAction(net.minecraft.network.protocol.game.ServerboundSpectatorActionPacket packet) {
+        getVanilla().handleSpectatorAction(packet);
+    }
+
+    @Override
+    public void handleAcceptPlayerLoad(net.minecraft.network.protocol.game.ServerboundPlayerLoadedPacket packet) {
+        getVanilla().handleAcceptPlayerLoad(packet);
+    }
+
+    @Override
+    public void handleBundleItemSelectedPacket(net.minecraft.network.protocol.game.ServerboundSelectBundleItemPacket packet) {
+        getVanilla().handleBundleItemSelectedPacket(packet);
+    }
+
+    @Override
+    public void handlePickItemFromBlock(net.minecraft.network.protocol.game.ServerboundPickItemFromBlockPacket packet) {
+        getVanilla().handlePickItemFromBlock(packet);
+    }
+
+    @Override
+    public void handlePickItemFromEntity(net.minecraft.network.protocol.game.ServerboundPickItemFromEntityPacket packet) {
+        getVanilla().handlePickItemFromEntity(packet);
+    }
+
+    @Override
+    public void handleSetGameRule(net.minecraft.network.protocol.game.ServerboundSetGameRulePacket packet) {
+        getVanilla().handleSetGameRule(packet);
+    }
+
+    @Override
+    public void handleSetTestBlock(net.minecraft.network.protocol.game.ServerboundSetTestBlockPacket packet) {
+        getVanilla().handleSetTestBlock(packet);
+    }
+
+    @Override
+    public void handleTestInstanceBlockAction(net.minecraft.network.protocol.game.ServerboundTestInstanceBlockActionPacket packet) {
+        getVanilla().handleTestInstanceBlockAction(packet);
+    }
+
+    @Override
+    public void handleChangeGameMode(net.minecraft.network.protocol.game.ServerboundChangeGameModePacket packet) {
+        getVanilla().handleChangeGameMode(packet);
+    }
+
+    @Override
+    public void handleDebugSubscriptionRequest(net.minecraft.network.protocol.game.ServerboundDebugSubscriptionRequestPacket packet) {
+        getVanilla().handleDebugSubscriptionRequest(packet);
+    }
+
+    @Override
+    public void handleClientTickEnd(net.minecraft.network.protocol.game.ServerboundClientTickEndPacket packet) {
+        getVanilla().handleClientTickEnd(packet);
+    }
+
+    @Override
+    public net.minecraft.network.protocol.PacketFlow flow() {
+        return getVanilla().flow();
+    }
+
+    @Override
+    public net.minecraft.network.ConnectionProtocol protocol() {
+        return getVanilla().protocol();
+    }
+
+    @Override
+    public void handleCustomClickAction(net.minecraft.network.protocol.common.ServerboundCustomClickActionPacket packet) {
+        getVanilla().handleCustomClickAction(packet);
+    }
+
+    @Override
+    public void send(net.minecraft.network.protocol.Packet<?> packet, io.netty.channel.ChannelFutureListener listener) {
+        send(level, packet, listener);
+    }
+
+    @Override
+    public void send(net.minecraft.network.protocol.common.custom.CustomPacketPayload packet) {
+        getVanilla().send(packet);
+    }
+
+    @Override
+    public net.minecraft.network.PacketProcessor getPacketProcessor() {
+        return getVanilla().getPacketProcessor();
+    }
 }
