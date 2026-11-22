@@ -1,5 +1,11 @@
 package team.creative.littletiles.common.level.little;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.level.storage.TagValueInput;
+import java.util.List;
+import net.minecraft.world.ticks.SavedTick;
+import net.minecraft.world.level.chunk.PalettedContainerFactory;
 import java.util.EnumSet;
 import java.util.Map;
 
@@ -40,7 +46,6 @@ import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.chunk.PalettedContainer;
 import net.minecraft.world.level.chunk.UpgradeData;
 import net.minecraft.world.level.chunk.status.ChunkType;
-import net.minecraft.world.level.chunk.storage.ChunkSerializer;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.lighting.LevelLightEngine;
 import net.minecraft.world.level.material.Fluid;
@@ -48,12 +53,10 @@ import net.minecraft.world.ticks.LevelChunkTicks;
 import net.neoforged.neoforge.attachment.AttachmentHolder;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.level.ChunkDataEvent;
-import team.creative.littletiles.mixin.server.level.ChunkSerializerAccessor;
 import team.creative.littletiles.server.level.little.LittleServerLevel;
 
 public class LittleChunkSerializer {
     
-    public static final Codec<PalettedContainer<BlockState>> BLOCK_STATE_CODEC = ChunkSerializerAccessor.getBLOCK_STATE_CODEC();
     private static final Logger LOGGER = LogUtils.getLogger();
     
     public static LevelChunk read(LittleLevel level, CompoundTag nbt) {
@@ -65,7 +68,8 @@ public class LittleChunkSerializer {
         boolean chunkSkyLight = level.dimensionType().hasSkyLight();
         ChunkSource chunksource = level.getChunkSource();
         LevelLightEngine levellightengine = chunksource.getLightEngine();
-        Registry<Biome> registry = level.registryAccess().registryOrThrow(Registries.BIOME);
+        // 26.3: palette codecs/factories come from PalettedContainerFactory (same on-disk palette format)
+        PalettedContainerFactory containers = PalettedContainerFactory.create(level.registryAccess());
         boolean retained = false;
         
         for (int j = 0; j < listtag.size(); ++j) {
@@ -75,13 +79,12 @@ public class LittleChunkSerializer {
             if (l >= 0 && l < alevelchunksection.length) {
                 PalettedContainer<BlockState> states;
                 if (compoundtag.contains("block_states"))
-                    states = BLOCK_STATE_CODEC.parse(NbtOps.INSTANCE, compoundtag.getCompoundOrEmpty("block_states")).promotePartial(error -> logErrors(chunkpos, y, error)).getOrThrow(
-                        ChunkSerializer.ChunkReadException::new);
+                    states = containers.blockStatesContainerCodec().parse(NbtOps.INSTANCE, compoundtag.getCompoundOrEmpty("block_states")).promotePartial(error -> logErrors(chunkpos, y,
+                        error)).getOrThrow(IllegalStateException::new);
                 else
-                    states = new PalettedContainer<>(Block.BLOCK_STATE_REGISTRY, Blocks.AIR.defaultBlockState(), PalettedContainer.Strategy.SECTION_STATES);
+                    states = containers.createForBlockStates();
                 
-                LevelChunkSection levelchunksection = new LevelChunkSection(states, new PalettedContainer<>(registry.asHolderIdMap(), registry.getHolderOrThrow(
-                    Biomes.PLAINS), PalettedContainer.Strategy.SECTION_BIOMES));
+                LevelChunkSection levelchunksection = new LevelChunkSection(states, containers.createForBiomes());
                 alevelchunksection[l] = levelchunksection;
                 //poiManager.checkConsistencyWithBlocks(pos, levelchunksection);
             }
@@ -95,17 +98,15 @@ public class LittleChunkSerializer {
                 }
                 
                 if (hasBlockLight)
-                    levellightengine.queueSectionData(LightLayer.BLOCK, SectionPos.of(chunkpos, y), new DataLayer(compoundtag.getByteArray("BlockLight")));
+                    levellightengine.queueSectionData(LightLayer.BLOCK, SectionPos.of(chunkpos, y), new DataLayer(compoundtag.getByteArray("BlockLight").orElseThrow()));
                 
                 if (hasSkyLight)
-                    levellightengine.queueSectionData(LightLayer.SKY, SectionPos.of(chunkpos, y), new DataLayer(compoundtag.getByteArray("SkyLight")));
+                    levellightengine.queueSectionData(LightLayer.SKY, SectionPos.of(chunkpos, y), new DataLayer(compoundtag.getByteArray("SkyLight").orElseThrow()));
             }
         }
         
-        LevelChunkTicks<Block> blockTicks = LevelChunkTicks.load(nbt.getListOrEmpty("block_ticks"), (x) -> BuiltInRegistries.BLOCK.getOptional(Identifier.tryParse(x)),
-            chunkpos);
-        LevelChunkTicks<Fluid> fluidTicks = LevelChunkTicks.load(nbt.getListOrEmpty("fluid_ticks"), (x) -> BuiltInRegistries.FLUID.getOptional(Identifier.tryParse(x)),
-            chunkpos);
+        LevelChunkTicks<Block> blockTicks = new LevelChunkTicks<>(SavedTick.filterTickListForChunk(readTicks(nbt, "block_ticks", BLOCK_TICKS_CODEC), chunkpos));
+        LevelChunkTicks<Fluid> fluidTicks = new LevelChunkTicks<>(SavedTick.filterTickListForChunk(readTicks(nbt, "fluid_ticks", FLUID_TICKS_CODEC), chunkpos));
         
         LevelChunk chunk = new LevelChunk(level.asLevel(), chunkpos, UpgradeData.EMPTY, blockTicks, fluidTicks, nbt.getLongOr("InhabitedTime", 0L), alevelchunksection, postLoadChunk(
             level, nbt), null);
@@ -129,14 +130,14 @@ public class LittleChunkSerializer {
         Heightmap.primeHeightmaps(chunk, enumset);
         
         if (nbt.getBooleanOr("shouldSave", false))
-            chunk.setUnsaved(true);
+            chunk.markUnsaved();
         
         ListTag blockEntities = nbt.getListOrEmpty("block_entities");
         
         for (int j = 0; j < blockEntities.size(); ++j)
             chunk.setBlockEntityNbt(blockEntities.getCompoundOrEmpty(j));
         
-        NeoForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, nbt, ChunkType.LEVELCHUNK));
+        // 26.3: ChunkDataEvent needs vanilla's SerializableChunkData; LittleTiles' internal chunks don't fire it
         return chunk;
     }
     
@@ -148,12 +149,13 @@ public class LittleChunkSerializer {
         ChunkPos chunkpos = chunk.getPos();
         CompoundTag nbt = NbtUtils.addCurrentDataVersion(new CompoundTag());
         nbt.putInt("xPos", chunkpos.x());
-        nbt.putInt("yPos", chunk.getMinSection());
+        nbt.putInt("yPos", chunk.getMinSectionY());
         nbt.putInt("zPos", chunkpos.z());
         nbt.putLong("LastUpdate", level.getGameTime());
         nbt.putLong("InhabitedTime", chunk.getInhabitedTime());
         
         LevelChunkSection[] alevelchunksection = chunk.getSections();
+        PalettedContainerFactory containers = PalettedContainerFactory.create(level.registryAccess());
         ListTag sections = new ListTag();
         LevelLightEngine levellightengine = level.getChunkSource().getLightEngine();
         
@@ -166,7 +168,7 @@ public class LittleChunkSerializer {
                 CompoundTag sectionTag = new CompoundTag();
                 if (flag1) {
                     LevelChunkSection levelchunksection = alevelchunksection[j];
-                    sectionTag.put("block_states", BLOCK_STATE_CODEC.encodeStart(NbtOps.INSTANCE, levelchunksection.getStates()).getOrThrow());
+                    sectionTag.put("block_states", containers.blockStatesContainerCodec().encodeStart(NbtOps.INSTANCE, levelchunksection.getStates()).getOrThrow());
                 }
                 
                 if (blockLight != null && !blockLight.isEmpty())
@@ -203,7 +205,9 @@ public class LittleChunkSerializer {
             LOGGER.error("A capability provider has thrown an exception trying to write state. It will not persist. Report this to the mod author", exception);
         }
         
-        saveTicks(level, nbt, chunk.getTicksForSerialization());
+        ChunkAccess.PackedTicks ticks = chunk.getTicksForSerialization(level.getLevelData().getGameTime());
+        nbt.put("block_ticks", BLOCK_TICKS_CODEC.encodeStart(NbtOps.INSTANCE, ticks.blocks()).getOrThrow());
+        nbt.put("fluid_ticks", FLUID_TICKS_CODEC.encodeStart(NbtOps.INSTANCE, ticks.fluids()).getOrThrow());
         
         CompoundTag heightmaps = new CompoundTag();
         for (Map.Entry<Heightmap.Types, Heightmap> entry : chunk.getHeightmaps())
@@ -211,14 +215,18 @@ public class LittleChunkSerializer {
                 heightmaps.put(entry.getKey().getSerializationKey(), new LongArrayTag(entry.getValue().getRawData()));
         nbt.put("Heightmaps", heightmaps);
         
-        NeoForge.EVENT_BUS.post(new ChunkDataEvent.Save(chunk, level, nbt));
         return nbt;
     }
     
-    private static void saveTicks(Level level, CompoundTag nbt, ChunkAccess.TicksToSave ticks) {
-        long i = level.getLevelData().getGameTime();
-        nbt.put("block_ticks", ticks.blocks().save(i, x -> BuiltInRegistries.BLOCK.getKey(x).toString()));
-        nbt.put("fluid_ticks", ticks.fluids().save(i, (x) -> BuiltInRegistries.FLUID.getKey(x).toString()));
+    // 26.3: scheduled ticks use vanilla's SavedTick codec (same "i/x/y/z/t/p" entries as before)
+    private static final Codec<List<SavedTick<Block>>> BLOCK_TICKS_CODEC = SavedTick.codec(BuiltInRegistries.BLOCK.byNameCodec()).listOf();
+    private static final Codec<List<SavedTick<Fluid>>> FLUID_TICKS_CODEC = SavedTick.codec(BuiltInRegistries.FLUID.byNameCodec()).listOf();
+    
+    private static <T> List<SavedTick<T>> readTicks(CompoundTag nbt, String key, Codec<List<SavedTick<T>>> codec) {
+        Tag tag = nbt.get(key);
+        if (tag == null)
+            return List.of();
+        return codec.parse(NbtOps.INSTANCE, tag).resultOrPartial(LOGGER::error).orElse(List.of());
     }
     
     @Nullable
@@ -227,7 +235,8 @@ public class LittleChunkSerializer {
         ListTag blockEntities = getListOfCompoundsOrNull(nbt, "block_entities");
         return entities == null && blockEntities == null ? null : (x) -> {
             if (entities != null && level instanceof LittleServerLevel sLevel)
-                sLevel.addLegacyChunkEntities(EntityType.loadEntitiesRecursive(entities, level.asLevel()));
+                sLevel.addLegacyChunkEntities(EntityType.loadEntitiesRecursive(TagValueInput.create(ProblemReporter.DISCARDING, level.registryAccess(), entities.stream()
+                        .map(t -> (CompoundTag) t).toList()), level.asLevel(), EntitySpawnReason.LOAD));
             
             if (blockEntities != null)
                 for (int i = 0; i < blockEntities.size(); ++i) {
@@ -235,7 +244,7 @@ public class LittleChunkSerializer {
                     if (blockTag.getBooleanOr("keepPacked", false))
                         x.setBlockEntityNbt(blockTag);
                     else {
-                        BlockPos blockpos = BlockEntity.getPosFromTag(blockTag);
+                        BlockPos blockpos = BlockEntity.getPosFromTag(x.getPos(), blockTag);
                         BlockEntity blockentity = BlockEntity.loadStatic(blockpos, x.getBlockState(blockpos), blockTag, level.registryAccess());
                         if (blockentity != null)
                             x.setBlockEntity(blockentity);

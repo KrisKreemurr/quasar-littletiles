@@ -23,7 +23,6 @@
         "common.item.BlockPlaceContextMixin",
         "common.menu.AbstractContainerMenuMixin",
         "common.network.FriendlyByteBufMixin",
-        "server.level.ChunkSerializerAccessor",
         "server.level.MinecraftServerAccessor",
         "server.level.ServerChunkCacheMixin",
         "server.level.ServerChunkCacheAccessor",
