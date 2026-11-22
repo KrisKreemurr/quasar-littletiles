@@ -1,5 +1,9 @@
 package team.creative.littletiles.common.entity;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.server.level.ServerLevel;
 import team.creative.littletiles.common.util.QuasarNbtBridge;
@@ -229,7 +233,7 @@ public abstract class LittleEntity<T extends LittleEntityPhysic> extends Entity 
             entitiesToAdd = new ArrayList<>();
             ListTag list = nbt.getListOrEmpty("entities");
             for (int i = 0; i < list.size(); i++)
-                EntityType.create(list.getCompoundOrEmpty(i), (Level) subLevel).ifPresent(entitiesToAdd::add);
+                EntityType.create(TagValueInput.create(ProblemReporter.DISCARDING, registryAccess(), list.getCompoundOrEmpty(i)), (Level) subLevel, EntitySpawnReason.LOAD).ifPresent(entitiesToAdd::add);
         } else
             entitiesToAdd = null;
     }
@@ -243,9 +247,9 @@ public abstract class LittleEntity<T extends LittleEntityPhysic> extends Entity 
         
         ListTag list = new ListTag();
         for (Entity entity : entities()) {
-            CompoundTag entityNBT = new CompoundTag();
-            entity.save(entityNBT);
-            list.add(entityNBT);
+            TagValueOutput entityOutput = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, registryAccess());
+            entity.save(entityOutput);
+            list.add(entityOutput.buildResult());
         }
         if (!list.isEmpty())
             nbt.put("entities", list);
@@ -276,7 +280,7 @@ public abstract class LittleEntity<T extends LittleEntityPhysic> extends Entity 
     }
     
     @Override
-    protected AABB makeBoundingBox() {
+    protected AABB makeBoundingBox(Vec3 position) {
         return origin.pose().transform(physic.getOBB()).toVanilla();
     }
     

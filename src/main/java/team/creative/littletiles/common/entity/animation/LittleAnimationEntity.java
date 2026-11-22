@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.entity.animation;
 
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -40,7 +42,7 @@ public class LittleAnimationEntity extends LittleEntity<LittleAnimationEntityPhy
     
     public static void loadBE(LevelAccessor level, CompoundTag nbt, boolean update) {
         BlockState state = BlockTile.getState(nbt.getBooleanOr("ticking", false), nbt.getBooleanOr("rendered", false));
-        BlockPos pos = BlockEntity.getPosFromTag(nbt);
+        BlockPos pos = new BlockPos(nbt.getIntOr("x", 0), nbt.getIntOr("y", 0), nbt.getIntOr("z", 0));
         level.setBlock(pos, state, 0);
         
         BlockEntity entity = level.getBlockEntity(pos);
@@ -50,7 +52,7 @@ public class LittleAnimationEntity extends LittleEntity<LittleAnimationEntityPhy
                 if (!update)
                     be.render.tilesChanged();
             } else {
-                be.loadWithComponents(nbt, level.registryAccess());
+                be.loadWithComponents(TagValueInput.create(ProblemReporter.DISCARDING, level.registryAccess(), nbt));
                 if (update)
                     be.updateTiles(false, true);
             }

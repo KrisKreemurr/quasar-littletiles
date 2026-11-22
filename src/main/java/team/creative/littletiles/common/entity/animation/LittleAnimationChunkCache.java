@@ -26,7 +26,7 @@ public class LittleAnimationChunkCache extends ChunkSource {
     }
     
     public void addLoadedChunk(LevelChunk chunk) {
-        chunks.put(chunk.getPos().toLong(), chunk);
+        chunks.put(chunk.getPos().pack(), chunk);
     }
     
     public Iterable<LevelChunk> all() {

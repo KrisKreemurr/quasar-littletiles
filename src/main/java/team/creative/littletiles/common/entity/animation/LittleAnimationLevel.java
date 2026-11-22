@@ -1,5 +1,8 @@
 package team.creative.littletiles.common.entity.animation;
 
+import net.minecraft.world.clock.ClockManager;
+import net.minecraft.world.attribute.EnvironmentAttributeSystem;
+import net.minecraft.world.item.crafting.RecipeAccess;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -14,7 +17,6 @@ import org.joml.Vector3d;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.prediction.BlockStatePredictionHandler;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.particles.ParticleOptions;
@@ -27,8 +29,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.flag.FeatureFlagSet;
-import net.minecraft.world.item.alchemy.PotionBrewing;
-import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
@@ -84,11 +84,11 @@ public class LittleAnimationLevel extends Level implements LittleSubLevel, Itera
     private BlockStatePredictionHandler blockStatePredictionHandler;
     
     public LittleAnimationLevel(Level level) {
-        super((WritableLevelData) level.getLevelData(), level.dimension(), level.registryAccess(), level.registryAccess().registryOrThrow(Registries.DIMENSION_TYPE)
-                .getHolderOrThrow(LittleTilesRegistry.FAKE_DIMENSION), level.getProfilerSupplier(), level.isClientSide(), level.isDebug(), 0, 1000000);
+        super((WritableLevelData) level.getLevelData(), level.dimension(), level.registryAccess(), level.registryAccess().lookupOrThrow(Registries.DIMENSION_TYPE)
+                .getOrThrow(LittleTilesRegistry.FAKE_DIMENSION), level.isClientSide(), level.isDebug(), 0, 1000000);
         this.parentLevel = level;
         this.chunks = new LittleAnimationChunkCache(this);
-        if (isClientSide) {
+        if (isClientSide()) {
             this.blockStatePredictionHandler = new BlockStatePredictionHandler();
             this.entityCallback = new LittleAnimationLevelClientCallback(this);
         } else {
@@ -137,7 +137,7 @@ public class LittleAnimationLevel extends Level implements LittleSubLevel, Itera
             this.setBlock(pos, state, 19);
             Player player = Minecraft.getInstance().player;
             if (player.isColliding(pos, state))
-                player.absMoveTo(vec.x, vec.y, vec.z);
+                player.absSnapTo(vec.x, vec.y, vec.z);
         }
         
     }
@@ -242,7 +242,7 @@ public class LittleAnimationLevel extends Level implements LittleSubLevel, Itera
     @Override
     public void unload() {
         entities.removeAll();
-        if (isClientSide && renderManager != null)
+        if (isClientSide() && renderManager != null)
             renderManager.unload();
     }
     
@@ -262,7 +262,7 @@ public class LittleAnimationLevel extends Level implements LittleSubLevel, Itera
     
     @Override
     public void tick() {
-        if (!isClientSide && !trackedChanges.isEmpty()) {
+        if (!isClientSide() && !trackedChanges.isEmpty()) {
             LittleTiles.NETWORK.sendToClientTracking(new LittleAnimationBlocksPacket((LittleAnimationEntity) holder, trackedChanges), holder);
             trackedChanges.clear();
         }
@@ -278,7 +278,7 @@ public class LittleAnimationLevel extends Level implements LittleSubLevel, Itera
     
     @Override
     public void sendBlockUpdated(BlockPos pos, BlockState actualState, BlockState setState, int p_104688_) {
-        if (isClientSide)
+        if (isClientSide())
             this.renderManager.blockChanged(this, pos, actualState, setState, p_104688_);
         else
             trackedChanges.add(pos);
@@ -286,7 +286,7 @@ public class LittleAnimationLevel extends Level implements LittleSubLevel, Itera
     
     @Override
     public void setBlocksDirty(BlockPos pos, BlockState actualState, BlockState setState) {
-        if (isClientSide)
+        if (isClientSide())
             this.renderManager.setBlockDirty(pos, actualState, setState);
         blockChangeListeners.forEach(x -> x.blockChanged(pos, setState));
     }
@@ -307,18 +307,8 @@ public class LittleAnimationLevel extends Level implements LittleSubLevel, Itera
     }
     
     @Override
-    public void setMapData(MapId key, MapItemSavedData data) {
-        getRealLevel().setMapData(key, data);
-    }
-    
-    @Override
-    public MapId getFreeMapId() {
-        return getRealLevel().getFreeMapId();
-    }
-    
-    @Override
     public void destroyBlockProgress(int id, BlockPos pos, int progress) {
-        if (isClientSide)
+        if (isClientSide())
             renderManager.destroyBlockProgress(id, pos, progress);
     }
     
@@ -400,11 +390,11 @@ public class LittleAnimationLevel extends Level implements LittleSubLevel, Itera
     
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void addParticle(ParticleOptions p_195590_1_, boolean p_195590_2_, double x, double y, double z, double p_195590_9_, double p_195590_11_, double p_195590_13_) {
+    public void addParticle(ParticleOptions p_195590_1_, boolean p_195590_2_, boolean alwaysShow, double x, double y, double z, double p_195590_9_, double p_195590_11_, double p_195590_13_) {
         if (getOrigin() == null)
             return;
         Vector3d vec = getOrigin().pose().transform(new Vector3d(x, y, z));
-        getRealLevel().addParticle(p_195590_1_, p_195590_2_, vec.x, vec.y, vec.z, p_195590_9_, p_195590_11_, p_195590_13_);
+        getRealLevel().addParticle(p_195590_1_, p_195590_2_, alwaysShow, vec.x, vec.y, vec.z, p_195590_9_, p_195590_11_, p_195590_13_);
     }
     
     @Override
@@ -430,18 +420,13 @@ public class LittleAnimationLevel extends Level implements LittleSubLevel, Itera
     }
     
     @Override
-    public float getShade(Direction direction, boolean p_230487_2_) {
-        return getRealLevel().getShade(direction, p_230487_2_);
-    }
-    
-    @Override
     public Scoreboard getScoreboard() {
         return getRealLevel().getScoreboard();
     }
     
     @Override
-    public RecipeManager getRecipeManager() {
-        return getRealLevel().getRecipeManager();
+    public RecipeAccess recipeAccess() {
+        return getRealLevel().recipeAccess();
     }
     
     @Override
@@ -502,7 +487,7 @@ public class LittleAnimationLevel extends Level implements LittleSubLevel, Itera
     
     @Override
     public boolean addFreshEntity(Entity entity) {
-        if (isClientSide || entity.isRemoved())
+        if (isClientSide() || entity.isRemoved())
             return false;
         
         if (this.entities.addNewEntity(entity)) {
@@ -518,33 +503,18 @@ public class LittleAnimationLevel extends Level implements LittleSubLevel, Itera
     }
     
     @Override
-    public PotionBrewing potionBrewing() {
-        return parentLevel.potionBrewing();
+    public int getMinY() {
+        return parentLevel.getMinY();
     }
     
     @Override
-    public void setDayTimeFraction(float dayTimeFraction) {
-        parentLevel.setDayTimeFraction(dayTimeFraction);
+    public EnvironmentAttributeSystem environmentAttributes() {
+        return (EnvironmentAttributeSystem) parentLevel.environmentAttributes();
     }
     
     @Override
-    public float getDayTimeFraction() {
-        return parentLevel.getDayTimeFraction();
-    }
-    
-    @Override
-    public float getDayTimePerTick() {
-        return parentLevel.getDayTimePerTick();
-    }
-    
-    @Override
-    public void setDayTimePerTick(float dayTimePerTick) {
-        parentLevel.setDayTimePerTick(dayTimePerTick);
-    }
-    
-    @Override
-    public int getMinBuildHeight() {
-        return parentLevel.getMinBuildHeight();
+    public ClockManager clockManager() {
+        return parentLevel.clockManager();
     }
     
     @Override

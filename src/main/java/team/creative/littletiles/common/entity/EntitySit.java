@@ -27,7 +27,7 @@ import team.creative.littletiles.common.structure.type.LittleChair;
 
 public class EntitySit extends Entity implements ILevelPositionProvider, INoPushEntity {
     
-    public static final EntityDataAccessor<CompoundTag> CONNECTION = SynchedEntityData.defineId(EntitySit.class, EntityDataSerializers.COMPOUND_TAG);
+    public static final EntityDataAccessor<CompoundTag> CONNECTION = SynchedEntityData.defineId(EntitySit.class, LittleTilesRegistry.COMPOUND_TAG_SERIALIZER);
     public static final EntityDataAccessor<Float> CHAIRX = SynchedEntityData.defineId(EntitySit.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<Float> CHAIRY = SynchedEntityData.defineId(EntitySit.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<Float> CHAIRZ = SynchedEntityData.defineId(EntitySit.class, EntityDataSerializers.FLOAT);
@@ -63,7 +63,10 @@ public class EntitySit extends Entity implements ILevelPositionProvider, INoPush
                 LittleStructure structure = connection.getStructure();
                 if (structure instanceof LittleChair)
                     ((LittleChair) structure).setPlayer(null);
-                kill();
+                if (level() instanceof ServerLevel serverLevel)
+                    kill(serverLevel);
+                else
+                    discard();
             } catch (CorruptedConnectionException | NotYetConnectedException e) {}
             
         } else {

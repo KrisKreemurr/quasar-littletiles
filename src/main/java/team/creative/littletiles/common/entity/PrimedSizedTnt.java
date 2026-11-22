@@ -33,7 +33,7 @@ public class PrimedSizedTnt extends PrimedTnt {
     public PrimedSizedTnt(Level level, double x, double y, double z, @Nullable LivingEntity igniter, LittleGrid grid, LittleVec size) {
         super(LittleTilesRegistry.SIZED_TNT_TYPE.get(), level);
         this.setPos(x, y, z);
-        double d0 = level.random.nextDouble() * ((float) Math.PI * 2F);
+        double d0 = level.getRandom().nextDouble() * ((float) Math.PI * 2F);
         this.setDeltaMovement(-Math.sin(d0) * 0.02D, 0.2F, -Math.cos(d0) * 0.02D);
         this.setFuse(80);
         this.xo = x;

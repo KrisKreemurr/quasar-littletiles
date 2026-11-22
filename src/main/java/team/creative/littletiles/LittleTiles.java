@@ -156,6 +156,7 @@ public class LittleTiles {
         LittleTilesRegistry.CREATIVE_TABS.register(bus);
         LittleTilesRegistry.RECIPE_SERIALIZERS.register(bus);
         LittleTilesRegistry.INGREDIENT_TYPES.register(bus);
+        LittleTilesRegistry.ENTITY_DATA_SERIALIZERS.register(bus);
         
         LittlePacketTypes.init();
         LittleStructureRegistry.initStructures();

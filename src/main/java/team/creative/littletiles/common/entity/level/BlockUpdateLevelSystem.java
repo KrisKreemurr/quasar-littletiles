@@ -267,8 +267,8 @@ public class BlockUpdateLevelSystem {
             for (int axisValue = axisValueStart; facing.positive ? axisValue >= axisValueEnd : axisValue <= axisValueEnd; axisValue += facing.positive ? -1 : 1) {
                 boolean found = false;
                 
-                for (int valueOne = 0; valueOne < LevelChunkSection.SECTION_WIDTH; valueOne++) {
-                    for (int valueTwo = 0; valueTwo < LevelChunkSection.SECTION_WIDTH; valueTwo++) {
+                for (int valueOne = 0; valueOne < 16; valueOne++) {
+                    for (int valueTwo = 0; valueTwo < 16; valueTwo++) {
                         int x = one == Axis.X ? valueOne : valueTwo;
                         int y = axisValue;
                         int z = one == Axis.Z ? valueOne : valueTwo;
@@ -355,12 +355,12 @@ public class BlockUpdateLevelSystem {
                     if (sections[i].hasOnlyAir())
                         continue;
                     LevelChunkSection section = sections[i];
-                    int bottom = chunk.getMinBuildHeight() + LevelChunkSection.SECTION_HEIGHT * i;
+                    int bottom = chunk.getMinY() + LevelChunkSection.SECTION_HEIGHT * i;
                     int offsetOne = one.get(sectionOffsetX, bottom, sectionOffsetZ);
                     int offsetTwo = two.get(sectionOffsetX, bottom, sectionOffsetZ);
                     
-                    for (int valueOne = 0; valueOne < LevelChunkSection.SECTION_WIDTH; valueOne++) {
-                        for (int valueTwo = 0; valueTwo < LevelChunkSection.SECTION_WIDTH; valueTwo++) {
+                    for (int valueOne = 0; valueOne < 16; valueOne++) {
+                        for (int valueTwo = 0; valueTwo < 16; valueTwo++) {
                             int x = one == Axis.X ? valueOne : (two == Axis.X ? valueTwo : axisValue);
                             int y = one == Axis.Y ? valueOne : (two == Axis.Y ? valueTwo : axisValue);
                             int z = one == Axis.Z ? valueOne : (two == Axis.Z ? valueTwo : axisValue);

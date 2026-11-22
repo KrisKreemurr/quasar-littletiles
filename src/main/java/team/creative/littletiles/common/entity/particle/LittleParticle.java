@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SpriteSet;
-import net.minecraft.client.particle.TextureSheetParticle;
+import net.minecraft.client.particle.SingleQuadParticle;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import team.creative.creativecore.common.util.math.vec.Vec3d;
@@ -13,7 +13,7 @@ import team.creative.littletiles.common.structure.type.premade.LittleParticleEmi
 import team.creative.littletiles.mixin.client.render.ParticleEngineAccessor;
 
 @OnlyIn(Dist.CLIENT)
-public class LittleParticle extends TextureSheetParticle {
+public class LittleParticle extends SingleQuadParticle {
     
     private static final Minecraft mc = Minecraft.getInstance();
     
@@ -22,7 +22,7 @@ public class LittleParticle extends TextureSheetParticle {
     private float scaleDeviation;
     
     public LittleParticle(ClientLevel level, Vec3d pos, Vec3d speed, ParticleSettings settings) {
-        super(level, pos.x, pos.y, pos.z);
+        super(level, pos.x, pos.y, pos.z, spriteSet(settings).get(0, 1));
         this.xd = speed.x * (Math.random() * 0.1 + 0.95);
         this.yd = speed.y * (Math.random() * 0.1 + 0.95);
         this.zd = speed.z * (Math.random() * 0.1 + 0.95);
@@ -71,9 +71,22 @@ public class LittleParticle extends TextureSheetParticle {
             this.setSprite(set.get(this.lifetime - this.age, this.lifetime));
     }
     
+    private static SpriteSet spriteSet(ParticleSettings settings) {
+        return ((ParticleEngineAccessor) mc.particleEngine).getSpriteSets().get(settings.texture.particleTexture);
+    }
+    
+    public void pickSprite(SpriteSet set) {
+        this.setSprite(set.get(this.random));
+    }
+    
     @Override
-    public ParticleRenderType getRenderType() {
-        return settings.texture.type.toVanilla();
+    protected SingleQuadParticle.Layer getLayer() {
+        return settings.texture.type.toLayer();
+    }
+    
+    @Override
+    public ParticleRenderType getGroup() {
+        return settings.texture.type.rendered() ? ParticleRenderType.SINGLE_QUADS : ParticleRenderType.NO_RENDER;
     }
     
 }

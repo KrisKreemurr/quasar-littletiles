@@ -213,7 +213,7 @@ public abstract class LittleEntityPhysic<T extends LittleEntity<? extends Little
             for (int i = 0; i < entities.size(); i++) {
                 Entity entity = entities.get(i);
                 
-                if (entity.getType().is(NO_COLLISION))
+                if (entity.getType().builtInRegistryHolder().is(NO_COLLISION))
                     continue;
                 
                 AABB entityBB = entity.getBoundingBox();

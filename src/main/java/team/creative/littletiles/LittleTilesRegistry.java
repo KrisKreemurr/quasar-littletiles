@@ -1,5 +1,7 @@
 package team.creative.littletiles;
 
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataSerializer;
 import java.util.function.Supplier;
 
 import com.mojang.serialization.Codec;
@@ -304,6 +306,11 @@ public class LittleTilesRegistry {
             }).build());
     
     // INGREDIENT_TYPES
+    
+    /** 26.x dropped the vanilla CompoundTag entity data serializer; LittleTiles registers its own (used by EntitySit). */
+    public static final EntityDataSerializer<CompoundTag> COMPOUND_TAG_SERIALIZER = EntityDataSerializer.forValueType(ByteBufCodecs.COMPOUND_TAG);
+    public static final DeferredRegister<EntityDataSerializer<?>> ENTITY_DATA_SERIALIZERS = DeferredRegister.create(NeoForgeRegistries.Keys.ENTITY_DATA_SERIALIZERS, LittleTiles.MODID);
+    public static final DeferredHolder<EntityDataSerializer<?>, EntityDataSerializer<CompoundTag>> COMPOUND_TAG_SERIALIZER_HOLDER = ENTITY_DATA_SERIALIZERS.register("compound_tag", () -> COMPOUND_TAG_SERIALIZER);
     
     public static final DeferredRegister<IngredientType<?>> INGREDIENT_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.INGREDIENT_TYPES, LittleTiles.MODID);
     
