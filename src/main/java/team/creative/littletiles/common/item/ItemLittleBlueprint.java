@@ -1,5 +1,6 @@
 package team.creative.littletiles.common.item;
 
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.component.TooltipDisplay;
 import java.util.function.Consumer;
 import java.util.List;
@@ -106,7 +107,9 @@ public class ItemLittleBlueprint extends Item implements ILittlePlacer, ILittleS
     }
     
     @Override
-    public boolean canAttackBlock(BlockState state, Level level, BlockPos pos, Player player) {
+    public boolean canDestroyBlock(ItemStack destroyStack, BlockState state, Level level, BlockPos pos, LivingEntity destroyer) {
+        if (!(destroyer instanceof Player player))
+            return true;
         return false;
     }
     
@@ -122,7 +125,7 @@ public class ItemLittleBlueprint extends Item implements ILittlePlacer, ILittleS
     
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> list, TooltipFlag flag) {
-        list.add(LittleGroup.printTooltip(getContent(stack)));
+        list.accept(LittleGroup.printTooltip(getContent(stack)));
     }
     
     @Override

@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import com.mojang.serialization.Codec;
 
-import net.minecraft.ResourceLocationException;
+import net.minecraft.IdentifierException;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.AirBlock;
@@ -46,7 +46,7 @@ public class LittleBlockRegistry {
         LittleBlock little = NAME_MAP.get(name);
         if (little != null)
             return little;
-        return create(name, BuiltInRegistries.BLOCK.get(Identifier.parse(name)));
+        return create(name, BuiltInRegistries.BLOCK.getValue(Identifier.parse(name)));
     }
     
     public static LittleBlock get(Block block) {
@@ -63,8 +63,8 @@ public class LittleBlockRegistry {
         
         StringBuilder name = new StringBuilder();
         name.append(state.getBlock().builtInRegistryHolder().key().identifier());
-        if (!state.getValues().isEmpty())
-            name.append('[').append(state.getValues().entrySet().stream().map(StateHolderAccessor.getPROPERTY_ENTRY_TO_STRING_FUNCTION()).collect(Collectors.joining(","))).append(
+        if (!state.getValues().toList().isEmpty())
+            name.append('[').append(state.getValues().map(StateHolderAccessor.getPROPERTY_ENTRY_TO_STRING_FUNCTION()).collect(Collectors.joining(","))).append(
                 ']');
         return name.toString();
     }
@@ -84,7 +84,7 @@ public class LittleBlockRegistry {
         Identifier location;
         try {
             location = Identifier.parse(parts[0]);
-        } catch (ResourceLocationException e) {
+        } catch (IdentifierException e) {
             return LittleTilesRegistry.MISSING.value().defaultBlockState();
         }
         Block block = BuiltInRegistries.BLOCK.get(location);

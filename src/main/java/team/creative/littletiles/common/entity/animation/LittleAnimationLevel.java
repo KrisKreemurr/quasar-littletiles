@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.entity.animation;
 
+import net.neoforged.neoforge.entity.PartEntity;
+import java.util.Collection;
 import net.minecraft.world.clock.ClockManager;
 import net.minecraft.world.attribute.EnvironmentAttributeSystem;
 import net.minecraft.world.item.crafting.RecipeAccess;
@@ -510,6 +512,11 @@ public class LittleAnimationLevel extends Level implements LittleSubLevel, Itera
     @Override
     public EnvironmentAttributeSystem environmentAttributes() {
         return (EnvironmentAttributeSystem) parentLevel.environmentAttributes();
+    }
+    
+    @Override
+    public Collection<? extends PartEntity<?>> dragonParts() {
+        return Collections.emptyList();
     }
     
     @Override

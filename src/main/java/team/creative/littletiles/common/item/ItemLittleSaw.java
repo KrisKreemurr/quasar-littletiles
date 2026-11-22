@@ -1,5 +1,6 @@
 package team.creative.littletiles.common.item;
 
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
@@ -18,7 +19,9 @@ public class ItemLittleSaw extends Item implements IItemTooltip {
     }
     
     @Override
-    public boolean canAttackBlock(BlockState state, Level level, BlockPos pos, Player player) {
+    public boolean canDestroyBlock(ItemStack destroyStack, BlockState state, Level level, BlockPos pos, LivingEntity destroyer) {
+        if (!(destroyer instanceof Player player))
+            return true;
         return false;
     }
     

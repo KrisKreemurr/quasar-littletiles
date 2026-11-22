@@ -1,5 +1,6 @@
 package team.creative.littletiles.common.item;
 
+import net.minecraft.world.entity.LivingEntity;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
@@ -40,7 +41,9 @@ public class ItemLittleMeasureTape extends Item implements ILittleMeasure, IItem
     }
     
     @Override
-    public boolean canAttackBlock(BlockState state, Level level, BlockPos pos, Player player) {
+    public boolean canDestroyBlock(ItemStack destroyStack, BlockState state, Level level, BlockPos pos, LivingEntity destroyer) {
+        if (!(destroyer instanceof Player player))
+            return true;
         return false;
     }
     

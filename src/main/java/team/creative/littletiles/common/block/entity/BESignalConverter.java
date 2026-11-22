@@ -123,7 +123,7 @@ public class BESignalConverter extends BlockEntity implements ISignalStructureCo
     public void changed() {
         BlockState state = level.getBlockState(worldPosition);
         Direction facing = state.getValue(BlockSignalConverter.HORIZONTAL_FACING);
-        level.neighborChanged(worldPosition.relative(facing), state.getBlock(), worldPosition);
+        level.neighborChanged(worldPosition.relative(facing), state.getBlock(), null);
     }
     
     public int getPower() {

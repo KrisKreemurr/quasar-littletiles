@@ -83,7 +83,7 @@ public class ItemBlockIngredient extends Item implements ILittleIngredientInvent
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flagIn) {
         BlockIngredientEntry entry = loadIngredient(stack);
         if (entry != null)
-            tooltip.add(BlockIngredient.printVolume(entry.value, false));
+            tooltip.accept(BlockIngredient.printVolume(entry.value, false));
     }
     
     @Override

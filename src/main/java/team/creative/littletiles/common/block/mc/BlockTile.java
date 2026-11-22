@@ -32,7 +32,7 @@ import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
@@ -72,7 +72,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.util.DeferredSoundType;
-import net.neoforged.neoforge.common.util.TriState;
+import net.minecraft.util.TriState;
 import net.neoforged.neoforge.event.EventHooks;
 import team.creative.creativecore.common.util.math.base.Facing;
 import team.creative.creativecore.common.util.math.box.ABB;
@@ -375,8 +375,9 @@ public class BlockTile extends BaseEntityBlock implements LittlePhysicBlock, Sim
     @Override
     public Optional<ServerPlayer.RespawnPosAngle> getRespawnPosition(BlockState state, EntityType<?> type, LevelReader level, BlockPos pos, float orientation) {
         LittleStructure bed = getBed(level, pos, null);
-        if (bed != null && level instanceof Level && level.dimensionType().bedWorks())
-            return BedBlock.findStandUpPosition(type, level, pos, bed.getBedDirection(), orientation).map(x -> ServerPlayer.RespawnPosAngle.of(x, pos));
+        // TODO(quasar): 26.x moved "beds work here" into environment attributes (bed rule); revisit with the bed hooks NeoForge removed.
+        if (bed != null && level instanceof Level)
+            return BedBlock.findStandUpPosition(type, level, pos, bed.getBedDirection(), orientation).map(x -> ServerPlayer.RespawnPosAngle.of(x, pos, orientation));
         return Optional.empty();
     }
     
@@ -406,7 +407,7 @@ public class BlockTile extends BaseEntityBlock implements LittlePhysicBlock, Sim
             if (f == -1.0F)
                 return 0.0F;
             int i = EventHooks.doPlayerHarvestCheck(player, state, level, pos) ? 30 : 100;
-            return player.getDigSpeed(state, pos) / f / i;
+            return player.getDestroySpeed(state, pos) / f / i;
         }
         return super.getDestroyProgress(state, player, level, pos);
     }
@@ -422,7 +423,8 @@ public class BlockTile extends BaseEntityBlock implements LittlePhysicBlock, Sim
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         this.spawnDestroyParticles(level, player, pos, state);
         if (state.is(BlockTags.GUARDED_BY_PIGLINS))
-            PiglinAi.angerNearbyPiglins(player, false);
+            if (player.level() instanceof ServerLevel serverLevel)
+                PiglinAi.angerNearbyPiglins(serverLevel, player, false);
         
         level.gameEvent(player, GameEvent.BLOCK_DESTROY, pos);
         return state;
@@ -618,7 +620,7 @@ public class BlockTile extends BaseEntityBlock implements LittlePhysicBlock, Sim
             }
             
             if (heighestTile != null)
-                level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, heighestTile.getState()).setPos(pos), entity.getX(), entity.getY(), entity.getZ(),
+                level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, heighestTile.getState()), entity.getX(), entity.getY(), entity.getZ(),
                     numberOfParticles, 0.0D, 0.0D, 0.0D, 0.15F);
         }
         return true;
@@ -645,7 +647,7 @@ public class BlockTile extends BaseEntityBlock implements LittlePhysicBlock, Sim
             Random random = new Random();
             if (heighestTile != null) {
                 Vec3 vec3 = entity.getDeltaMovement();
-                level.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, heighestTile.getState()).setPos(pos), entity.getX() + (random.nextDouble() - 0.5D) * entity
+                level.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, heighestTile.getState()), entity.getX() + (random.nextDouble() - 0.5D) * entity
                         .getDimensions(entity.getPose()).width(), entity.getY() + 0.1D, entity.getZ() + (random.nextDouble() - 0.5D) * entity.getDimensions(entity.getPose())
                                 .width(), vec3.x * -4.0D, 1.5D, vec3.z * -4.0D);
             }
@@ -862,7 +864,7 @@ public class BlockTile extends BaseEntityBlock implements LittlePhysicBlock, Sim
     public boolean hidesNeighborFace(BlockGetter level, BlockPos pos, BlockState state, BlockState neighborState, Direction dir) {
         BETiles be = loadBE(level, pos);
         if (be != null && be.sideCache.get(Facing.get(dir)).doesBlockLight())
-            return neighborState.isSolidRender(level, pos);
+            return neighborState.isSolidRender();
         return false;
     }
     

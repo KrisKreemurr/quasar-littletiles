@@ -1,5 +1,6 @@
 package team.creative.littletiles.common.placement.shape;
 
+import java.util.function.Consumer;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -93,8 +94,8 @@ public class LittleShapeInstance {
         return new LittleShapeInstance(shape, tag);
     }
     
-    public void appendInformation(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("gui.shape").append(": ").append(shape.translatable()));
+    public void appendInformation(ItemStack stack, TooltipContext context, Consumer<Component> tooltip, TooltipFlag flag) {
+        tooltip.accept(Component.translatable("gui.shape").append(": ").append(shape.translatable()));
         var config = getConfig(context.registries(), Side.CLIENT);
         if (config != null)
             tooltip.addAll(config.information());

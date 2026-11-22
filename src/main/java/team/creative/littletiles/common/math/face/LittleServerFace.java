@@ -56,7 +56,7 @@ public non-sealed class LittleServerFace implements ILittleFace {
     }
     
     public static boolean checkforNeighbour(Level level, Direction facing, BlockPos pos, BlockState state, int color) {
-        return !Block.shouldRenderFace(state, level, pos, facing, pos.relative(facing)) || (ColorUtils.WHITE == color && state == level.getBlockState(pos.relative(facing)));
+        return !Block.shouldRenderFace(level, pos, state, level.getBlockState(pos.relative(facing)), facing) || (ColorUtils.WHITE == color && state == level.getBlockState(pos.relative(facing)));
     }
     
     private final BETiles be;

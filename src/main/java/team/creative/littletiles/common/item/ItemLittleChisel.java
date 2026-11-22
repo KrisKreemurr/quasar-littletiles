@@ -1,5 +1,6 @@
 package team.creative.littletiles.common.item;
 
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.component.TooltipDisplay;
 import java.util.function.Consumer;
 import java.util.List;
@@ -50,7 +51,9 @@ public class ItemLittleChisel extends Item implements ILittleShaper, IItemToolti
     }
     
     @Override
-    public boolean canAttackBlock(BlockState state, Level level, BlockPos pos, Player player) {
+    public boolean canDestroyBlock(ItemStack destroyStack, BlockState state, Level level, BlockPos pos, LivingEntity destroyer) {
+        if (!(destroyer instanceof Player player))
+            return true;
         return false;
     }
     
@@ -72,7 +75,7 @@ public class ItemLittleChisel extends Item implements ILittleShaper, IItemToolti
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
         getShape(stack).appendInformation(stack, context, tooltip, flag);
-        tooltip.add(Component.literal(TooltipUtils.printColor(LittleElement.getOrDefault(stack).color)));
+        tooltip.accept(Component.literal(TooltipUtils.printColor(LittleElement.getOrDefault(stack).color)));
     }
     
     @Override

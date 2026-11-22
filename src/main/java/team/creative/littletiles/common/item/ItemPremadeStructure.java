@@ -60,14 +60,14 @@ public class ItemPremadeStructure extends Item implements ILittlePlacer, IItemTo
     }
     
     @Override
-    public String getDescriptionId(ItemStack stack) {
-        return "structure." + getPremadeId(stack);
+    public Component getName(ItemStack stack) {
+        return Component.translatable("structure." + getPremadeId(stack));
     }
     
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> list, TooltipFlag flag) {
         if (LanguageUtils.can("structure.description." + getPremadeId(stack)))
-            list.addAll(new TextBuilder().translate("structure.description." + getPremadeId(stack)).build());
+            new TextBuilder().translate("structure.description." + getPremadeId(stack)).build().forEach(list);
     }
     
     @Override

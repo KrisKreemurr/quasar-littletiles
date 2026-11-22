@@ -134,8 +134,8 @@ public class ItemMultiTiles extends Item implements ILittlePlacer, IItemTooltip 
         var data = ILittleTool.getData(stack);
         if (data.contains(LittleGroup.STRUCTURE_KEY))
             id = data.getCompoundOrEmpty(LittleGroup.STRUCTURE_KEY).getStringOr("id", "");
-        tooltip.add(Component.translatable("gui.structure").append(": ").append(Component.translatable("structure." + id)));
-        tooltip.add(LittleGroup.printTooltip(data));
+        tooltip.accept(Component.translatable("gui.structure").append(": ").append(Component.translatable("structure." + id)));
+        tooltip.accept(LittleGroup.printTooltip(data));
     }
     
     @Override

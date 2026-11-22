@@ -1,10 +1,10 @@
 package team.creative.littletiles.common.item;
 
+import net.minecraft.world.InteractionResult;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -38,12 +38,12 @@ public class ItemLittleBag extends Item implements ILittleIngredientInventory, I
     }
     
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
         if (hand != InteractionHand.MAIN_HAND)
-            return InteractionResultHolder.fail(player.getItemInHand(hand));
+            return InteractionResult.FAIL;
         if (!level.isClientSide())
             GuiCreator.ITEM_OPENER.open(player, hand);
-        return InteractionResultHolder.success(player.getItemInHand(hand));
+        return InteractionResult.SUCCESS;
     }
     
     @Override

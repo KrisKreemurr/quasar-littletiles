@@ -1,5 +1,6 @@
 package team.creative.littletiles.common.placement.selection;
 
+import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -108,8 +109,8 @@ public class AreaSelectionMode extends SelectionMode {
         SelectionBuilder search = new SelectionBuilder();
         search.scanLevel(level, minX, minY, minZ, maxX, maxY, maxZ, null);
         
-        BlockPos realMin = BlockPos.containing(pos.context.toRealWorld(pos.pos.getCenter()));
-        BlockPos realMax = BlockPos.containing(pos2.context.toRealWorld(pos2.pos.getCenter()));
+        BlockPos realMin = BlockPos.containing(pos.context.toRealWorld(Vec3.atCenterOf(pos.pos)));
+        BlockPos realMax = BlockPos.containing(pos2.context.toRealWorld(Vec3.atCenterOf(pos2.pos)));
         AABB bb = new AABB(realMin.getX(), realMin.getY(), realMin.getZ(), realMax.getX() + 1, realMax.getY() + 1, realMax.getZ() + 1);
         if (!(pos.context instanceof SableContext)) {
             minX = Math.min(realMin.getX(), realMax.getX());

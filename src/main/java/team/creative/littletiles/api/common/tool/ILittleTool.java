@@ -21,7 +21,7 @@ public interface ILittleTool {
     public static boolean hasData(ItemStack stack) {
         var data = stack.get(LittleTilesRegistry.DATA.value());
         if (data != null)
-            return !data.getUnsafe().isEmpty();
+            return !data.copyTag().isEmpty();
         return stack.get(DataComponents.CUSTOM_DATA) != null;
     }
     
@@ -42,7 +42,7 @@ public interface ILittleTool {
     public static void consumeUnsafeData(ItemStack stack, Consumer<CompoundTag> consumer) {
         var data = stack.get(LittleTilesRegistry.DATA.value());
         if (data != null)
-            consumer.accept(data.getUnsafe());
+            consumer.accept(data.copyTag());
         else if (stack.has(DataComponents.CUSTOM_DATA)) {
             var oldData = stack.get(DataComponents.CUSTOM_DATA).copyTag();
             stack.remove(DataComponents.CUSTOM_DATA);

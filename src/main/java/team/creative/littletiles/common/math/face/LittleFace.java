@@ -209,9 +209,9 @@ public non-sealed class LittleFace implements ILittleFace {
             for (int i = 0; i < coords.length; i++) {
                 VertexInfo info = face.getVertexInfo(i);
                 Vec3f vec = new Vec3f();
-                vec.x = get(box, info.xFace);
-                vec.y = get(box, info.yFace);
-                vec.z = get(box, info.zFace);
+                vec.x = get(box, info.xFace());
+                vec.y = get(box, info.yFace());
+                vec.z = get(box, info.zFace());
                 coords[i] = vec;
             }
             fans.add(new VectorFan(coords));

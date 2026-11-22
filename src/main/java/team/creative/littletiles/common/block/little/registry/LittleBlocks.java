@@ -68,7 +68,7 @@ public class LittleBlocks {
                     parent.getBE().updateTiles(x -> tile.remove(x.get(parent), box));
                     
                     if (heldItem.getItem() == Items.FLINT_AND_STEEL)
-                        heldItem.hurtAndBreak(1, player, LivingEntity.getSlotForHand(InteractionHand.MAIN_HAND));
+                        heldItem.hurtAndBreak(1, player, InteractionHand.MAIN_HAND);
                     else if (!player.isCreative())
                         heldItem.shrink(1);
                     
@@ -92,7 +92,7 @@ public class LittleBlocks {
                     grid) + size.getPosY(grid) / 2, pos.getZ() + min.getPosZ(grid) + size.getPosZ(
                         grid) / 2, entity instanceof LivingEntity ? (LivingEntity) entity : null, grid, size);
                 if (randomFuse)
-                    entitytntprimed.setFuse((short) (parent.getLevel().random.nextInt(entitytntprimed.getFuse() / 4) + entitytntprimed.getFuse() / 8));
+                    entitytntprimed.setFuse((short) (parent.getLevel().getRandom().nextInt(entitytntprimed.getFuse() / 4) + entitytntprimed.getFuse() / 8));
                 parent.getLevel().addFreshEntity(entitytntprimed);
                 parent.getLevel().playSound((Player) null, entitytntprimed.getX(), entitytntprimed.getY(), entitytntprimed.getZ(), SoundEvents.TNT_PRIMED, SoundSource.BLOCKS, 1.0F,
                     1.0F);

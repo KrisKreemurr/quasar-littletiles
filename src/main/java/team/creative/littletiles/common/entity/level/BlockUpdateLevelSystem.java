@@ -355,7 +355,7 @@ public class BlockUpdateLevelSystem {
                     if (sections[i].hasOnlyAir())
                         continue;
                     LevelChunkSection section = sections[i];
-                    int bottom = chunk.getMinY() + LevelChunkSection.SECTION_HEIGHT * i;
+                    int bottom = chunk.getMinY() + 16 * i;
                     int offsetOne = one.get(sectionOffsetX, bottom, sectionOffsetZ);
                     int offsetTwo = two.get(sectionOffsetX, bottom, sectionOffsetZ);
                     

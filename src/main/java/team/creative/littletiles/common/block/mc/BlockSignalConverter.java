@@ -24,13 +24,14 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.core.Direction;
 import team.creative.littletiles.LittleTilesRegistry;
 import team.creative.littletiles.common.block.entity.BESignalConverter;
 
 public class BlockSignalConverter extends BaseEntityBlock {
     
-    public static final DirectionProperty HORIZONTAL_FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> HORIZONTAL_FACING = BlockStateProperties.HORIZONTAL_FACING;
     
     public BlockSignalConverter(BlockBehaviour.Properties properties) {
         super(properties.sound(SoundType.METAL).strength(1.5F, 6.0F));

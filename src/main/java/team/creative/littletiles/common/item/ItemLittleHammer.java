@@ -1,5 +1,6 @@
 package team.creative.littletiles.common.item;
 
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.component.TooltipDisplay;
 import java.util.function.Consumer;
 import java.util.List;
@@ -82,7 +83,9 @@ public class ItemLittleHammer extends Item implements ILittleShaper, IItemToolti
     }
     
     @Override
-    public boolean canAttackBlock(BlockState state, Level level, BlockPos pos, Player player) {
+    public boolean canDestroyBlock(ItemStack destroyStack, BlockState state, Level level, BlockPos pos, LivingEntity destroyer) {
+        if (!(destroyer instanceof Player player))
+            return true;
         return false;
     }
     

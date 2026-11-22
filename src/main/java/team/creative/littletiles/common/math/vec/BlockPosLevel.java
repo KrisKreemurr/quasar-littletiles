@@ -1,5 +1,6 @@
 package team.creative.littletiles.common.math.vec;
 
+import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -66,7 +67,7 @@ public class BlockPosLevel {
     }
     
     public BlockPosLevel convertTo(ILittleLevelContext context) {
-        var vec = this.context.toRealWorld(pos.getCenter());
+        var vec = this.context.toRealWorld(Vec3.atCenterOf(pos));
         return new BlockPosLevel(context, BlockPos.containing(context.toFakeWorld(vec)));
     }
 }

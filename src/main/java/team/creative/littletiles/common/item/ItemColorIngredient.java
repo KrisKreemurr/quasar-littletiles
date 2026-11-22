@@ -121,7 +121,7 @@ public class ItemColorIngredient extends Item implements ILittleIngredientInvent
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flagIn) {
         ColorIngredient entry = loadIngredient(stack);
         if (entry != null)
-            tooltip.add(type.print(entry));
+            tooltip.accept(type.print(entry));
     }
     
     @Override

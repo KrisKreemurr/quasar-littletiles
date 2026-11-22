@@ -117,7 +117,7 @@ public class BlockFlowingLava extends Block implements ILittleMCBlock, IFakeRend
             Direction facing = tile.getState().getValue(BlockStateProperties.FACING);
             int index = facing.ordinal() + 1;
             if (index >= Direction.values().length)
-                if (this == LittleTilesRegistry.FLOWING_LAVA)
+                if (this == LittleTilesRegistry.FLOWING_LAVA.value())
                     newState = LittleTilesRegistry.LAVA.value().defaultBlockState();
                 else
                     newState = LittleTilesRegistry.WHITE_LAVA.value().defaultBlockState();

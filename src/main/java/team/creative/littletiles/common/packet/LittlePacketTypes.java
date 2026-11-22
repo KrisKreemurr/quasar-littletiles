@@ -1,5 +1,8 @@
 package team.creative.littletiles.common.packet;
 
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import team.creative.creativecore.common.network.CreativeByteBuf;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -137,7 +140,7 @@ public class LittlePacketTypes {
             protected void writeContent(LittleCollection content, RegistryFriendlyByteBuf buffer) {
                 buffer.writeInt(content.size());
                 for (LittleTile tile : content)
-                    NetworkFieldTypes.write(LittleTile.class, tile, buffer, null);
+                    NetworkFieldTypes.write(LittleTile.class, tile, (CreativeByteBuf) buffer, null);
             }
             
             @Override
@@ -145,7 +148,7 @@ public class LittlePacketTypes {
                 int size = buffer.readInt();
                 LittleCollection collection = new LittleCollection();
                 for (int i = 0; i < size; i++)
-                    collection.add(NetworkFieldTypes.read(LittleTile.class, buffer, null));
+                    collection.add(NetworkFieldTypes.read(LittleTile.class, (CreativeByteBuf) buffer, null));
                 return collection;
             }
             
@@ -160,7 +163,7 @@ public class LittlePacketTypes {
                 
                 buffer.writeInt(content.children.sizeChildren());
                 for (LittleGroup child : content.children.children())
-                    NetworkFieldTypes.write(LittleGroup.class, child, buffer, null);
+                    NetworkFieldTypes.write(LittleGroup.class, child, (CreativeByteBuf) buffer, null);
                 
                 buffer.writeInt(content.getGrid().count);
                 if (content.hasStructure()) {
@@ -169,12 +172,12 @@ public class LittlePacketTypes {
                 } else
                     buffer.writeBoolean(false);
                 
-                NetworkFieldTypes.writeMany(LittleTile.class, content, buffer, null);
+                NetworkFieldTypes.writeMany(LittleTile.class, content, (CreativeByteBuf) buffer, null);
                 
                 buffer.writeInt(content.children.sizeExtensions());
                 for (Entry<String, LittleGroup> extension : content.children.extensionEntries()) {
                     buffer.writeUtf(extension.getKey());
-                    NetworkFieldTypes.write(LittleGroup.class, extension.getValue(), buffer, null);
+                    NetworkFieldTypes.write(LittleGroup.class, extension.getValue(), (CreativeByteBuf) buffer, null);
                 }
             }
             
@@ -183,15 +186,15 @@ public class LittlePacketTypes {
                 int size = buffer.readInt();
                 List<LittleGroup> children = new ArrayList<>(size);
                 for (int i = 0; i < size; i++)
-                    children.add(NetworkFieldTypes.read(LittleGroup.class, buffer, null));
+                    children.add(NetworkFieldTypes.read(LittleGroup.class, (CreativeByteBuf) buffer, null));
                 
                 LittleGrid grid = LittleGrid.get(buffer.readInt());
                 LittleGroup group = new LittleGroup(buffer.readBoolean() ? (CompoundTag) buffer.readNbt(NbtAccounter.unlimitedHeap()) : null, children);
-                group.addAll(grid, NetworkFieldTypes.readMany(LittleTile.class, buffer, null));
+                group.addAll(grid, NetworkFieldTypes.readMany(LittleTile.class, (CreativeByteBuf) buffer, null));
                 
                 int extensionCount = buffer.readInt();
                 for (int i = 0; i < extensionCount; i++)
-                    group.children.addExtension(buffer.readUtf(), NetworkFieldTypes.read(LittleGroup.class, buffer, null));
+                    group.children.addExtension(buffer.readUtf(), NetworkFieldTypes.read(LittleGroup.class, (CreativeByteBuf) buffer, null));
                 
                 return group;
             }
@@ -202,12 +205,12 @@ public class LittlePacketTypes {
             @Override
             protected void writeContent(LittleGroupAbsolute content, RegistryFriendlyByteBuf buffer) {
                 buffer.writeBlockPos(content.pos);
-                NetworkFieldTypes.write(LittleGroup.class, content.group, buffer, null);
+                NetworkFieldTypes.write(LittleGroup.class, content.group, (CreativeByteBuf) buffer, null);
             }
             
             @Override
             protected LittleGroupAbsolute readContent(RegistryFriendlyByteBuf buffer) {
-                return new LittleGroupAbsolute(buffer.readBlockPos(), NetworkFieldTypes.read(LittleGroup.class, buffer, null));
+                return new LittleGroupAbsolute(buffer.readBlockPos(), NetworkFieldTypes.read(LittleGroup.class, (CreativeByteBuf) buffer, null));
             }
             
         }, LittleGroupAbsolute.class);
@@ -228,13 +231,13 @@ public class LittlePacketTypes {
         NetworkFieldTypes.register(new NetworkFieldType<LittleAction>() {
             
             @Override
-            public void write(LittleAction content, Class classType, @Nullable Type genericType, RegistryFriendlyByteBuf buffer, PacketFlow flow) {
+            public void write(LittleAction content, Class classType, @Nullable Type genericType, CreativeByteBuf buffer, PacketFlow flow) {
                 buffer.writeUtf(content.getClass().getName());
                 LittleTiles.NETWORK.getType(content.getClass()).write(content, buffer, flow);
             }
             
             @Override
-            public LittleAction read(Class classType, @Nullable Type genericType, RegistryFriendlyByteBuf buffer, PacketFlow flow) {
+            public LittleAction read(Class classType, @Nullable Type genericType, CreativeByteBuf buffer, PacketFlow flow) {
                 try {
                     Class clazz = Class.forName(buffer.readUtf());
                     return (LittleAction) LittleTiles.NETWORK.getType(clazz).read(buffer, flow);
@@ -293,12 +296,12 @@ public class LittlePacketTypes {
             @Override
             protected void writeContent(LittleVecAbsolute content, RegistryFriendlyByteBuf buffer) {
                 buffer.writeBlockPos(content.getPos());
-                NetworkFieldTypes.write(LittleVecGrid.class, content.getVecGrid(), buffer, null);
+                NetworkFieldTypes.write(LittleVecGrid.class, content.getVecGrid(), (CreativeByteBuf) buffer, null);
             }
             
             @Override
             protected LittleVecAbsolute readContent(RegistryFriendlyByteBuf buffer) {
-                return new LittleVecAbsolute(buffer.readBlockPos(), NetworkFieldTypes.read(LittleVecGrid.class, buffer, null));
+                return new LittleVecAbsolute(buffer.readBlockPos(), NetworkFieldTypes.read(LittleVecGrid.class, (CreativeByteBuf) buffer, null));
             }
             
         }, LittleVecAbsolute.class);
@@ -306,13 +309,13 @@ public class LittlePacketTypes {
             
             @Override
             protected void writeContent(PlacementPosition content, RegistryFriendlyByteBuf buffer) {
-                NetworkFieldTypes.write(LittleBoxAbsolute.class, content.box(), buffer, null);
+                NetworkFieldTypes.write(LittleBoxAbsolute.class, content.box(), (CreativeByteBuf) buffer, null);
                 buffer.writeInt(content.facing == null ? -1 : content.facing.ordinal());
             }
             
             @Override
             protected PlacementPosition readContent(RegistryFriendlyByteBuf buffer) {
-                return new PlacementPosition(NetworkFieldTypes.read(LittleBoxAbsolute.class, buffer, null), readFacing(buffer.readInt()));
+                return new PlacementPosition(NetworkFieldTypes.read(LittleBoxAbsolute.class, (CreativeByteBuf) buffer, null), readFacing(buffer.readInt()));
             }
             
             private Facing readFacing(int facing) {
@@ -438,7 +441,7 @@ public class LittlePacketTypes {
                 buffer.writeBoolean(content instanceof PlacementPreviewAdd);
                 
                 if (content instanceof PlacementPreviewAdd a)
-                    NetworkFieldTypes.write(StructureLocation.class, a.parent, buffer, null);
+                    NetworkFieldTypes.write(StructureLocation.class, a.parent, (CreativeByteBuf) buffer, null);
                 
                 if (content.levelUUID != null) {
                     buffer.writeBoolean(true);
@@ -446,19 +449,19 @@ public class LittlePacketTypes {
                 } else
                     buffer.writeBoolean(false);
                 
-                NetworkFieldTypes.write(LittleGroup.class, content.previews, buffer, null);
-                NetworkFieldTypes.write(PlacementMode.class, content.mode, buffer, null);
-                NetworkFieldTypes.write(PlacementPosition.class, content.position, buffer, null);
+                NetworkFieldTypes.write(LittleGroup.class, content.previews, (CreativeByteBuf) buffer, null);
+                NetworkFieldTypes.write(PlacementMode.class, content.mode, (CreativeByteBuf) buffer, null);
+                NetworkFieldTypes.write(PlacementPosition.class, content.position, (CreativeByteBuf) buffer, null);
             }
             
             @Override
             protected PlacementPreview readContent(RegistryFriendlyByteBuf buffer) {
                 if (buffer.readBoolean())
-                    return new PlacementPreviewAdd(NetworkFieldTypes.read(StructureLocation.class, buffer, null), buffer.readBoolean() ? buffer.readUUID() : null, NetworkFieldTypes
-                            .read(LittleGroup.class, buffer, null), NetworkFieldTypes.read(PlacementMode.class, buffer, null), NetworkFieldTypes.read(PlacementPosition.class,
+                    return new PlacementPreviewAdd(NetworkFieldTypes.read(StructureLocation.class, (CreativeByteBuf) buffer, null), buffer.readBoolean() ? buffer.readUUID() : null, NetworkFieldTypes
+                            .read(LittleGroup.class, buffer, null), NetworkFieldTypes.read(PlacementMode.class, (CreativeByteBuf) buffer, null), NetworkFieldTypes.read(PlacementPosition.class,
                                 buffer, null));
-                return PlacementPreview.load(buffer.readBoolean() ? buffer.readUUID() : null, NetworkFieldTypes.read(LittleGroup.class, buffer, null), NetworkFieldTypes.read(
-                    PlacementMode.class, buffer, null), NetworkFieldTypes.read(PlacementPosition.class, buffer, null));
+                return PlacementPreview.load(buffer.readBoolean() ? buffer.readUUID() : null, NetworkFieldTypes.read(LittleGroup.class, (CreativeByteBuf) buffer, null), NetworkFieldTypes.read(
+                    PlacementMode.class, (CreativeByteBuf) buffer, null), NetworkFieldTypes.read(PlacementPosition.class, (CreativeByteBuf) buffer, null));
             }
             
         }, PlacementPreview.class);
@@ -524,6 +527,6 @@ public class LittlePacketTypes {
         NetworkFieldTypes.register(SelectionComponent.STREAM_CODEC, SelectionComponent.class);
         NetworkFieldTypes.register(MeasurementsComponent.STREAM_CODEC, MeasurementsComponent.class);
         NetworkFieldTypes.register(MeasurementTypeComponent.STREAM_CODEC, MeasurementTypeComponent.class);
-        NetworkFieldTypes.register(TransformMode.STREAM_CODEC, TransformMode.class);
+        NetworkFieldTypes.register((StreamCodec<FriendlyByteBuf, TransformMode>) (StreamCodec) TransformMode.STREAM_CODEC, TransformMode.class);
     }
 }

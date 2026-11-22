@@ -41,7 +41,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.LeftClickBlock.Action;
 import net.neoforged.neoforge.event.level.BlockEvent;
-import net.neoforged.neoforge.event.level.BlockEvent.BreakEvent;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import team.creative.creativecore.common.network.CreativePacket;
 import team.creative.creativecore.common.util.math.base.Axis;
 import team.creative.creativecore.common.util.math.base.Facing;
@@ -144,7 +144,7 @@ public abstract class LittleAction<T> extends CreativePacket {
     }
     
     public static boolean canPlace(Player player) {
-        GameType type = PlayerUtils.getGameType(player);
+        GameType type = player.gameMode();
         if (type == GameType.CREATIVE || type == GameType.SURVIVAL || type == GameType.ADVENTURE)
             return true;
         return false;
@@ -218,7 +218,7 @@ public abstract class LittleAction<T> extends CreativePacket {
     public static boolean fireBlockBreakEvent(Level level, BlockPos pos, LittleActionSource source) {
         if (!source.isPlayer() || level.isClientSide())
             return true;
-        BreakEvent event = new BlockEvent.BreakEvent(level, pos, level.getBlockState(pos), source.asPlayer());
+        BreakBlockEvent event = new BreakBlockEvent(level, pos, level.getBlockState(pos), source.asPlayer());
         NeoForge.EVENT_BUS.post(event);
         if (event.isCanceled()) {
             sendBlockResetToClient(level, source, pos);
@@ -283,7 +283,7 @@ public abstract class LittleAction<T> extends CreativePacket {
         if (!source.isPlayer())
             return true;
         var player = source.asPlayer();
-        if (player.isSpectator() || (!rightClick && (PlayerUtils.isAdventure(player) || !player.mayBuild())))
+        if (player.isSpectator() || (!rightClick && ((player.gameMode() == GameType.ADVENTURE) || !player.mayBuild())))
             return false;
         
         return true;
@@ -294,13 +294,13 @@ public abstract class LittleAction<T> extends CreativePacket {
             return true;
         
         var player = source.asPlayer();
-        if (player.isSpectator() || (!rightClick && (PlayerUtils.isAdventure(player) || !player.mayBuild())))
+        if (player.isSpectator() || (!rightClick && ((player.gameMode() == GameType.ADVENTURE) || !player.mayBuild())))
             return false;
         
         if (player.isSpectator())
             return false;
         
-        if (!rightClick && PlayerUtils.isAdventure(player)) {
+        if (!rightClick && (player.gameMode() == GameType.ADVENTURE)) {
             ItemStack stack = player.getMainHandItem();
             BlockInWorld blockinworld = new BlockInWorld(level, pos, false);
             if (!stack.canPlaceOnBlockInAdventureMode(blockinworld))
@@ -322,7 +322,7 @@ public abstract class LittleAction<T> extends CreativePacket {
                 return false;
         }
         
-        return !player.getServer().isUnderSpawnProtection((ServerLevel) player.level(), pos, player);
+        return player.level().mayInteract(player, pos);
     }
     
     public static boolean isAllowedToPlacePreview(Player player, LittleTile tile) throws LittleActionException {
@@ -505,7 +505,7 @@ public abstract class LittleAction<T> extends CreativePacket {
         if (ChiselsAndBitsManager.isChiselsAndBitsStructure(state))
             return true;
         try {
-            return state.isSolidRender(EmptyBlockGetter.INSTANCE, BlockPos.ZERO);
+            return state.isSolidRender();
         } catch (Exception e) {
             return false;
         }

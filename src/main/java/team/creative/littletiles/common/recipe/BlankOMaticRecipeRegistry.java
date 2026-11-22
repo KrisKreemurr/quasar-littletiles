@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.recipe;
 
+import net.minecraft.resources.Identifier;
+import net.minecraft.core.registries.BuiltInRegistries;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +41,7 @@ public class BlankOMaticRecipeRegistry {
     
     public static int getVolume(ItemStack stack) {
         for (int i = 0; i < bleacher.size(); i++)
-            if (bleacher.get(i).stack.is(stack))
+            if (bleacher.get(i).stack.is(null, stack))
                 return bleacher.get(i).volume;
         return 0;
     }
@@ -50,7 +52,7 @@ public class BlankOMaticRecipeRegistry {
     
     static {
         registerBleacher(new CreativeIngredientItem(Items.BONE_MEAL), 4);
-        registerBleacher(new CreativeIngredientItem(Items.WHITE_DYE), 4);
+        registerBleacher(new CreativeIngredientItem(BuiltInRegistries.ITEM.getValue(Identifier.withDefaultNamespace("white_dye"))), 4);
         registerBleacher(new CreativeIngredientItem(Items.LIGHT_GRAY_DYE), 2);
         registerBleacher(new CreativeIngredientItem(Items.GRAY_DYE), 1);
         registerBleacher(new CreativeIngredientBlock(Blocks.WHITE_WOOL), 8);
