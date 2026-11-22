@@ -274,6 +274,7 @@
     "block.littletiles.storage": "Little Storage Block",
     "block.littletiles.signal_converter": "Signal Converter",
     "key.categories.littletiles": "LittleTiles Settings",
+    "key.category.littletiles.littletiles": "LittleTiles Settings",
     "key.little.mirror": "Mirror Preview",
     "key.little.mark": "Mark Preview",
     "key.little.config.item": "Configure Tool",
