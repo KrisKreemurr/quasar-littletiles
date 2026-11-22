@@ -1,5 +1,9 @@
 package team.creative.littletiles.common.entity;
 
+import net.minecraft.server.level.ServerLevel;
+import team.creative.littletiles.common.util.QuasarNbtBridge;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -212,8 +216,7 @@ public abstract class LittleEntity<T extends LittleEntityPhysic> extends Entity 
     
     protected abstract Vec3d loadCenter(CompoundTag nbt);
     
-    @Override
-    public void readAdditionalSaveData(CompoundTag nbt) {
+        public void readAdditionalSaveData(CompoundTag nbt) {
         setSubLevel(createLevel(), loadCenter(nbt));
         
         physic.load(nbt.getCompoundOrEmpty("physic"));
@@ -232,8 +235,7 @@ public abstract class LittleEntity<T extends LittleEntityPhysic> extends Entity 
     
     public abstract void loadEntity(CompoundTag nbt);
     
-    @Override
-    public void addAdditionalSaveData(CompoundTag nbt) {
+        public void addAdditionalSaveData(CompoundTag nbt) {
         nbt.put("physic", physic.save());
         
         saveEntity(nbt);
@@ -297,25 +299,31 @@ public abstract class LittleEntity<T extends LittleEntityPhysic> extends Entity 
     }
     
     @Override
-    public void kill() {
+    public void kill(ServerLevel level) {
         subLevel.unload();
-        super.kill();
+        super.kill(level);
+    }
+    
+    /** Quasar MC: 26.3's kill needs the ServerLevel; LittleTiles also kills on the client. */
+    public void kill() {
+        if (level() instanceof ServerLevel server)
+            kill(server);
+        else {
+            subLevel.unload();
+            remove(RemovalReason.KILLED);
+        }
     }
     
     @Override
-    public boolean canBeCollidedWith() {
+    public boolean canBeCollidedWith(Entity other) {
         return false;
     }
     
     @Override
-    public InteractionResult interact(Player player, InteractionHand hand) {
+    public InteractionResult interact(Player player, InteractionHand hand, Vec3 location) {
         return InteractionResult.PASS;
     }
     
-    @Override
-    public InteractionResult interactAt(Player player, Vec3 vec, InteractionHand hand) {
-        return InteractionResult.PASS;
-    }
     
     // ================Hit Result================
     
@@ -382,5 +390,17 @@ public abstract class LittleEntity<T extends LittleEntityPhysic> extends Entity 
     public boolean hasLoaded() {
         return subLevel != null;
     }
+
+    // Quasar MC: 26.3 saves entities through ValueInput/ValueOutput; the same CompoundTag goes through unchanged.
+    @Override
+    public void readAdditionalSaveData(ValueInput input) {
+        readAdditionalSaveData(QuasarNbtBridge.read(input));
+    }
     
+    @Override
+    public void addAdditionalSaveData(ValueOutput output) {
+        CompoundTag nbt = new CompoundTag();
+        addAdditionalSaveData(nbt);
+        QuasarNbtBridge.write(output, nbt);
+    }
 }

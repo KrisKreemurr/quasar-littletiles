@@ -47,7 +47,7 @@ public class LittleItemHandler {
             inventory.allowDrop = false;
             
             if (ingredients == null) {
-                entityItem.kill();
+                entityItem.discard();
                 event.setCanPickup(TriState.FALSE);
                 return;
             }
@@ -57,7 +57,7 @@ public class LittleItemHandler {
                     LittleAction.give((LittleActionSource) player, inventory, ingredients);
                     
                     player.onItemPickup(entityItem);
-                    entityItem.kill();
+                    entityItem.discard();
                     
                     event.setCanPickup(TriState.FALSE);
                     player.level().playSound(null, player.getX(), player.getY() + 0.5, player.getZ(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.2F, ((player.level().random

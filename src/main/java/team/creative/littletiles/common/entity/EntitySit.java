@@ -1,5 +1,8 @@
 package team.creative.littletiles.common.entity;
 
+import team.creative.littletiles.common.util.QuasarNbtBridge;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -86,16 +89,14 @@ public class EntitySit extends Entity implements ILevelPositionProvider, INoPush
         builder.define(CHAIRZ, 0F);
     }
     
-    @Override
-    protected void addAdditionalSaveData(CompoundTag nbt) {
+        protected void addAdditionalSaveData(CompoundTag nbt) {
         nbt.put("connection", entityData.get(CONNECTION));
         nbt.putFloat("chairX", entityData.get(CHAIRX));
         nbt.putFloat("chairY", entityData.get(CHAIRY));
         nbt.putFloat("chairZ", entityData.get(CHAIRZ));
     }
     
-    @Override
-    protected void readAdditionalSaveData(CompoundTag nbt) {
+        protected void readAdditionalSaveData(CompoundTag nbt) {
         entityData.set(CONNECTION, nbt.getCompoundOrEmpty("connection"));
         entityData.set(CHAIRX, nbt.getFloatOr("chairX", 0F));
         entityData.set(CHAIRY, nbt.getFloatOr("chairY", 0F));
@@ -114,5 +115,17 @@ public class EntitySit extends Entity implements ILevelPositionProvider, INoPush
     
     @Override
     public void structureDestroyed() {}
+
+    // Quasar MC: 26.3 saves entities through ValueInput/ValueOutput; the same CompoundTag goes through unchanged.
+    @Override
+    protected void readAdditionalSaveData(ValueInput input) {
+        readAdditionalSaveData(QuasarNbtBridge.read(input));
+    }
     
+    @Override
+    protected void addAdditionalSaveData(ValueOutput output) {
+        CompoundTag nbt = new CompoundTag();
+        addAdditionalSaveData(nbt);
+        QuasarNbtBridge.write(output, nbt);
+    }
 }

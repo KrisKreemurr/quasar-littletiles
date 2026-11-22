@@ -65,7 +65,7 @@ public class LittleChair extends LittleStructure {
         if (!isClient()) {
             EntitySit sit = getSitEntity();
             if (sit != null)
-                sit.kill();
+                sit.discard();
         }
         super.removeStructure(neighbor);
     }

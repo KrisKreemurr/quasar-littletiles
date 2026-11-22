@@ -1,5 +1,8 @@
 package team.creative.littletiles.common.entity;
 
+import team.creative.littletiles.common.util.QuasarNbtBridge;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
@@ -48,17 +51,20 @@ public class PrimedSizedTnt extends PrimedTnt {
     }
     
     @Override
-    protected void addAdditionalSaveData(CompoundTag tag) {
+    protected void addAdditionalSaveData(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
         size.save("size", tag);
         grid.set(tag);
-        super.addAdditionalSaveData(tag);
+        QuasarNbtBridge.write(output, tag);
+        super.addAdditionalSaveData(output);
     }
     
     @Override
-    protected void readAdditionalSaveData(CompoundTag tag) {
+    protected void readAdditionalSaveData(ValueInput input) {
+        CompoundTag tag = QuasarNbtBridge.read(input);
         size = new LittleVec("size", tag);
         grid = LittleGrid.get(tag);
-        super.readAdditionalSaveData(tag);
+        super.readAdditionalSaveData(input);
     }
     
     @Override
