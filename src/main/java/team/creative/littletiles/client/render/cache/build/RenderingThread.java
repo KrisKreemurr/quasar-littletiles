@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelAccessor;
@@ -55,6 +58,7 @@ public class RenderingThread extends Thread {
 
     public RenderingThread() {}
 
+    private SingletonList<BakedQuad> bakedQuadWrapper;
     private LevelAccessorFake fakeAccess;
     private ChunkLayerMap<BufferCache> buffers;
     public boolean active;
@@ -91,6 +95,7 @@ public class RenderingThread extends Thread {
 
     public static class RenderingBlockedException extends RenderingException {
 
+        public RenderingBlockedException() {}
 
     }
 

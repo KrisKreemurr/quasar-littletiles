@@ -9,12 +9,19 @@ import org.spongepowered.include.com.google.common.base.Objects;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.client.RenderTypeHelper;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import team.creative.creativecore.client.render.model.box.CreativeBakedBoxItemLayer;
+import team.creative.creativecore.client.render.model.box.ItemModelBox;
+import team.creative.creativecore.client.render.model.layer.CreativeBakedItemLayer;
+import team.creative.creativecore.client.render.model.layer.CreativeBakedLayerModel;
 import team.creative.creativecore.common.util.math.base.Facing;
 import team.creative.creativecore.common.util.type.list.Pair;
 import team.creative.littletiles.api.common.tool.ILittleTool;
@@ -25,6 +32,7 @@ import team.creative.littletiles.client.level.LevelAwareHandler;
 public class ItemRenderCache implements LevelAwareHandler {
 
     public static RenderingThreadItem THREAD;
+    public static ItemModelBox get(ItemStack stack) { return null; }
 
     private RenderedStack temp;
     private HashMap<RenderedStack, ItemModelCache> caches;
@@ -36,6 +44,7 @@ public class ItemRenderCache implements LevelAwareHandler {
 
     public boolean hasTranslucent(ItemStack stack) { return false; }
 
+    public List<BakedQuad> requestCache(ItemStack stack, boolean translucent) { return null; }
 
     public void clearCache() {}
 

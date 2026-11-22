@@ -8,18 +8,23 @@ import com.google.common.base.Strings;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.client.event.RenderBlockScreenEffectEvent;
+import net.neoforged.neoforge.client.event.RenderBlockScreenEffectEvent.OverlayType;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import team.creative.creativecore.common.gui.GuiControl;
+import team.creative.creativecore.common.gui.GuiControlRect;
 import team.creative.creativecore.common.gui.GuiLayer;
 import team.creative.creativecore.common.gui.GuiParent;
 import team.creative.creativecore.common.gui.integration.IGuiIntegratedParent;
+import team.creative.creativecore.common.gui.integration.ScreenEventListener;
 import team.creative.creativecore.common.gui.style.ControlFormatting;
 import team.creative.creativecore.common.gui.style.GuiStyle;
 import team.creative.creativecore.common.network.CreativePacket;
@@ -38,13 +43,14 @@ import team.creative.littletiles.common.item.tooltip.IItemTooltip;
 
 // QUASAR STUB: generated no-op stand-in; the original lives in src/parked (render rewrite pending).
 
-public class OverlayRenderer {
+public class OverlayRenderer implements IGuiIntegratedParent, LevelAwareHandler {
 
     private static Minecraft MC;
     private boolean doneInit;
     private OverlayGuiLayer transparentLayer;
     private SingletonList<GuiLayer> layers;
     private Screen screen;
+    private ScreenEventListener listener;
     private int lastWidth;
     private int lastHeight;
     private List<OverlayText> scheduled;
@@ -54,6 +60,7 @@ public class OverlayRenderer {
 
     public void displayActionMessage(List<Component> message) {}
 
+    public void renderBlockOverlay(RenderBlockScreenEffectEvent event) {}
 
     private Vec2d projectToScreen(Vec3 cam, Vec3d pos) { return null; }
 
@@ -88,6 +95,7 @@ public class OverlayRenderer {
     public static class OverlayGuiLayer extends GuiLayer {
 
         private GuiActionDisplay actionDisplay;
+        public OverlayGuiLayer(boolean client, String name) {}
 
         private TupleList<GuiControl, OverlayPosition> positions;
         public void create() {}
@@ -124,6 +132,7 @@ public class OverlayRenderer {
     public static enum OverlayPosition {
 
         TOP_STRETCH, CENTER, ACTION_BAR;
+        protected abstract void positionControl(GuiControlRect control, int width, int height);
 
     }
 

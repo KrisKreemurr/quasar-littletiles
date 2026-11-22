@@ -15,15 +15,19 @@ import com.google.common.primitives.Doubles;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.MeshData.SortState;
+import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.blaze3d.vertex.VertexSorting;
 import net.minecraft.CrashReport;
+import net.minecraft.Util;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.SectionBufferBuilderPack;
+import net.minecraft.client.renderer.chunk.RenderChunkRegion;
 import net.minecraft.client.renderer.chunk.RenderRegionCache;
 import net.minecraft.client.renderer.chunk.SectionCompiler;
 import net.minecraft.client.renderer.chunk.SectionRenderDispatcher;
+import net.minecraft.client.renderer.chunk.SectionRenderDispatcher.CompiledSection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.SectionPos;
@@ -46,6 +50,7 @@ import team.creative.littletiles.client.render.level.transition.LevelTransition.
 import team.creative.littletiles.client.render.mc.RenderChunkExtender;
 import team.creative.littletiles.client.render.mc.SectionCompilerResultsExtender;
 import team.creative.littletiles.common.level.little.LittleSubLevel;
+import team.creative.littletiles.mixin.client.render.CompiledSectionAccessor;
 
 // QUASAR STUB: generated no-op stand-in; the original lives in src/parked (render rewrite pending).
 
@@ -55,11 +60,13 @@ public class LittleRenderChunk implements RenderChunkExtender {
     public LittleLevelRenderManager manager;
     public SectionPos section;
     public BlockPos pos;
+    public AtomicReference<CompiledSection> compiled;
     private AABB bb;
     public AtomicBoolean considered;
     private RebuildTask lastRebuildTask;
     private ResortTransparencyTask lastResortTransparencyTask;
     private Set<BlockEntity> globalBlockEntities;
+    private ChunkLayerMap<VertexBuffer> buffers;
     private boolean dirty;
     private SectionPos[] neighbors;
     private boolean playerChanged;
@@ -88,9 +95,11 @@ public class LittleRenderChunk implements RenderChunkExtender {
 
     public AABB getBB() { return null; }
 
+    public VertexBuffer getVertexBuffer(ChunkSectionLayer layer) { return null; }
 
     protected double getDistToPlayerSqr() { return 0D; }
 
+    public CompiledSection getCompiledSection() { return null; }
 
     private void reset() {}
 
@@ -153,6 +162,8 @@ public class LittleRenderChunk implements RenderChunkExtender {
     class RebuildTask extends CompileTask {
 
         private List<AdditionalSectionRenderer> additionalRenderers;
+        private RenderChunkRegion region;
+        public RebuildTask(double distAtCreation, RenderChunkRegion region, boolean isHighPriority, List<AdditionalSectionRenderer> additionalRenderers) {}
 
         public String name() { return null; }
 
@@ -165,6 +176,8 @@ public class LittleRenderChunk implements RenderChunkExtender {
     @OnlyIn(Dist.CLIENT)
     class ResortTransparencyTask extends CompileTask {
 
+        private CompiledSection compiledSection;
+        public ResortTransparencyTask(double distAtCreation, CompiledSection section) {}
 
         public String name() { return null; }
 
