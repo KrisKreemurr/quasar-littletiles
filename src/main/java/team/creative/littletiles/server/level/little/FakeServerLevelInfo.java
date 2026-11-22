@@ -22,55 +22,55 @@ public class FakeServerLevelInfo extends FakeLevelInfo implements ServerLevelDat
         return "fake";
     }
     
-    @Override
+    // 26.3: no longer part of the level data interfaces (kept as a plain method)
     public void setThundering(boolean thundering) {}
     
-    @Override
+    // 26.3: no longer part of the level data interfaces (kept as a plain method)
     public int getRainTime() {
         return 0;
     }
     
-    @Override
+    // 26.3: no longer part of the level data interfaces (kept as a plain method)
     public void setRainTime(int time) {}
     
-    @Override
+    // 26.3: no longer part of the level data interfaces (kept as a plain method)
     public void setThunderTime(int time) {}
     
-    @Override
+    // 26.3: no longer part of the level data interfaces (kept as a plain method)
     public int getThunderTime() {
         return 0;
     }
     
-    @Override
+    // 26.3: no longer part of the level data interfaces (kept as a plain method)
     public int getClearWeatherTime() {
         return 0;
     }
     
-    @Override
+    // 26.3: no longer part of the level data interfaces (kept as a plain method)
     public void setClearWeatherTime(int time) {}
     
-    @Override
+    // 26.3: no longer part of the level data interfaces (kept as a plain method)
     public int getWanderingTraderSpawnDelay() {
         return 0;
     }
     
-    @Override
+    // 26.3: no longer part of the level data interfaces (kept as a plain method)
     public void setWanderingTraderSpawnDelay(int delay) {}
     
-    @Override
+    // 26.3: no longer part of the level data interfaces (kept as a plain method)
     public int getWanderingTraderSpawnChance() {
         return 0;
     }
     
-    @Override
+    // 26.3: no longer part of the level data interfaces (kept as a plain method)
     public void setWanderingTraderSpawnChance(int chance) {}
     
-    @Override
+    // 26.3: no longer part of the level data interfaces (kept as a plain method)
     public UUID getWanderingTraderId() {
         return null;
     }
     
-    @Override
+    // 26.3: no longer part of the level data interfaces (kept as a plain method)
     public void setWanderingTraderId(UUID uuid) {}
     
     @Override
@@ -78,10 +78,10 @@ public class FakeServerLevelInfo extends FakeLevelInfo implements ServerLevelDat
         return GameType.SURVIVAL;
     }
     
-    @Override
+    // 26.3: no longer part of the level data interfaces (kept as a plain method)
     public void setWorldBorder(Settings settings) {}
     
-    @Override
+    // 26.3: no longer part of the level data interfaces (kept as a plain method)
     public Settings getWorldBorder() {
         return WorldBorder.DEFAULT_SETTINGS;
     }
@@ -102,25 +102,27 @@ public class FakeServerLevelInfo extends FakeLevelInfo implements ServerLevelDat
     @Override
     public void setGameType(GameType type) {}
     
-    @Override
+    // 26.3: no longer part of the level data interfaces (kept as a plain method)
     public TimerQueue<MinecraftServer> getScheduledEvents() {
         return null;
     }
     
-    @Override
+    // 26.3: no longer part of the level data interfaces (kept as a plain method)
     public float getDayTimeFraction() {
         return 0;
     }
     
-    @Override
+    // 26.3: no longer part of the level data interfaces (kept as a plain method)
     public float getDayTimePerTick() {
         return 0;
     }
     
-    @Override
+    // 26.3: no longer part of the level data interfaces (kept as a plain method)
     public void setDayTimeFraction(float dayTimeFraction) {}
     
-    @Override
+    // 26.3: no longer part of the level data interfaces (kept as a plain method)
     public void setDayTimePerTick(float dayTimePerTick) {}
     
+    @Override
+    public void setAllowCommands(boolean allow) {}
 }

@@ -1,15 +1,16 @@
 package team.creative.littletiles.common.level.little;
 
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.LevelData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.storage.WritableLevelData;
 import net.neoforged.neoforge.common.CommonHooks;
 
 public class FakeLevelInfo implements WritableLevelData {
     
     private final boolean hardcore;
-    private final GameRules gameRules;
+    private LevelData.RespawnData respawn = LevelData.RespawnData.DEFAULT;
     private final boolean isFlat;
     private BlockPos spawnPos;
     private float spawnAngle;
@@ -23,23 +24,35 @@ public class FakeLevelInfo implements WritableLevelData {
         this.difficulty = difficulty;
         this.hardcore = hardcore;
         this.isFlat = isFlat;
-        this.gameRules = new GameRules();
     }
     
-    @Override
+    // 26.3: no longer part of the level data interfaces (kept as a plain method)
     public BlockPos getSpawnPos() {
         return spawnPos;
     }
     
-    @Override
+    // 26.3: no longer part of the level data interfaces (kept as a plain method)
     public float getSpawnAngle() {
         return spawnAngle;
     }
     
-    @Override
+    // 26.3: no longer part of the level data interfaces (kept as a plain method)
     public void setSpawn(BlockPos pos, float angle) {
         this.spawnPos = pos.immutable();
         this.spawnAngle = angle;
+        this.respawn = LevelData.RespawnData.of(Level.OVERWORLD, this.spawnPos, angle, 0F);
+    }
+    
+    @Override
+    public LevelData.RespawnData getRespawnData() {
+        return respawn;
+    }
+    
+    @Override
+    public void setSpawn(LevelData.RespawnData data) {
+        this.respawn = data;
+        this.spawnPos = data.pos();
+        this.spawnAngle = data.yaw();
     }
     
     @Override
@@ -47,7 +60,7 @@ public class FakeLevelInfo implements WritableLevelData {
         return this.gameTime;
     }
     
-    @Override
+    // 26.3: no longer part of the level data interfaces (kept as a plain method)
     public long getDayTime() {
         return this.dayTime;
     }
@@ -60,17 +73,17 @@ public class FakeLevelInfo implements WritableLevelData {
         this.dayTime = p_239158_1_;
     }
     
-    @Override
+    // 26.3: no longer part of the level data interfaces (kept as a plain method)
     public boolean isThundering() {
         return false;
     }
     
-    @Override
+    // 26.3: no longer part of the level data interfaces (kept as a plain method)
     public boolean isRaining() {
         return this.raining;
     }
     
-    @Override
+    // 26.3: no longer part of the level data interfaces (kept as a plain method)
     public void setRaining(boolean p_76084_1_) {
         this.raining = p_76084_1_;
     }
@@ -78,11 +91,6 @@ public class FakeLevelInfo implements WritableLevelData {
     @Override
     public boolean isHardcore() {
         return this.hardcore;
-    }
-    
-    @Override
-    public GameRules getGameRules() {
-        return this.gameRules;
     }
     
     @Override
