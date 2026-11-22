@@ -1,5 +1,6 @@
 package team.creative.littletiles.client.gui.animation;
 
+import team.creative.littletiles.client.gui.LittleGuiDist;
 import org.joml.Matrix3x2fStack;
 
 import net.minecraft.client.Minecraft;
@@ -51,7 +52,7 @@ public class GuiClientIsoAnimationViewer extends GuiClientControl<GuiIsoAnimatio
     
     @Override
     public boolean mouseClicked(double x, double y, MouseButtonInfo info) {
-        switch (info.button()) {
+        switch (LittleGuiDist.legacyButton(info.button())) {
             case 0 -> {
                 grabX = x;
                 grabY = y;

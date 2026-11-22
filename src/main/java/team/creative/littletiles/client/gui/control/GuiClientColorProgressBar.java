@@ -1,5 +1,6 @@
 package team.creative.littletiles.client.gui.control;
 
+import team.creative.littletiles.client.gui.LittleGuiDist;
 import java.util.List;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -32,7 +33,7 @@ public class GuiClientColorProgressBar extends GuiClientProgressbar<GuiColorProg
     
     @Override
     public boolean mouseClicked(double x, double y, MouseButtonInfo info) {
-        if (info.button() == 1) {
+        if (LittleGuiDist.legacyButton(info.button()) == 1) {
             playSound(SoundEvents.UI_BUTTON_CLICK);
             return true;
         }

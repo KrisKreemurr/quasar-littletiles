@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 
-import org.lwjgl.glfw.GLFW;
 
 import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -221,7 +220,7 @@ public class BuildingModeAreaRule extends BuildingModeFeature implements Buildin
         boolean doubleClick = lastMouseKey == event.getButton() && Blaze3D.getTime() - lastMouseClicked < ScreenEventListener.DOUBLE_CLICK_TIME;
         lastMouseKey = event.getButton();
         lastMouseClicked = Blaze3D.getTime();
-        if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+        if (event.getButton() == InputConstants.MOUSE_BUTTON_LEFT) {
             if (LittleActionHandlerClient.isUsingSecondMode())
                 if (doubleClick)
                     reset();
@@ -237,7 +236,7 @@ public class BuildingModeAreaRule extends BuildingModeFeature implements Buildin
                 }
             else
                 markedPosition = LittleTilesClient.PREVIEW_RENDERER.renderer.select(ILittleLevelContext.STANDARD, positions);
-        } else if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+        } else if (event.getButton() == InputConstants.MOUSE_BUTTON_RIGHT) {
             if (first == null)
                 first = last.copy();
             else {

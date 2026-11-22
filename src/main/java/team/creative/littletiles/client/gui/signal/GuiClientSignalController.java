@@ -203,7 +203,7 @@ public class GuiClientSignalController extends GuiClientParent<GuiSignalControll
     @Override
     public boolean mouseClicked(double x, double y, MouseButtonInfo info) {
         control.startedDragging = false;
-        if (info.button() == 2) {
+        if (LittleGuiDist.legacyButton(info.button()) == 2) {
             control.zoom.set(1);
             control.scrolledX.set(0);
             control.scrolledY.set(0);

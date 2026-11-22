@@ -11,6 +11,17 @@ public class LittleGuiDist {
         return ((GuiClientControl) control.dist()).rect;
     }
     
+    /** 26.3 renumbered mouse buttons; maps them back to the classic 0 = left, 1 = right, 2 = middle that LittleTiles' logic uses. */
+    public static int legacyButton(int button) {
+        if (button == com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_LEFT)
+            return 0;
+        if (button == com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_RIGHT)
+            return 1;
+        if (button == com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_MIDDLE)
+            return 2;
+        return button;
+    }
+    
     public static GuiClientControl client(GuiControl control) {
         return (GuiClientControl) control.dist();
     }

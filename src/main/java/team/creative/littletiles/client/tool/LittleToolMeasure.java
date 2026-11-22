@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.lwjgl.glfw.GLFW;
 
 import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -169,7 +168,7 @@ public class LittleToolMeasure extends LittleTool {
         boolean doubleClick = lastMouseKey == event.getButton() && Blaze3D.getTime() - lastMouseClicked < ScreenEventListener.DOUBLE_CLICK_TIME;
         lastMouseKey = event.getButton();
         lastMouseClicked = Blaze3D.getTime();
-        if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+        if (event.getButton() == InputConstants.MOUSE_BUTTON_LEFT) {
             Map<LittleBoxLevel, LittleMeasurement> map = new Object2ObjectArrayMap<>();
             List<LittleBoxLevel> temp = new ArrayList<>();
             for (LittleMeasurement measurement : measurements) {
@@ -208,7 +207,7 @@ public class LittleToolMeasure extends LittleTool {
                     markedPosition = null;
                 }
             }
-        } else if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+        } else if (event.getButton() == InputConstants.MOUSE_BUTTON_RIGHT) {
             selected.add(last.copy());
             var type = stack.has(LittleTilesRegistry.MEASUREMENT_TYPE) ? stack.get(LittleTilesRegistry.MEASUREMENT_TYPE).type : LittleMeasurementType.REGISTRY.getDefault();
             if (type.points().apply(selected.size())) {

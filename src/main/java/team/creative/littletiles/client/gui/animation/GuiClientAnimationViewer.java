@@ -1,5 +1,6 @@
 package team.creative.littletiles.client.gui.animation;
 
+import team.creative.littletiles.client.gui.LittleGuiDist;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -50,7 +51,7 @@ public class GuiClientAnimationViewer extends GuiClientControl<GuiAnimationViewe
     @Override
     public boolean mouseClicked(double x, double y, MouseButtonInfo info) {
         if (control.grabMode == ViewerDragMode.NONE) {
-            control.grabMode = ViewerDragMode.of(info.button());
+            control.grabMode = ViewerDragMode.of(LittleGuiDist.legacyButton(info.button()));
             control.grabX = x;
             control.grabY = y;
             return true;
@@ -60,7 +61,7 @@ public class GuiClientAnimationViewer extends GuiClientControl<GuiAnimationViewe
     
     @Override
     public void mouseReleased(double x, double y, MouseButtonInfo info) {
-        if (info.button() == control.grabMode.ordinal() - 1)
+        if (LittleGuiDist.legacyButton(info.button()) == control.grabMode.ordinal() - 1)
             control.grabMode = ViewerDragMode.NONE;
     }
     

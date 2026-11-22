@@ -1,5 +1,6 @@
 package team.creative.littletiles.client.gui.signal;
 
+import team.creative.littletiles.client.gui.LittleGuiDist;
 import net.minecraft.client.input.MouseButtonInfo;
 import team.creative.creativecore.client.gui.GuiClientParent;
 import team.creative.littletiles.common.gui.signal.node.GuiSignalNode;
@@ -12,7 +13,7 @@ public class GuiClientSignalNode extends GuiClientParent<GuiSignalNode> {
     
     @Override
     public boolean testForDoubleClick(double x, double y, MouseButtonInfo info) {
-        return info.button() != 1;
+        return LittleGuiDist.legacyButton(info.button()) != 1;
     }
     
     @Override

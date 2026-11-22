@@ -7,7 +7,6 @@ import java.util.function.BooleanSupplier;
 
 import javax.annotation.Nullable;
 
-import org.lwjgl.glfw.GLFW;
 
 import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -269,7 +268,7 @@ public class BuildingModeMirrors extends BuildingModeFeature implements Building
         boolean doubleClick = lastMouseKey == event.getButton() && Blaze3D.getTime() - lastMouseClicked < ScreenEventListener.DOUBLE_CLICK_TIME;
         lastMouseKey = event.getButton();
         lastMouseClicked = Blaze3D.getTime();
-        if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+        if (event.getButton() == InputConstants.MOUSE_BUTTON_LEFT) {
             if (LittleActionHandlerClient.isUsingSecondMode())
                 if (doubleClick)
                     reset();
@@ -282,7 +281,7 @@ public class BuildingModeMirrors extends BuildingModeFeature implements Building
                 }
             else
                 marked = select(LittleTilesClient.PREVIEW_RENDERER.renderer);
-        } else if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+        } else if (event.getButton() == InputConstants.MOUSE_BUTTON_RIGHT) {
             int index = select(LittleTilesClient.PREVIEW_RENDERER.renderer);
             if (index >= 0) {
                 var renderer = LittleTilesClient.PREVIEW_RENDERER.renderer;
