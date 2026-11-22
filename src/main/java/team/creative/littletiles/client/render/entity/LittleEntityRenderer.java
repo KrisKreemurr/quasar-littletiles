@@ -11,7 +11,6 @@ import team.creative.littletiles.common.entity.LittleEntity;
 
 public class LittleEntityRenderer {
 
-    public LittleEntityRenderer(EntityRendererProvider.Context context) { super(context); }
 
     public boolean shouldRender(LittleEntity animation, Frustum frustum, double camX, double camY, double camZ) { return false; }
 

@@ -7,14 +7,11 @@ import java.util.function.Supplier;
 import javax.annotation.Nullable;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL15C;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.MeshData.SortState;
-import com.mojang.blaze3d.vertex.VertexBuffer;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexSorting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
@@ -31,7 +28,6 @@ import team.creative.littletiles.client.render.cache.buffer.ChunkBufferUploader;
 
 public interface RenderChunkExtender {
 
-    public VertexBuffer getVertexBuffer(ChunkSectionLayer layer);
 
     public void markReadyForUpdate(boolean playerChanged);
 

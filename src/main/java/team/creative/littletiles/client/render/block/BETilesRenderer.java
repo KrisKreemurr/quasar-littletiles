@@ -1,7 +1,6 @@
 package team.creative.littletiles.client.render.block;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -19,7 +18,6 @@ public class BETilesRenderer {
 
     public boolean shouldRenderOffScreen(BETiles be) { return false; }
 
-    public void render(BETiles be, float partialTickTime, PoseStack pose, MultiBufferSource buffer, int destroyStage, int p_112312_) {}
 
 }
 

@@ -12,15 +12,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 import javax.annotation.Nullable;
 import org.joml.Matrix4f;
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexBuffer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.PrioritizeChunkUpdates;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.SectionBufferBuilderPack;
 import net.minecraft.client.renderer.chunk.RenderRegionCache;
@@ -71,9 +68,7 @@ public class LittleLevelRenderManager extends LittleEntityRenderManager<LittleLe
 
     private LittleRenderChunk create(SectionPos pos) { return null; }
 
-    public CompletableFuture<Void> uploadChunkLayer(MeshData rendered, VertexBuffer buffer) { return null; }
 
-    public CompletableFuture<Void> uploadSectionIndexBuffer(ByteBufferBuilder.Result result, VertexBuffer buffer) { return null; }
 
     public void schedule(LittleRenderChunk.CompileTask task) {}
 
@@ -85,11 +80,9 @@ public class LittleLevelRenderManager extends LittleEntityRenderManager<LittleLe
 
     public void compileSections(Camera camera) {}
 
-    protected void renderAllBlockEntities(PoseStack pose, Frustum frustum, Vec3 cam, float frameTime, MultiBufferSource bufferSource) {}
 
     public void resortTransparency(ChunkSectionLayer layer, double x, double y, double z) {}
 
-    public void renderChunkLayer(ChunkSectionLayer layer, PoseStack pose, double x, double y, double z, Matrix4f projectionMatrix, Uniform offset) {}
 
     public SectionBufferBuilderPack fixedBuffers() { return null; }
 
