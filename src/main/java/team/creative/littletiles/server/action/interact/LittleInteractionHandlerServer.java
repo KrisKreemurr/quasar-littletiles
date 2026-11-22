@@ -8,7 +8,7 @@ import net.neoforged.bus.api.EventPriority;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.EntityInteract;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.EntityInteractSpecific;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.EntityInteract;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.LeftClickBlock;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.RightClickItem;
@@ -37,8 +37,8 @@ public class LittleInteractionHandlerServer {
             interactions.remove(player);
     }
     
-    public void interactEntitySpecific(EntityInteractSpecific event) {
-        if (!event.getLevel().isClientSide && interactions.containsKey(event.getEntity())) {
+    public void interactEntitySpecific(EntityInteract event) {
+        if (!event.getLevel().isClientSide() && interactions.containsKey(event.getEntity())) {
             event.setCanceled(true);
             event.setCancellationResult(InteractionResult.SUCCESS);
         }

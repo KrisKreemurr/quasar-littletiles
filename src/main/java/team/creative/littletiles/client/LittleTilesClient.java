@@ -14,7 +14,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -34,7 +33,6 @@ import team.creative.creativecore.common.config.holder.ConfigHolderDynamic;
 import team.creative.creativecore.common.util.math.base.Facing;
 import team.creative.creativecore.common.util.math.matrix.IntMatrix3c;
 import team.creative.creativecore.common.util.math.transformation.Rotation;
-import team.creative.creativecore.common.util.mc.ColorUtils;
 import team.creative.littletiles.LittleTiles;
 import team.creative.littletiles.LittleTilesRegistry;
 import team.creative.littletiles.client.action.LittleActionHandlerClient;
@@ -157,7 +155,7 @@ public class LittleTilesClient {
     public static void load(IEventBus bus) {
         bus.addListener(LittleTilesClient::setup);
         NeoForge.EVENT_BUS.addListener(LittleTilesClient::commands);
-        bus.addListener(LittleTilesClient::initBlockColors);
+        // TODO(quasar): colored water tint (was RegisterColorHandlersEvent.Block) - 26.x block tints are data-driven.
         bus.addListener(LittleTilesClient::registerKeys);
         bus.addListener(LittleTilesClient::registerRenderers);
         // TODO(quasar): item models (multi tiles, premade, glove/chisel previews, block ingredient), item tints and the "filled" bottle property
@@ -222,11 +220,6 @@ public class LittleTilesClient {
         holder.clear();
         for (Entry<String, BuildingModeFeature> entry : BuildingModeFeatures.REGISTRY.entrySet())
             holder.registerValue(entry.getKey(), entry.getValue());
-    }
-    
-    private static void initBlockColors(RegisterColorHandlersEvent.Block event) {
-        event.register((state, level, pos, tint) -> level != null && pos != null ? ColorUtils.setAlpha(BiomeColors.getAverageWaterColor(level, pos), 255) : -12618012,
-            LittleTilesRegistry.WATER.value(), LittleTilesRegistry.FLOWING_WATER.value());
     }
     
     /** TODO(quasar): real renderers for animated structures / sized TNT / seats come with the render rewrite; until then they are invisible. */

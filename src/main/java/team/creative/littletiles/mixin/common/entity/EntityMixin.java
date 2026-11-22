@@ -1,5 +1,6 @@
 package team.creative.littletiles.mixin.common.entity;
 
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -276,7 +277,7 @@ public class EntityMixin {
                             BlockState blockstate = level.getBlockState(pos);
                             
                             try {
-                                blockstate.entityInside((Level) level, pos, asEntity());
+                                blockstate.entityInside((Level) level, pos, asEntity(), InsideBlockEffectApplier.NOOP, true);
                                 this.onInsideBlock(blockstate);
                             } catch (Throwable throwable) {
                                 CrashReport crashreport = CrashReport.forThrowable(throwable, "Colliding entity with block");

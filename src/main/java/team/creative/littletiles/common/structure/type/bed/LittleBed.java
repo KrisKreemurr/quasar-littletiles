@@ -1,10 +1,11 @@
 package team.creative.littletiles.common.structure.type.bed;
 
+import net.minecraft.world.level.storage.LevelData;
 import java.util.List;
 
 import com.mojang.datafixers.util.Either;
 
-import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -103,15 +104,14 @@ public class LittleBed extends LittleStructure {
             if (player.isSleeping() || !player.isAlive())
                 return Either.left(Player.BedSleepingProblem.OTHER_PROBLEM);
             
-            if (!player.level().dimensionType().natural())
-                return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_HERE);
-            player.setRespawnPosition(player.level().dimension(), pos, player.getYRot(), false, true);
-            if (player.level().isDay())
-                return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
+            // TODO(quasar): 26.x decides "beds work here" through the bed-rule environment attribute; check it here once ported.
+            player.setRespawnPosition(new ServerPlayer.RespawnConfig(LevelData.RespawnData.of(player.level().dimension(), pos, player.getYRot(), 0), false), true);
+            if (player.level().isBrightOutside())
+                return Either.left(new Player.BedSleepingProblem(Component.translatable("block.minecraft.bed.no_sleep")));
             if (!player.isCreative()) {
                 Vec3 vec3 = highest.toVanilla();
                 List<Monster> list = player.level().getEntitiesOfClass(Monster.class, new AABB(vec3.x() - 8.0, vec3.y() - 5.0, vec3.z() - 8.0, vec3.x() + 8.0, vec3.y() + 5.0, vec3
-                        .z() + 8.0), monster -> monster.isPreventingPlayerRest(player));
+                        .z() + 8.0), monster -> monster.isPreventingPlayerRest(player.level(), player));
                 if (!list.isEmpty())
                     return Either.left(Player.BedSleepingProblem.NOT_SAFE);
             }
@@ -136,16 +136,16 @@ public class LittleBed extends LittleStructure {
         ((ILittleBedPlayerExtension) player).setPositionToBed();
         player.setSleepingPos(getStructurePos());
         player.setDeltaMovement(Vec3.ZERO);
-        player.hasImpulse = true;
+        player.needsSync = true;
         
         if (player instanceof ServerPlayer sPlayer) {
             player.awardStat(Stats.SLEEP_IN_BED);
             CriteriaTriggers.SLEPT_IN_BED.trigger(sPlayer);
             
-            if (!sPlayer.serverLevel().canSleepThroughNights())
+            if (!sPlayer.level().canSleepThroughNights())
                 player.sendOverlayMessage(Component.translatable("sleep.not_possible"));
             
-            sPlayer.serverLevel().updateSleepingPlayerList();
+            sPlayer.level().updateSleepingPlayerList();
         }
         return null;
     }
@@ -186,7 +186,7 @@ public class LittleBed extends LittleStructure {
             if (level instanceof ISubLevel l)
                 level = l.getRealLevel();
             
-            if (level.dimensionType().bedWorks()) {
+            { // TODO(quasar): bed-rule environment attribute (was dimensionType().bedWorks())
                 Vec3d vec = getHighestCenterVec();
                 if (this.sleepingPlayer != null) {
                     player.sendSystemMessage(Component.translatable("tile.bed.occupied", new Object[0]));
@@ -196,7 +196,7 @@ public class LittleBed extends LittleStructure {
                 BedSleepingProblem problem = trySleep((ServerPlayer) player, vec);
                 
                 if (problem != null)
-                    player.displayClientMessage(problem.getMessage(), true);
+                    player.sendOverlayMessage(problem.message());
                 return InteractionResult.SUCCESS;
             }
         } catch (CorruptedConnectionException | NotYetConnectedException e) {}

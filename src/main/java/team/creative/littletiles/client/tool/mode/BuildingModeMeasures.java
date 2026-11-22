@@ -48,7 +48,7 @@ public class BuildingModeMeasures extends BuildingModeToggle implements Building
         removeCache();
         inventoryChanged = renderer.player().getInventory().getTimesChanged();
         tapes.clear();
-        for (ItemStack stack : renderer.player().getInventory().items)
+        for (ItemStack stack : renderer.player().getInventory().getNonEquipmentItems())
             if (stack.getItem() instanceof ILittleMeasure m)
                 tapes.addAll(m.getMeasurements(renderer.level(), stack));
         result = RenderMeasurementResults.of(renderer, tapes);

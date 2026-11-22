@@ -29,7 +29,7 @@ public class LittleActionHandlerClient extends LevelHandler {
     public final PlacementPlayerSetting setting = new PlacementPlayerSetting();
     
     public static boolean canUseUndoOrRedo() {
-        GameType type = PlayerUtils.getGameType(mc.player);
+        GameType type = mc.player.gameMode();
         return type == GameType.CREATIVE || type == GameType.SURVIVAL;
     }
     

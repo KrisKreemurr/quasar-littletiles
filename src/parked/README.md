@@ -7,3 +7,6 @@ They are **not compiled**. The build uses small no-op stubs in `src/main/java` w
 of LittleTiles compiles and boots (tiles exist, load and save, but are not drawn yet).
 
 The render rewrite (into the chunk-mesh path Quasium uses) moves code back from here piece by piece.
+
+Also parked (gameplay, not render, but tied to Minecraft client internals that changed a lot):
+- `mixin/client/MinecraftMixin` + `client/level/LittleVanillaInteractionHandlerClient`: attacking / using items on blocks *inside animated structures* (sub-levels). Normal LittleTiles placing/breaking in the world is unaffected.

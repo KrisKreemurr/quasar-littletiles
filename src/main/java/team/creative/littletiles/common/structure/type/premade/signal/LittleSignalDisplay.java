@@ -2,7 +2,6 @@ package team.creative.littletiles.common.structure.type.premade.signal;
 
 
 
-import com.mojang.blaze3d.platform.GlStateManager;
 
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.BlockPos;
