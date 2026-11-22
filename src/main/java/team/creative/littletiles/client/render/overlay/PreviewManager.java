@@ -72,8 +72,6 @@ public class PreviewManager implements LevelAwareHandler {
     @SubscribeEvent
     protected void drawNonHighlight(RenderLevelStageEvent event) {}
 
-    @SubscribeEvent
-
     public boolean keyPressed(int keyCode, int scanCode, int action, int modifiers) { return false; }
 
     public Player player() { return null; }

@@ -32,7 +32,5 @@ public class LittleClientEventHandler {
     @SubscribeEvent
     public synchronized void levelUnload(LevelEvent.Unload event) {}
 
-    @SubscribeEvent
-
 }
 
