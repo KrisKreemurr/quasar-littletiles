@@ -31,7 +31,7 @@ public class LittleTickers extends LevelHandlers<LittleTicker> {
     
     public LittleTickers() {
         super();
-        if (FMLLoader.getDist() == Dist.CLIENT)
+        if (FMLLoader.getCurrent().getDist() == Dist.CLIENT)
             NeoForge.EVENT_BUS.addListener(this::clientTick);
         NeoForge.EVENT_BUS.addListener(this::levelTick);
         NeoForge.EVENT_BUS.addListener(this::serverTick);

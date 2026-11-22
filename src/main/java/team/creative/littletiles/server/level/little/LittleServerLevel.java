@@ -1,5 +1,8 @@
 package team.creative.littletiles.server.level.little;
 
+import org.jetbrains.annotations.Nullable;
+
+import net.minecraft.world.level.redstone.Orientation;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,7 +11,7 @@ import java.util.List;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
@@ -45,8 +48,8 @@ import team.creative.littletiles.server.player.LittleServerPlayerConnection;
 public abstract class LittleServerLevel extends ServerLevel implements LittleLevel {
     
     private static LevelStem overworldStem(MinecraftServer server) {
-        Registry<LevelStem> registry = server.registries().compositeAccess().registryOrThrow(Registries.LEVEL_STEM);
-        return registry.get(LevelStem.OVERWORLD);
+        Registry<LevelStem> registry = server.registries().compositeAccess().lookupOrThrow(Registries.LEVEL_STEM);
+        return registry.getValue(LevelStem.OVERWORLD);
     }
     
     public Entity holder;
@@ -86,14 +89,14 @@ public abstract class LittleServerLevel extends ServerLevel implements LittleLev
     }
     
     @Override
-    public void neighborChanged(BlockPos pos, Block block, BlockPos fromPos) {
+    public void neighborChanged(BlockPos pos, Block block, @Nullable Orientation orientation) {
         if (preventNeighborUpdate)
             return;
         if (this.isClientSide()) {
             BlockState blockstate = this.getBlockState(pos);
             
             try {
-                blockstate.handleNeighborChanged(this, pos, block, fromPos, false);
+                blockstate.handleNeighborChanged(this, pos, block, orientation, false);
             } catch (Throwable throwable) {
                 CrashReport crashreport = CrashReport.forThrowable(throwable, "Exception while updating neighbours");
                 CrashReportCategory crashreportcategory = crashreport.addCategory("Block being updated");
@@ -108,14 +111,14 @@ public abstract class LittleServerLevel extends ServerLevel implements LittleLev
                 throw new ReportedException(crashreport);
             }
         } else
-            super.neighborChanged(pos, block, fromPos);
+            super.neighborChanged(pos, block, orientation);
     }
     
     @Override
-    public void updateNeighborsAtExceptFromFacing(BlockPos pos, Block block, Direction facing) {
+    public void updateNeighborsAtExceptFromFacing(BlockPos pos, Block block, Direction facing, @Nullable Orientation orientation) {
         if (preventNeighborUpdate)
             return;
-        super.updateNeighborsAtExceptFromFacing(pos, block, facing);
+        super.updateNeighborsAtExceptFromFacing(pos, block, facing, orientation);
     }
     
     @Override

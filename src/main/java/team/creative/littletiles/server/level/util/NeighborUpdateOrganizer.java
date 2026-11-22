@@ -59,7 +59,7 @@ public class NeighborUpdateOrganizer {
             if (level instanceof ServerLevel) {
                 HashMapList<ChunkPos, BlockPos> chunks = new HashMapList<>();
                 for (BlockPos pos : entry.getValue())
-                    chunks.add(new ChunkPos(pos), pos);
+                    chunks.add(ChunkPos.containing(pos), pos);
                 
                 for (Player player : level.players()) {
                     List<BlockPos> collected = new ArrayList<>();
@@ -67,7 +67,7 @@ public class NeighborUpdateOrganizer {
                         boolean collect = false;
                         if (SableManager.INSTALLED)
                             collect = SableManager.context(level, chunk.getKey()).isSubLevel();
-                        if (collect || checkerboardDistance(chunk.getKey(), (ServerPlayer) player, true) <= player.getServer().getPlayerList().getViewDistance())
+                        if (collect || checkerboardDistance(chunk.getKey(), (ServerPlayer) player, true) <= player.level().getServer().getPlayerList().getViewDistance())
                             collected.addAll(chunk.getValue());
                     }
                     

@@ -17,46 +17,45 @@ import team.creative.littletiles.client.render.mc.RenderChunkExtender;
 public class SableManager {
     
     public static final String MODID = "sable";
-    public static final boolean INSTALLED = ModList.get().isLoaded(MODID);
+    // Quasar MC: Sable isn't on 26.3, so its compat is left out of the build; every call takes the vanilla path.
+    public static final boolean INSTALLED = false;
     
     public static @Nullable ILittleLevelContext context(LevelAccessor level, BlockPos pos) {
         if (INSTALLED)
-            return SableInteractor.context((Level) level, pos);
+            throw new IllegalStateException("Sable compat is not built");
         return ILittleLevelContext.STANDARD;
     }
     
     public static @Nullable ILittleLevelContext context(LevelAccessor level, ChunkPos pos) {
         if (INSTALLED)
-            return SableInteractor.context((Level) level, pos);
+            throw new IllegalStateException("Sable compat is not built");
         return ILittleLevelContext.STANDARD;
     }
     
     public static @Nullable ILittleLevelContext context(LevelAccessor level, Vec3 pos) {
         if (INSTALLED)
-            return SableInteractor.context((Level) level, pos);
+            throw new IllegalStateException("Sable compat is not built");
         return ILittleLevelContext.STANDARD;
     }
     
     public static boolean isSubLevel(LevelAccessor level, BlockPos pos) {
         if (INSTALLED)
-            return SableInteractor.isSubLevel((Level) level, pos);
+            throw new IllegalStateException("Sable compat is not built");
         return false;
     }
     
     @OnlyIn(Dist.CLIENT)
     public static @Nullable RenderChunkExtender getRenderChunk(Level level, long pos) {
-        return INSTALLED ? SableInteractor.getRenderChunk(level, pos) : null;
+        return null;
     }
     
     @OnlyIn(Dist.CLIENT)
     public static void markDirty(LevelAccessor level, BlockPos pos) {
-        if (INSTALLED)
-            SableInteractor.markDirty((Level) level, pos);
     }
     
     public static @Nullable IVecOrigin originWrapper(LevelAccessor level, Vec3 pos, IVecOrigin origin) {
         if (INSTALLED)
-            return SableInteractor.originWrapper((Level) level, pos, origin);
+            throw new IllegalStateException("Sable compat is not built");
         return origin;
     }
     

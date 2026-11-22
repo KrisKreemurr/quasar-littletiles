@@ -1,5 +1,6 @@
 package team.creative.littletiles.server.level.little;
 
+import net.minecraft.world.item.crafting.RecipeAccess;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -147,11 +148,11 @@ public class SubServerLevel extends LittleServerLevel implements LittleSubLevel 
     
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void addParticle(ParticleOptions p_195590_1_, boolean p_195590_2_, double x, double y, double z, double p_195590_9_, double p_195590_11_, double p_195590_13_) {
+    public void addParticle(ParticleOptions p_195590_1_, boolean p_195590_2_, boolean quasar$alwaysShow, double x, double y, double z, double p_195590_9_, double p_195590_11_, double p_195590_13_) {
         if (getOrigin() == null)
             return;
         Vector3d vec = getOrigin().pose().transform(new Vector3d(x, y, z));
-        getRealLevel().addParticle(p_195590_1_, p_195590_2_, vec.x, vec.y, vec.z, p_195590_9_, p_195590_11_, p_195590_13_);
+        getRealLevel().addParticle(p_195590_1_, p_195590_2_, quasar$alwaysShow, vec.x, vec.y, vec.z, p_195590_9_, p_195590_11_, p_195590_13_);
     }
     
     @Override
@@ -176,10 +177,6 @@ public class SubServerLevel extends LittleServerLevel implements LittleSubLevel 
         return getRealLevel().getUncachedNoiseBiome(p_225604_1_, p_225604_2_, p_225604_3_);
     }
     
-    @Override
-    public float getShade(Direction direction, boolean p_230487_2_) {
-        return getRealLevel().getShade(direction, p_230487_2_);
-    }
     
     @Override
     public ServerScoreboard getScoreboard() {
@@ -187,8 +184,8 @@ public class SubServerLevel extends LittleServerLevel implements LittleSubLevel 
     }
     
     @Override
-    public RecipeManager getRecipeManager() {
-        return getRealLevel().getRecipeManager();
+    public RecipeAccess recipeAccess() {
+        return getRealLevel().recipeAccess();
     }
     
     @Override

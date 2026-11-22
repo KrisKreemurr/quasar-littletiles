@@ -37,7 +37,7 @@ public class LittleClientChunkCache extends ClientChunkCache {
     }
     
     public void addLoadedChunk(LevelChunk chunk) {
-        chunks.put(chunk.getPos().toLong(), chunk);
+        chunks.put(chunk.getPos().pack(), chunk);
         getLevel().onChunkLoaded(chunk);
     }
     

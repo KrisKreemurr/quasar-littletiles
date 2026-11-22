@@ -1,5 +1,9 @@
 package team.creative.littletiles.client.level.little;
 
+import org.jetbrains.annotations.Nullable;
+
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.redstone.Orientation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -64,7 +68,7 @@ public abstract class LittleClientLevel extends ClientLevel implements LittleLev
     private final List<LevelBlockChangeListener> blockChangeListeners = new ArrayList<>();
     
     protected LittleClientLevel(ClientLevelData data, ResourceKey<Level> dimension, Supplier<ProfilerFiller> supplier, boolean debug, long seed, RegistryAccess.Frozen access) {
-        super(FakeClientPacketListener.get(access), data, dimension, access.registryOrThrow(Registries.DIMENSION_TYPE).getHolderOrThrow(
+        super(FakeClientPacketListener.get(access), data, dimension, access.lookupOrThrow(Registries.DIMENSION_TYPE).getOrThrow(
             LittleTilesRegistry.FAKE_DIMENSION), 3, 3, supplier, null, debug, seed);
     }
     
@@ -96,8 +100,8 @@ public abstract class LittleClientLevel extends ClientLevel implements LittleLev
     }
     
     @Override
-    public void disconnect() {
-        Minecraft.getInstance().level.disconnect();
+    public void disconnect(Component reason) {
+        Minecraft.getInstance().level.disconnect(reason);
     }
     
     @Override
@@ -149,14 +153,14 @@ public abstract class LittleClientLevel extends ClientLevel implements LittleLev
     }
     
     @Override
-    public void neighborChanged(BlockPos pos, Block block, BlockPos fromPos) {
+    public void neighborChanged(BlockPos pos, Block block, @Nullable Orientation orientation) {
         if (preventNeighborUpdate)
             return;
         if (this.isClientSide()) {
             BlockState blockstate = this.getBlockState(pos);
             
             try {
-                blockstate.handleNeighborChanged(this, pos, block, fromPos, false);
+                blockstate.handleNeighborChanged(this, pos, block, orientation, false);
             } catch (Throwable throwable) {
                 CrashReport crashreport = CrashReport.forThrowable(throwable, "Exception while updating neighbours");
                 CrashReportCategory crashreportcategory = crashreport.addCategory("Block being updated");
@@ -171,14 +175,14 @@ public abstract class LittleClientLevel extends ClientLevel implements LittleLev
                 throw new ReportedException(crashreport);
             }
         } else
-            super.neighborChanged(pos, block, fromPos);
+            super.neighborChanged(pos, block, orientation);
     }
     
     @Override
-    public void updateNeighborsAtExceptFromFacing(BlockPos pos, Block block, Direction facing) {
+    public void updateNeighborsAtExceptFromFacing(BlockPos pos, Block block, Direction facing, @Nullable Orientation orientation) {
         if (preventNeighborUpdate)
             return;
-        super.updateNeighborsAtExceptFromFacing(pos, block, facing);
+        super.updateNeighborsAtExceptFromFacing(pos, block, facing, orientation);
     }
     
     @Override

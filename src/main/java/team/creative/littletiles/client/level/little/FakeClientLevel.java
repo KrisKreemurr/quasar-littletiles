@@ -1,5 +1,6 @@
 package team.creative.littletiles.client.level.little;
 
+import net.minecraft.world.item.crafting.RecipeAccess;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -64,7 +65,7 @@ public class FakeClientLevel extends LittleClientLevel {
     
     @Override
     public Holder<Biome> getUncachedNoiseBiome(int p_225604_1_, int p_225604_2_, int p_225604_3_) {
-        return this.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.PLAINS);
+        return this.registryAccess().lookupOrThrow(Registries.BIOME).getOrThrow(Biomes.PLAINS);
     }
     
     @Override
@@ -108,9 +109,9 @@ public class FakeClientLevel extends LittleClientLevel {
     }
     
     @Override
-    public RecipeManager getRecipeManager() {
-        if (isClientSide)
-            return Minecraft.getInstance().getConnection().getRecipeManager();
+    public RecipeAccess recipeAccess() {
+        if (isClientSide())
+            return Minecraft.getInstance().getConnection().recipes();
         return getServer().getRecipeManager();
     }
     
