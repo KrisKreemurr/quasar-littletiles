@@ -119,6 +119,10 @@ public class LittleTilesClient {
         OVERLAY_RENDERER.displayActionMessage(message);
     }
     
+    public static Facing facingFromKeybind(Player player, int keyCode, int scanCode) {
+        return facingFromKeybind(player, new KeyEvent(keyCode, scanCode, 0));
+    }
+    
     public static Facing facingFromKeybind(Player player, KeyEvent key) {
         for (int i = 0; i < TOOL_KEYS.length; i++)
             if (TOOL_KEYS[i].matches(key))

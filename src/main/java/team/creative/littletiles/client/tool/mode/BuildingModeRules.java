@@ -1,5 +1,6 @@
 package team.creative.littletiles.client.tool.mode;
 
+import net.minecraft.client.input.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +20,7 @@ import team.creative.creativecore.common.gui.control.menu.GuiMenu;
 import team.creative.creativecore.common.gui.control.menu.GuiMenuRoot;
 import team.creative.creativecore.common.gui.control.simple.GuiLabel;
 import team.creative.creativecore.common.gui.extension.GuiExtensionCreator;
-import team.creative.creativecore.common.gui.extension.GuiExtensionCreator.ExtensionDirection;
+import team.creative.creativecore.client.gui.extension.GuiExtensionCreator.ExtensionDirection;
 import team.creative.creativecore.common.util.type.list.Tuple;
 import team.creative.creativecore.common.util.type.tree.NamedTree;
 import team.creative.littletiles.client.render.overlay.OverlayRenderer.OverlayGuiLayer;
@@ -170,12 +171,12 @@ public class BuildingModeRules extends BuildingModeFeature implements BuildingMo
         if (!ex.hasExtension())
             return;
         var entryTree = ex.get().createEntryTree();
-        for (Tuple<String, GuiMenu<BooleanSupplier>.GuiMenuEntry> entry : entryTree.all())
+        for (var entry : entryTree.all())
             entry.value.setHighlighted(selected.startsWith(entry.getKey()));
     }
     
     private boolean is(KeyMapping key, int keyCode, int scanCode) {
-        return key.matches(keyCode, scanCode) && key.getKeyModifier().isActive(null);
+        return key.matches(new KeyEvent(keyCode, scanCode, 0)) && key.getKeyModifier().isActive(null);
     }
     
     @Override

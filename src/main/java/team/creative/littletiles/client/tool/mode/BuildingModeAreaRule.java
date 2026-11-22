@@ -20,7 +20,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import team.creative.creativecore.common.config.api.CreativeConfig;
-import team.creative.creativecore.common.gui.integration.ScreenEventListener;
 import team.creative.creativecore.common.util.mc.ColorUtils;
 import team.creative.creativecore.common.util.type.Color;
 import team.creative.creativecore.common.util.type.tree.NamedTree;
@@ -131,59 +130,8 @@ public class BuildingModeAreaRule extends BuildingModeFeature implements Buildin
     
     @Override
     public boolean render(PreviewRenderer renderer, PoseStack pose, Vec3 cam, boolean lines) {
-        if (!lines)
-            return active;
-        
-        var blockHit = renderer.blockHit();
-        var player = renderer.player();
-        var level = renderer.level();
-        
-        var context = renderer.blockHitContext();
-        if (context.isSubLevel()) {
-            Vec3 newLocation = context.toRealWorld(blockHit.getLocation());
-            BlockPos blockPos = BlockPos.containing(newLocation);
-            if (blockHit.getType() == Type.MISS)
-                blockHit = BlockHitResult.miss(newLocation, blockHit.getDirection(), blockPos);
-            else
-                blockHit = new BlockHitResult(newLocation, blockHit.getDirection(), blockPos, blockHit.isInside());
-        }
-        
-        if (active) {
-            if (first != null)
-                positions.add(first);
-            if (last != null)
-                positions.add(last);
-            renderer.renderPositions(pose, ILittleLevelContext.STANDARD, positions.getFirst().getPos(), cam, positions, x -> markedPosition == x);
-            if (first != null)
-                positions.removeLast();
-            if (last != null)
-                positions.removeLast();
-            
-            if (first != null && last != null) {
-                var boxes = new LittleBoxesSimple(first.getPos(), first.getGrid());
-                boxes.minGrid(last);
-                LittleBox box = LittleBox.ofNothing();
-                box.growToInclude(first.getRelative(boxes.pos, boxes.grid));
-                box.growToInclude(last.getRelative(boxes.pos, boxes.grid));
-                boxes.add(box);
-                var result = renderer.buildBoxes(pose, boxes, lines, true);
-                renderer.renderLinesHighlight(ILittleLevelContext.STANDARD, cam, result.pos(), result.data(), color.toInt(), 1);
-                result.close();
-            }
-        }
-        
-        RenderSystem.enableBlend();
-        
-        if (blockHit != null)
-            last = new ShapePosition(player, level, PlacementHelper.getPosition(level, blockHit, positionGrid()), blockHit, false, inside());
-        
-        if (result == null && boxes != null && !boxes.isEmpty())
-            result = renderer.buildBoxes(pose, boxes, lines, true);
-        
-        if (boxes != null && result != null)
-            renderer.renderLinesHighlight(ILittleLevelContext.STANDARD, cam, result.pos(), result.data(), color.toInt(), 1);
-        RenderSystem.setShaderColor(1, 1, 1, 1);
-        return active; // Disable standard rendering during selection mode.
+        // TODO(quasar): render code parked for the render rewrite (see src/parked / upstream 1.21).
+        return false;
     }
     
     private void removeCache() {
@@ -217,7 +165,7 @@ public class BuildingModeAreaRule extends BuildingModeFeature implements Buildin
         if (event.getAction() != InputConstants.PRESS || MC.player == null || MC.gui.screen() != null || !active)
             return;
         
-        boolean doubleClick = lastMouseKey == event.getButton() && Blaze3D.getTime() - lastMouseClicked < ScreenEventListener.DOUBLE_CLICK_TIME;
+        boolean doubleClick = lastMouseKey == event.getButton() && Blaze3D.getTime() - lastMouseClicked < team.creative.creativecore.client.gui.integration.ScreenEventListener.DOUBLE_CLICK_TIME;
         lastMouseKey = event.getButton();
         lastMouseClicked = Blaze3D.getTime();
         if (event.getButton() == InputConstants.MOUSE_BUTTON_LEFT) {

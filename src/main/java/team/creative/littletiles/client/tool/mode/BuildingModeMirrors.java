@@ -31,7 +31,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import team.creative.creativecore.common.config.api.CreativeConfig;
-import team.creative.creativecore.common.gui.integration.ScreenEventListener;
 import team.creative.creativecore.common.util.math.base.Facing;
 import team.creative.creativecore.common.util.math.box.ABB;
 import team.creative.creativecore.common.util.math.vec.Vec3d;
@@ -153,82 +152,8 @@ public class BuildingModeMirrors extends BuildingModeFeature implements Building
     
     @Override
     public boolean render(PreviewRenderer renderer, PoseStack pose, Vec3 cam, boolean lines) {
-        var blockHit = renderer.blockHit();
-        var player = renderer.player();
-        var level = renderer.level();
-        
-        if (!lines) {
-            pose.pushPose();
-            pose.translate(-cam.x, -cam.y, -cam.z);
-            renderer.wrapPreviewRender(false, () -> {
-                for (MirrorOrigin mirror : mirrorOrigins)
-                    mirror.renderMirrors(renderer, pose);
-            });
-            
-            pose.popPose();
-            
-            RenderSystem.setShaderColor(1, 1, 1, 1);
-            RenderSystem.enableCull();
-            return active;
-        }
-        
-        if (!active)
-            return false;
-        
-        var context = renderer.blockHitContext();
-        if (context.isSubLevel()) {
-            Vec3 newLocation = context.toRealWorld(blockHit.getLocation());
-            BlockPos blockPos = BlockPos.containing(newLocation);
-            if (blockHit.getType() == Type.MISS)
-                blockHit = BlockHitResult.miss(newLocation, blockHit.getDirection(), blockPos);
-            else
-                blockHit = new BlockHitResult(newLocation, blockHit.getDirection(), blockPos, blockHit.isInside());
-        }
-        
-        pose.pushPose();
-        pose.translate(-cam.x, -cam.y, -cam.z);
-        if (first != null)
-            renderer.drawABB(pose, first.getBB(), false);
-        if (last != null)
-            renderer.drawABB(pose, last.getBB(), false);
-        pose.popPose();
-        
-        if (first != null && last != null) {
-            first.sameGrid(last, () -> {
-                var boxes = new LittleBoxesSimple(first.getPos(), first.getGrid());
-                LittleBox box = LittleBox.ofNothing();
-                box.growToIncludePixel(first.getRelative(boxes.pos));
-                box.growToIncludePixel(last.getRelative(boxes.pos));
-                boxes.add(box);
-                var result = renderer.buildBoxes(pose, boxes, lines);
-                renderer.renderLinesHighlight(ILittleLevelContext.STANDARD, cam, result.pos(), result.data(), color);
-                result.close();
-            });
-        }
-        
-        if (blockHit != null)
-            last = new ShapePosition(player, level, PlacementHelper.getPosition(level, blockHit, positionGrid()), blockHit, false, inside());
-        
-        if (result == null && mirrorOrigins != null && !mirrorOrigins.isEmpty()) {
-            LittleBoxes boxes = new LittleBoxesSimple(mirrorOrigins.getFirst().pos(), LittleGrid.MIN);
-            for (MirrorOrigin origin : mirrorOrigins)
-                boxes.addBox(origin.box);
-            result = renderer.buildBoxes(pose, boxes, lines);
-        }
-        
-        if (mirrorOrigins != null && result != null) {
-            if (marked != -1 && marked < mirrorOrigins.size()) {
-                pose.pushPose();
-                pose.translate(-cam.x, -cam.y, -cam.z);
-                mirrorOrigins.get(marked).render(pose, true);
-                pose.popPose();
-            }
-            
-            renderer.renderLinesHighlight(ILittleLevelContext.STANDARD, cam, result.pos(), result.data(), color);
-            
-        }
-        
-        return active; // Disable standard rendering during selection mode.
+        // TODO(quasar): render code parked for the render rewrite (see src/parked / upstream 1.21).
+        return false;
     }
     
     private void removeCache() {
@@ -265,7 +190,7 @@ public class BuildingModeMirrors extends BuildingModeFeature implements Building
         if (event.getAction() != InputConstants.PRESS || MC.player == null || MC.gui.screen() != null || !active)
             return;
         
-        boolean doubleClick = lastMouseKey == event.getButton() && Blaze3D.getTime() - lastMouseClicked < ScreenEventListener.DOUBLE_CLICK_TIME;
+        boolean doubleClick = lastMouseKey == event.getButton() && Blaze3D.getTime() - lastMouseClicked < team.creative.creativecore.client.gui.integration.ScreenEventListener.DOUBLE_CLICK_TIME;
         lastMouseKey = event.getButton();
         lastMouseClicked = Blaze3D.getTime();
         if (event.getButton() == InputConstants.MOUSE_BUTTON_LEFT) {
@@ -405,32 +330,7 @@ public class BuildingModeMirrors extends BuildingModeFeature implements Building
         }
         
         private void renderMirror(PoseStack pose, Axis axis, Vec3 center, int color) {
-            float normalX = axis == Axis.X ? 1 : 0;
-            float normalY = axis == Axis.Y ? 1 : 0;
-            float normalZ = axis == Axis.Z ? 1 : 0;
-            
-            color = ColorUtils.setAlpha(color, 100);
-            
-            Tesselator tesselator = Tesselator.getInstance();
-            BufferBuilder bufferbuilder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_NORMAL);
-            var a = team.creative.creativecore.common.util.math.base.Axis.get(axis);
-            float size = 1000;
-            float doubleSize = size * 2;
-            Vec3d vec = new Vec3d(center);
-            
-            vec.set(a.one(), vec.get(a.one()) - size);
-            vec.set(a.two(), vec.get(a.two()) - size);
-            
-            RenderSystem.disableCull();
-            bufferbuilder.addVertex(pose.last().pose(), (float) vec.x, (float) vec.y, (float) vec.z).setColor(color).setNormal(normalX, normalY, normalZ);
-            vec.set(a.one(), vec.get(a.one()) + doubleSize);
-            bufferbuilder.addVertex(pose.last().pose(), (float) vec.x, (float) vec.y, (float) vec.z).setColor(color).setNormal(normalX, normalY, normalZ);
-            vec.set(a.two(), vec.get(a.two()) + doubleSize);
-            bufferbuilder.addVertex(pose.last().pose(), (float) vec.x, (float) vec.y, (float) vec.z).setColor(color).setNormal(normalX, normalY, normalZ);
-            vec.set(a.one(), vec.get(a.one()) - doubleSize);
-            bufferbuilder.addVertex(pose.last().pose(), (float) vec.x, (float) vec.y, (float) vec.z).setColor(color).setNormal(normalX, normalY, normalZ);
-            
-            BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
+            // TODO(quasar): render code parked for the render rewrite (see src/parked / upstream 1.21).
         }
         
         public void renderMirrors(PreviewRenderer renderer, PoseStack pose) {
@@ -444,35 +344,7 @@ public class BuildingModeMirrors extends BuildingModeFeature implements Building
         }
         
         public void render(PoseStack pose, boolean selected) {
-            Tesselator tesselator = Tesselator.getInstance();
-            BufferBuilder bufferbuilder = tesselator.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL);
-            
-            RenderSystem.depthMask(true);
-            RenderSystem.disableCull();
-            RenderSystem.enableBlend();
-            RenderSystem.defaultBlendFunc();
-            RenderSystem.enableDepthTest();
-            
-            ABB box = this.box.toABB();
-            box.inflate(0.002);
-            
-            RenderSystem.setShader(GameRenderer::getRendertypeLinesShader);
-            
-            RenderSystem.lineWidth(3.0F);
-            box.renderLines(pose, bufferbuilder, 0, 0, 0, 1F);
-            
-            BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
-            
-            RenderSystem.disableDepthTest();
-            if (selected) {
-                bufferbuilder = tesselator.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL);
-                RenderSystem.lineWidth(6.0F);
-                box.renderLines(pose, bufferbuilder, 1F, 0.3F, 0.0F, 1F);
-                BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
-            }
-            
-            RenderSystem.enableDepthTest();
-            RenderSystem.enableCull();
+            // TODO(quasar): render code parked for the render rewrite (see src/parked / upstream 1.21).
         }
         
         public void toggle(Axis axis) {

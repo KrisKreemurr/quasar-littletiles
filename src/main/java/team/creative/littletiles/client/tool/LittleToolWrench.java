@@ -115,39 +115,7 @@ public class LittleToolWrench extends LittleTool {
     
     @Override
     protected void renderInternal(PreviewRenderer renderer, PoseStack pose, Vec3 cam, boolean lines) {
-        if (lines || receivedStructures == null || receivedStructures.isEmpty())
-            return;
-        
-        Minecraft mc = Minecraft.getInstance();
-        var cameraOrientation = mc.getEntityRenderDispatcher().cameraOrientation();
-        var buffer = mc.renderBuffers().bufferSource();
-        
-        boolean focus = false;
-        LittleStructure focusedStructure = null;
-        if (net.minecraft.client.Minecraft.getInstance().hasShiftDown()) {
-            focus = true;
-            if (mc.hitResult.getType() == Type.BLOCK && mc.hitResult instanceof BlockHitResult b && renderer.level().getBlockState(b.getBlockPos())
-                    .getBlock() instanceof BlockTile) {
-                LittleTileContext tileContext = renderer.selectFocused(b);
-                if (tileContext.isComplete() && tileContext.parent.isStructure())
-                    try {
-                        focusedStructure = tileContext.parent.getStructure();
-                    } catch (CorruptedConnectionException | NotYetConnectedException e) {}
-            }
-        }
-        
-        buffer.endBatch();
-        
-        pose.pushPose();
-        pose.translate((float) -cam.x, (float) -cam.y, (float) -cam.z);
-        for (StructureTooltip s : receivedStructures)
-            if (s.visible(focus, focusedStructure))
-                s.render(pose, buffer, mc.font, cameraOrientation);
-        pose.popPose();
-        
-        RenderSystem.disableDepthTest();
-        buffer.endBatch();
-        RenderSystem.enableDepthTest();
+        // TODO(quasar): render code parked for the render rewrite (see src/parked / upstream 1.21).
     }
     
     @Override
@@ -191,29 +159,7 @@ public class LittleToolWrench extends LittleTool {
         }
         
         public void render(PoseStack pose, MultiBufferSource buffer, Font font, Quaternionf cameraOrientation) {
-            if (info == null)
-                return;
-            int light = 255;
-            pose.pushPose();
-            Vec3 pos = this.pos;
-            if (structure.getStructureLevel() instanceof IOrientatedLevel l)
-                pos = l.getOrigin().pose().transform(pos);
-            pose.translate(pos.x, pos.y, pos.z);
-            pose.mulPose(cameraOrientation);
-            float scale = 0.005F;
-            pose.scale(scale, -scale, scale);
-            Matrix4f matrix4f = pose.last().pose();
-            int j = 255;
-            
-            int x = 0;
-            for (int i = 0; i < info.size(); i++) {
-                Component text = info.get(i);
-                float f1 = -font.width(text) / 2;
-                font.drawInBatch(text, f1, x, -1, true, matrix4f, buffer, Font.DisplayMode.SEE_THROUGH, j, light);
-                x += 10;
-            }
-            
-            pose.popPose();
+            // TODO(quasar): render code parked for the render rewrite (see src/parked / upstream 1.21).
         }
         
     }

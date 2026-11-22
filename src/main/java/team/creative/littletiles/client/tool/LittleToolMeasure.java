@@ -19,7 +19,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.InputEvent.MouseButton.Pre;
-import team.creative.creativecore.common.gui.integration.ScreenEventListener;
 import team.creative.littletiles.LittleTiles;
 import team.creative.littletiles.LittleTilesRegistry;
 import team.creative.littletiles.api.common.tool.ILittleMeasure;
@@ -165,7 +164,7 @@ public class LittleToolMeasure extends LittleTool {
             return;
         
         var renderer = LittleTilesClient.PREVIEW_RENDERER.renderer;
-        boolean doubleClick = lastMouseKey == event.getButton() && Blaze3D.getTime() - lastMouseClicked < ScreenEventListener.DOUBLE_CLICK_TIME;
+        boolean doubleClick = lastMouseKey == event.getButton() && Blaze3D.getTime() - lastMouseClicked < team.creative.creativecore.client.gui.integration.ScreenEventListener.DOUBLE_CLICK_TIME;
         lastMouseKey = event.getButton();
         lastMouseClicked = Blaze3D.getTime();
         if (event.getButton() == InputConstants.MOUSE_BUTTON_LEFT) {
@@ -248,7 +247,7 @@ public class LittleToolMeasure extends LittleTool {
             if (measurements.isEmpty())
                 return null;
             
-            var cam = MC.gameRenderer.mainCamera().getPosition();
+            var cam = MC.gameRenderer.mainCamera().position();
             
             var buffer = renderer.createBuffer();
             

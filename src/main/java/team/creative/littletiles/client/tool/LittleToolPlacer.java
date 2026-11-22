@@ -152,7 +152,7 @@ public class LittleToolPlacer extends LittleTool {
             var data = builder.build();
             ((MeshDataExtender) data).keepAlive(true);
             return new LittleGroupResult(group, buffer, data);
-        }, Util.backgroundExecutor());
+        }, net.minecraft.util.Util.backgroundExecutor());
         
     }
     
@@ -320,45 +320,7 @@ public class LittleToolPlacer extends LittleTool {
     
     @Override
     protected void renderInternal(PreviewRenderer renderer, PoseStack pose, Vec3 cam, boolean lines) {
-        if (this.builtLines != lines)
-            return;
-        
-        var mesh = getMeshData(renderer, lines);
-        if (mesh == null || placedPosition == null)
-            return;
-        
-        if (marked != null)
-            renderer.renderLineBox(placedContext, pose, cam, marked.getBB(), marked.getPos(), true);
-        
-        renderer.wrapPreviewRender(placedContext, placedPosition.getPos(), cam, lines, () -> {
-            var matrix = RenderSystem.getModelViewStack();
-            matrix.pushMatrix();
-            var min = placedPosition.getMin();
-            matrix.translate((float) min.getPosX(), (float) min.getPosY(), (float) min.getPosZ());
-            
-            RenderSystem.applyModelViewMatrix();
-            BufferUploader.drawWithShader(mesh);
-            
-            matrix.popMatrix();
-            RenderSystem.applyModelViewMatrix();
-            
-            if (builtResult != null) {
-                int colorAlpha = 255;
-                if (LittleActionHandlerClient.isUsingSecondMode() != placer.snapToGridByDefault(stack)) {
-                    pose.pushPose();
-                    pose.translate(-placedPosition.getPos().getX(), -placedPosition.getPos().getY(), -placedPosition.getPos().getZ());
-                    List<RenderBox> cubes = getPositingCubes(placedLevel, placedPosition.getPos());
-                    BufferBuilder builder = renderer.createTesselatorBuilder(lines);
-                    if (cubes != null)
-                        for (RenderBox cube : cubes)
-                            renderer.buildBox(pose, cube, builder, colorAlpha, lines);
-                    var data = builder.build();
-                    if (data != null)
-                        BufferUploader.drawWithShader(data);
-                    pose.popPose();
-                }
-            }
-        });
+        // TODO(quasar): render code parked for the render rewrite (see src/parked / upstream 1.21).
     }
     
     private List<RenderBox> getPositingCubes(Level level, BlockPos pos) {
