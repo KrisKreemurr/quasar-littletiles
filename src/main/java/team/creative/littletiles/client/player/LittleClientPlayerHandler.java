@@ -25,7 +25,6 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.Connection;
 import net.minecraft.network.DisconnectionDetails;
-import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.TickablePacketListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -53,6 +52,8 @@ import net.minecraft.world.TickRateManager;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.PositionMoveRotation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ExperienceOrb;
@@ -61,12 +62,9 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Guardian;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
-import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.inventory.HorseInventoryMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -235,16 +233,16 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
         LittleTiles.NETWORK.sendToServer(new LittleVanillaPacket((LittleLevel) level, packet));
     }
     
-    public void send(Packet<?> packet, @Nullable PacketSendListener listener) {
+    public void send(Packet<?> packet, @Nullable Runnable listener) {
         send(packet);
         if (listener != null)
-            listener.onSuccess();
+            listener.run(); // 26.3: PacketSendListener is now a factory of netty listeners; callers pass the success callback
     }
     
     @Nullable
     private Entity createEntityFromPacket(ClientboundAddEntityPacket packet) {
         EntityType<?> entitytype = packet.getType();
-        if (entitytype == EntityType.PLAYER) {
+        if (entitytype == EntityTypes.PLAYER) {
             PlayerInfo playerinfo = vanilla().getPlayerInfo(packet.getUUID());
             if (playerinfo == null) {
                 LOGGER.warn("Server attempted to add player prior to sending player info (Player id {})", packet.getUUID());
@@ -252,7 +250,7 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
             }
             return new RemotePlayer(requiresClientLevel(), playerinfo.getProfile());
         }
-        return entitytype.create(this.level);
+        return entitytype.create(this.level, EntitySpawnReason.LOAD);
     }
     
     @Override
@@ -361,7 +359,7 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
     }
     
     private void updateLevelChunk(ClientLevel level, int x, int z, ClientboundLevelChunkPacketData data) {
-        level.getChunkSource().replaceWithPacketData(x, z, data.getReadBuffer(), data.getHeightmaps(), data.getBlockEntitiesTagsConsumer(x, z));
+        level.getChunkSource().replaceWithPacketData(x, z, data);
     }
     
     private void queueLightUpdate(ClientLevel level, int x, int z, ClientboundLightUpdatePacketData data) {
@@ -377,13 +375,13 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
     
     private void applyLightData(ClientLevel level, int x, int z, ClientboundLightUpdatePacketData data) {
         LevelLightEngine levellightengine = this.level.getChunkSource().getLightEngine();
-        BitSet bitset = data.getSkyYMask();
-        BitSet bitset1 = data.getEmptySkyYMask();
-        Iterator<byte[]> iterator = data.getSkyUpdates().iterator();
+        BitSet bitset = data.skyYMask();
+        BitSet bitset1 = data.emptySkyYMask();
+        Iterator<byte[]> iterator = data.skyUpdates().iterator();
         this.readSectionList(level, x, z, levellightengine, LightLayer.SKY, bitset, bitset1, iterator);
-        BitSet bitset2 = data.getBlockYMask();
-        BitSet bitset3 = data.getEmptyBlockYMask();
-        Iterator<byte[]> iterator1 = data.getBlockUpdates().iterator();
+        BitSet bitset2 = data.blockYMask();
+        BitSet bitset3 = data.emptyBlockYMask();
+        Iterator<byte[]> iterator1 = data.blockUpdates().iterator();
         this.readSectionList(level, x, z, levellightengine, LightLayer.BLOCK, bitset2, bitset3, iterator1);
         levellightengine.setLightEnabled(new ChunkPos(x, z), true);
     }
@@ -436,7 +434,7 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
                 levellightengine.queueSectionData(LightLayer.SKY, sectionpos, (DataLayer) null);
             }
             
-            for (int j = this.level.getMinSectionY(); j < this.level.getMaxSection(); ++j)
+            for (int j = this.level.getMinSectionY(); j <= this.level.getMaxSectionY(); ++j)
                 levellightengine.updateSectionStatus(SectionPos.of(chunkpos, j), true);
         });
     }
@@ -676,7 +674,7 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
         Entity entity = this.level.getEntity(packet.playerId());
         if (entity == mc.player)
             if (mc.player.shouldShowDeathScreen())
-                mc.setScreen(new DeathScreen(packet.message(), this.level.getLevelData().isHardcore()));
+                mc.setScreen(new DeathScreen(packet.message(), this.level.getLevelData().isHardcore(), mc.player));
             else
                 mc.player.respawn();
     }
