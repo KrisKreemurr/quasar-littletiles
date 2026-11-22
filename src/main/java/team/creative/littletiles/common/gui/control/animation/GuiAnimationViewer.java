@@ -2,27 +2,12 @@ package team.creative.littletiles.common.gui.control.animation;
 
 import team.creative.creativecore.common.gui.IGuiParent;
 
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.lwjgl.opengl.GL11;
 
-import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexSorting;
 import com.mojang.math.Axis;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.Options;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.client.ClientHooks;
 import team.creative.creativecore.common.gui.GuiControl;
-import team.creative.creativecore.common.gui.style.ControlFormatting;
-import team.creative.creativecore.common.util.math.geo.Rect;
 import team.creative.creativecore.common.util.math.vec.SmoothValue;
 import team.creative.creativecore.common.util.math.vec.Vec3d;
 
@@ -39,67 +24,19 @@ public class GuiAnimationViewer extends GuiControl {
     
     public ViewerDragMode grabMode = ViewerDragMode.NONE;
     private ProjectionMode projection = ProjectionMode.SHOWCASE;
+    public boolean initialized = false;
     public double grabX;
     public double grabY;
     public GuiAnimationViewerStorage storage;
-    private boolean initialized = false;
     
-    private boolean forward;
-    private boolean backward;
-    private boolean left;
-    private boolean right;
-    private boolean up;
-    private boolean down;
     
     public GuiAnimationViewer(IGuiParent parent, String name, GuiAnimationViewerStorage storage) {
         super(parent, name);
         this.storage = storage;
     }
     
-    @Override
-    public ControlFormatting getControlFormatting() {
-        return ControlFormatting.NESTED_NO_PADDING;
-    }
-    
-    @Override
-    public void mouseMoved(double x, double y) {
-        super.mouseMoved(x, y);
-        if (grabMode == ViewerDragMode.NONE)
-            return;
-        
-        switch (grabMode) {
-            case LEFT -> {
-                int scale = Math.min(rect.getWidth(), rect.getHeight());
-                rotY.setStart(rotY.aimed() + (x - grabX) / scale * 180);
-                rotX.setStart(rotX.aimed() + (y - grabY) / scale * 180);
-            }
-            default -> projection.dragMouse(this, x - grabX, y - grabY);
-        }
-        grabX = x;
-        grabY = y;
-    }
-    
-    @Override
-    public boolean mouseClicked(double x, double y, int button) {
-        if (grabMode == ViewerDragMode.NONE) {
-            grabMode = ViewerDragMode.of(button);
-            grabX = x;
-            grabY = y;
-            return true;
-        }
-        return false;
-    }
-    
-    @Override
-    public void mouseReleased(double x, double y, int button) {
-        if (button == grabMode.ordinal() - 1)
-            grabMode = ViewerDragMode.NONE;
-    }
-    
-    @Override
-    public boolean mouseScrolled(double x, double y, double delta) {
-        distance.set(Math.max(distance.aimed() + delta * -(net.minecraft.client.Minecraft.getInstance().hasControlDown() ? 5 : 1), 0));
-        return true;
+    public ProjectionMode projection() {
+        return projection;
     }
     
     public void nextProjection() {
@@ -109,46 +46,6 @@ public class GuiAnimationViewer extends GuiControl {
     public void setProjection(ProjectionMode mode) {
         this.projection = mode;
         initialized = false;
-    }
-    
-    public static Matrix4f getProjectionMatrix(Minecraft mc, double fov, float width, float height) {
-        return new Matrix4f().perspective((float) (fov * Math.PI / 180F), width / height, 0.05F, mc.gameRenderer.getDepthFar());
-    }
-    
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        Options options = Minecraft.getInstance().options;
-        if (options.keyUp.matches(keyCode, scanCode))
-            forward = true;
-        if (options.keyDown.matches(keyCode, scanCode))
-            backward = true;
-        if (options.keyRight.matches(keyCode, scanCode))
-            left = true;
-        if (options.keyLeft.matches(keyCode, scanCode))
-            right = true;
-        if (options.keyJump.matches(keyCode, scanCode))
-            up = true;
-        if (options.keyShift.matches(keyCode, scanCode))
-            down = true;
-        return super.keyPressed(keyCode, scanCode, modifiers);
-    }
-    
-    @Override
-    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-        Options options = Minecraft.getInstance().options;
-        if (options.keyUp.matches(keyCode, scanCode))
-            forward = false;
-        if (options.keyDown.matches(keyCode, scanCode))
-            backward = false;
-        if (options.keyRight.matches(keyCode, scanCode))
-            left = false;
-        if (options.keyLeft.matches(keyCode, scanCode))
-            right = false;
-        if (options.keyJump.matches(keyCode, scanCode))
-            up = false;
-        if (options.keyShift.matches(keyCode, scanCode))
-            down = false;
-        return super.keyReleased(keyCode, scanCode, modifiers);
     }
     
     public void resetView() {
@@ -162,85 +59,6 @@ public class GuiAnimationViewer extends GuiControl {
     }
     
     @Override
-    @OnlyIn(Dist.CLIENT)
-    protected void renderContent(GuiGraphics graphics, Rect controlRect, Rect realRect, double controlScale, int mouseX, int mouseY) {
-        if (!storage.isReady())
-            return;
-        
-        if (!initialized) {
-            resetView();
-            projection.init(this);
-            initialized = true;
-        }
-        Minecraft mc = Minecraft.getInstance();
-        Window window = mc.getWindow();
-        
-        rotX.tick();
-        rotY.tick();
-        rotZ.tick();
-        distance.tick();
-        offX.tick();
-        offY.tick();
-        offZ.tick();
-        
-        float amount = mc.getTimer().getGameTimeDeltaTicks() * 2;
-        if (net.minecraft.client.Minecraft.getInstance().hasControlDown())
-            amount *= 4;
-        if (forward)
-            projection.forward(amount, this);
-        if (backward)
-            projection.forward(-amount, this);
-        if (left)
-            projection.lateral(amount, this);
-        if (right)
-            projection.lateral(-amount, this);
-        if (up)
-            projection.up(amount, this);
-        if (down)
-            projection.up(-amount, this);
-        
-        var view = RenderSystem.getModelViewStack();
-        view.pushMatrix();
-        view.identity();
-        RenderSystem.applyModelViewMatrix();
-        
-        PoseStack pose = new PoseStack();
-        
-        RenderSystem.setShaderColor(1, 1, 1, 1);
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        
-        double scale = window.getGuiScale();
-        int height = (int) (realRect.getHeight() * scale);
-        RenderSystem.viewport((int) (realRect.minX * scale), (int) (window.getHeight() - realRect.minY * scale - height), (int) (realRect.getWidth() * scale), height);
-        RenderSystem.clear(GL11.GL_DEPTH_BUFFER_BIT, Minecraft.ON_OSX);
-        Matrix4f projection = getProjectionMatrix(mc, 70, rect.getContentWidth(), rect.getContentHeight());
-        RenderSystem.setProjectionMatrix(projection, VertexSorting.DISTANCE_TO_ORIGIN);
-        
-        RenderSystem.enableDepthTest();
-        
-        Vec3d center = storage.center();
-        this.projection.prepareRendering(pose, center, this);
-        
-        storage.renderAll(pose, projection, mc);
-        
-        RenderSystem.viewport(0, 0, window.getWidth(), window.getHeight());
-        RenderSystem.clear(GL11.GL_DEPTH_BUFFER_BIT, Minecraft.ON_OSX);
-        
-        RenderSystem.setProjectionMatrix(new Matrix4f().ortho(0.0F, (float) (window.getWidth() / window.getGuiScale()), (float) (window.getHeight() / window.getGuiScale()), 0.0F,
-            1000.0F, ClientHooks.getGuiFarPlane()), VertexSorting.ORTHOGRAPHIC_Z);
-        
-        Lighting.setupFor3DItems();
-        RenderSystem.disableDepthTest();
-        view.popMatrix();
-        RenderSystem.applyModelViewMatrix();
-    }
-    
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    protected void renderContent(GuiGraphics graphics, int mouseX, int mouseY) {}
-    
-    @Override
     public void closed() {}
     
     @Override
@@ -249,23 +67,7 @@ public class GuiAnimationViewer extends GuiControl {
     @Override
     public void tick() {}
     
-    @Override
-    public void flowX(int width, int preferred) {}
-    
-    @Override
-    public void flowY(int width, int height, int preferred) {}
-    
-    @Override
-    protected int preferredWidth(int availableWidth) {
-        return 10;
-    }
-    
-    @Override
-    protected int preferredHeight(int width, int availableHeight) {
-        return 10;
-    }
-    
-    protected static enum ViewerDragMode {
+    public static enum ViewerDragMode {
         
         NONE,
         LEFT,

@@ -1,42 +1,17 @@
 package team.creative.littletiles.common.gui.control.animation;
 
+import team.creative.littletiles.common.gui.LittleGuiUtils;
 import team.creative.creativecore.common.gui.IGuiParent;
 
-import org.joml.Matrix4f;
-import org.lwjgl.opengl.GL11;
 
-import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.blaze3d.vertex.VertexSorting;
 import com.mojang.math.Axis;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.sounds.SoundEvents;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.client.ClientHooks;
-import team.creative.creativecore.client.render.GuiRenderHelper;
-import team.creative.creativecore.client.render.box.RenderBox;
 import team.creative.creativecore.common.gui.GuiControl;
 import team.creative.creativecore.common.gui.event.GuiControlChangedEvent;
-import team.creative.creativecore.common.gui.style.ControlFormatting;
-import team.creative.creativecore.common.gui.style.Icon;
 import team.creative.creativecore.common.util.math.base.Facing;
-import team.creative.creativecore.common.util.math.geo.Rect;
 import team.creative.creativecore.common.util.math.vec.SmoothValue;
 import team.creative.creativecore.common.util.math.vec.Vec3d;
-import team.creative.creativecore.common.util.mc.ColorUtils;
 import team.creative.littletiles.common.grid.LittleGrid;
 import team.creative.littletiles.common.gui.tool.blueprint.GuiBlueprintAnimationStorage;
 import team.creative.littletiles.common.gui.tool.blueprint.GuiTreeItemStructure;
@@ -44,22 +19,19 @@ import team.creative.littletiles.common.math.box.LittleBox;
 
 public class GuiIsoAnimationViewer extends GuiControl {
     
-    private static final float MAXIMUM_ZOOM = 1F / (float) LittleGrid.OVERALL_DEFAULT_PIXEL_LENGTH;
+    public static final float MAXIMUM_ZOOM = 1F / (float) LittleGrid.OVERALL_DEFAULT_PIXEL_LENGTH;
     
-    protected SmoothValue rotX = new SmoothValue(200);
-    protected SmoothValue rotY = new SmoothValue(200);
-    protected SmoothValue rotZ = new SmoothValue(200);
-    protected SmoothValue scale = new SmoothValue(200, 1);
+    public SmoothValue rotX = new SmoothValue(200);
+    public SmoothValue rotY = new SmoothValue(200);
+    public SmoothValue rotZ = new SmoothValue(200);
+    public SmoothValue scale = new SmoothValue(200, 1);
     
-    protected SmoothValue offX = new SmoothValue(200);
-    protected SmoothValue offY = new SmoothValue(200);
+    public SmoothValue offX = new SmoothValue(200);
+    public SmoothValue offY = new SmoothValue(200);
     
     private GuiIsoView view;
     
-    private boolean initialized = false;
-    private boolean grabbed = false;
-    public double grabX;
-    public double grabY;
+    public boolean initialized = false;
     public final GuiTreeItemStructure item;
     
     private LittleBox box;
@@ -124,75 +96,29 @@ public class GuiIsoAnimationViewer extends GuiControl {
             raiseEvent(new GuiAnimationViewChangedEvent(this));
     }
     
-    @Override
-    public void mouseMoved(double x, double y) {
-        super.mouseMoved(x, y);
-        if (!grabbed)
-            return;
-        double scale = calculateScale();
-        offX.add((x - grabX) / scale);
-        offY.add((y - grabY) / scale);
-        grabX = x;
-        grabY = y;
-    }
-    
-    @Override
-    public boolean mouseClicked(double x, double y, int button) {
-        switch (button) {
-            case 0 -> {
-                grabX = x;
-                grabY = y;
-                grabbed = true;
-            }
-            case 1 -> clickToSetAxis(x, y);
-            case 2 -> resetView();
-        }
-        return true;
-    }
-    
-    @Override
-    public void mouseReleased(double x, double y, int button) {
-        grabbed = false;
-    }
-    
-    @Override
-    public boolean mouseScrolled(double x, double y, double delta) {
-        scale.add(0.05 * delta * (net.minecraft.client.Minecraft.getInstance().hasControlDown() ? 5 : 1));
-        if (Math.pow(scale.aimed(), 2) > MAXIMUM_ZOOM)
-            scale.set(Math.sqrt(MAXIMUM_ZOOM));
-        if (scale.aimed() < 0)
-            scale.set(0);
-        return true;
-    }
-    
-    public void clickToSetAxis(double x, double y) {
+    /** @param width,height control size, scale the client view scale (see the client dist). */
+    public void clickToSetAxis(double x, double y, int width, int height, float scale) {
         GuiBlueprintAnimationStorage storage = item.blueprint.storage;
         if (!storage.isReady() || !storage.isReady(item))
             return;
         
-        float scale = calculateScale();
         Vec3d center = storage.center();
         
         team.creative.creativecore.common.util.math.base.Axis one = view.xAxis.axis;
-        int posOne = grid.toGrid(-offX.current() * view.xAxis.offset() + ((x - rect.getWidth() / 2) / scale) * view.xAxis.offset() + center.get(one));
+        int posOne = grid.toGrid(-offX.current() * view.xAxis.offset() + ((x - width / 2) / scale) * view.xAxis.offset() + center.get(one));
         int sizeOne = box.getSize(one);
         box.setMax(one, posOne + sizeOne);
         box.setMin(one, posOne);
         
         team.creative.creativecore.common.util.math.base.Axis two = view.yAxis.axis;
-        int posTwo = grid.toGrid((-offY.current() + (y - rect.getHeight() / 2) / scale) * -view.yAxis.offset() + center.get(two));
+        int posTwo = grid.toGrid((-offY.current() + (y - height / 2) / scale) * -view.yAxis.offset() + center.get(two));
         int sizeTwo = box.getSize(two);
         box.setMax(two, posTwo + sizeTwo);
         box.setMin(two, posTwo);
         
         raiseEvent(new GuiAnimationAxisChangedEvent(this));
         
-        playSound(SoundEvents.WOODEN_BUTTON_CLICK_ON);
-    }
-    
-    @Override
-    public ControlFormatting getControlFormatting() {
-        return ControlFormatting.NESTED_NO_PADDING;
+        LittleGuiUtils.playSound(this, SoundEvents.WOODEN_BUTTON_CLICK_ON);
     }
     
     public void resetView() {
@@ -222,131 +148,6 @@ public class GuiIsoAnimationViewer extends GuiControl {
         });
     }
     
-    protected float calculateScale() {
-        float dimensionScale = Math.min(rect.getContentWidth(), (float) rect.getContentHeight());
-        return (float) (dimensionScale * Math.pow(this.scale.current(), 2));
-    }
-    
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    protected void renderContent(GuiGraphics graphics, Rect controlRect, Rect realRect, double controlScale, int mouseX, int mouseY) {
-        GuiBlueprintAnimationStorage storage = item.blueprint.storage;
-        
-        if (!storage.isReady() || !storage.isReady(item))
-            return;
-        
-        if (!initialized) {
-            resetView();
-            initialized = true;
-        }
-        
-        rotX.tick();
-        rotY.tick();
-        rotZ.tick();
-        scale.tick();
-        offX.tick();
-        offY.tick();
-        
-        Minecraft mc = Minecraft.getInstance();
-        Window window = mc.getWindow();
-        
-        RenderSystem.applyModelViewMatrix();
-        PoseStack pose = new PoseStack();
-        
-        RenderSystem.setShaderColor(1, 1, 1, 1);
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        
-        RenderSystem.enableDepthTest();
-        
-        double guiScale = window.getGuiScale();
-        int height = (int) (realRect.getHeight() * guiScale);
-        RenderSystem.viewport((int) (realRect.minX * guiScale), (int) (window.getHeight() - realRect.minY * guiScale - height), (int) (realRect.getWidth() * guiScale), height);
-        RenderSystem.clear(GL11.GL_DEPTH_BUFFER_BIT, Minecraft.ON_OSX);
-        Matrix4f projection = new Matrix4f().ortho(0.0F, (float) realRect.getWidth(), 0, (float) realRect.getHeight(), -1000.0F, ClientHooks.getGuiFarPlane());
-        RenderSystem.setProjectionMatrix(projection, VertexSorting.DISTANCE_TO_ORIGIN);
-        
-        Vec3d center = storage.center();
-        
-        pose.translate(rect.getWidth() / 2, rect.getHeight() / 2, 0);
-        
-        float scale = calculateScale();
-        pose.scale(scale, scale, scale);
-        
-        pose.translate(offX.current(), -offY.current(), 0);
-        
-        pose.mulPose(Axis.XP.rotationDegrees((float) rotX.current()));
-        pose.mulPose(Axis.YP.rotationDegrees((float) rotY.current()));
-        pose.mulPose(Axis.ZP.rotationDegrees((float) rotZ.current()));
-        pose.translate(-center.x, -center.y, -center.z);
-        
-        storage.renderAll(pose, projection, mc);
-        
-        RenderSystem.depthMask(true);
-        RenderSystem.disableCull();
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.setShaderColor(1, 1, 1, 1);
-        if (visibleAxis) {
-            RenderSystem.setShader(GameRenderer::getRendertypeLinesShader);
-            Tesselator tesselator = Tesselator.getInstance();
-            BufferBuilder bufferbuilder = tesselator.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL);
-            int colorAlpha = 255;
-            RenderBox renderBox = box.getRenderingBox(grid);
-            RenderSystem.disableDepthTest();
-            RenderSystem.lineWidth(16.0F);
-            renderBox.buildLines(pose, bufferbuilder, colorAlpha);
-            BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
-        }
-        
-        RenderSystem.viewport(0, 0, window.getWidth(), window.getHeight());
-        RenderSystem.setProjectionMatrix(new Matrix4f().ortho(0.0F, (float) (window.getWidth() / window.getGuiScale()), (float) (window.getHeight() / window.getGuiScale()), 0.0F,
-            1000.0F, ClientHooks.getGuiFarPlane()), VertexSorting.ORTHOGRAPHIC_Z);
-        RenderSystem.clear(GL11.GL_DEPTH_BUFFER_BIT, Minecraft.ON_OSX);
-        
-        Lighting.setupFor3DItems();
-        RenderSystem.disableDepthTest();
-        
-        pose = graphics.pose();
-        {
-            pose.pushPose();
-            
-            int axisWidth = 20;
-            int axisHeight = 16;
-            
-            Font font = Minecraft.getInstance().font;
-            
-            graphics.drawString(font, view.xAxis.axis.name(), rect.getWidth() / 2 - axisWidth / 2, rect.getHeight() - axisHeight + font.lineHeight / 2, ColorUtils.WHITE);
-            Icon icon = view.xAxis.positive ? Icon.ARROW_RIGHT : Icon.ARROW_LEFT;
-            
-            pose.translate(rect.getWidth() / 2 - axisWidth / 2, rect.getHeight() - axisHeight, 0);
-            RenderSystem.setShaderTexture(0, icon.location());
-            RenderSystem.setShaderColor(0, 0, 0, 1);
-            GuiRenderHelper.textureRect(graphics, 9, 0, icon.width(), icon.height(), icon.minX(), icon.minY());
-            RenderSystem.setShaderColor(1, 1, 1, 1);
-            GuiRenderHelper.textureRect(graphics, 8, 0, icon.width(), icon.height(), icon.minX(), icon.minY());
-            
-            pose.popPose();
-            pose.pushPose();
-            
-            graphics.drawString(font, view.yAxis.axis.name(), 5, rect.getHeight() / 2 - axisHeight / 2, ColorUtils.WHITE);
-            icon = view.yAxis.positive ? Icon.ARROW_UP : Icon.ARROW_DOWN;
-            
-            pose.translate(0, rect.getHeight() / 2 - axisHeight - 2, 0);
-            RenderSystem.setShaderTexture(0, icon.location());
-            RenderSystem.setShaderColor(0, 0, 0, 1);
-            GuiRenderHelper.textureRect(graphics, 0, -9, icon.width(), icon.height(), icon.minX(), icon.minY());
-            RenderSystem.setShaderColor(1, 1, 1, 1);
-            GuiRenderHelper.textureRect(graphics, 0, -8, icon.width(), icon.height(), icon.minX(), icon.minY());
-            
-            pose.popPose();
-        }
-    }
-    
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    protected void renderContent(GuiGraphics graphics, int mouseX, int mouseY) {}
-    
     @Override
     public void closed() {}
     
@@ -356,20 +157,8 @@ public class GuiIsoAnimationViewer extends GuiControl {
     @Override
     public void tick() {}
     
-    @Override
-    public void flowX(int width, int preferred) {}
-    
-    @Override
-    public void flowY(int width, int height, int preferred) {}
-    
-    @Override
-    protected int preferredWidth(int availableWidth) {
-        return 10;
-    }
-    
-    @Override
-    protected int preferredHeight(int width, int availableHeight) {
-        return 10;
+    public GuiIsoView view() {
+        return view;
     }
     
     public team.creative.creativecore.common.util.math.base.Axis axis() {
@@ -404,7 +193,7 @@ public class GuiIsoAnimationViewer extends GuiControl {
         
     }
     
-    static enum GuiIsoView {
+    public static enum GuiIsoView {
         
         UP(90, 90, 0, Facing.SOUTH, Facing.EAST, Facing.UP),
         DOWN(-90, 90, 0, Facing.SOUTH, Facing.WEST, Facing.DOWN),

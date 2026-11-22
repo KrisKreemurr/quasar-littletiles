@@ -4,22 +4,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.joml.Matrix4f;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -27,18 +20,14 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import team.creative.creativecore.common.gui.control.tree.GuiTree;
 import team.creative.creativecore.common.gui.control.tree.GuiTreeItem;
-import team.creative.creativecore.common.util.math.box.ABB;
-import team.creative.creativecore.common.util.math.box.BoxesVoxelShape;
 import team.creative.creativecore.common.util.math.vec.SmoothValue;
 import team.creative.creativecore.common.util.math.vec.Vec3d;
-import team.creative.littletiles.client.render.overlay.PreviewRenderer;
 import team.creative.littletiles.common.grid.LittleGrid;
 import team.creative.littletiles.common.gui.AnimationPreview;
 import team.creative.littletiles.common.gui.control.animation.GuiAnimationViewerStorage;
 import team.creative.littletiles.common.math.box.LittleBox;
 import team.creative.littletiles.common.math.box.collection.LittleBoxes;
 import team.creative.littletiles.common.math.box.collection.LittleBoxesNoOverlap;
-import team.creative.littletiles.common.math.vec.LittleVecGrid;
 
 public class GuiBlueprintAnimationStorage implements Iterable<Entry<GuiTreeItemStructure, AnimationPreview>>, GuiAnimationViewerStorage {
     
@@ -104,112 +93,8 @@ public class GuiBlueprintAnimationStorage implements Iterable<Entry<GuiTreeItemS
         return Collections.EMPTY_LIST;
     }
     
-    @OnlyIn(Dist.CLIENT)
-    protected void renderItem(GuiTreeItem item, PoseStack pose, Matrix4f projection, Minecraft mc) {
-        pose.pushPose();
-        
-        if ((!item.tree.hasCheckboxes() || item.isChecked()) && item instanceof GuiTreeItemStructure s) {
-            AnimationPreview preview = get(s);
-            if (preview == null) {
-                pose.popPose();
-                return;
-            }
-            
-            s.prepareRendering(preview);
-            
-            LittleVecGrid offset = s.getOffset();
-            if (offset != null)
-                pose.translate(offset.getPosX(), offset.getPosY(), offset.getPosZ());
-            
-            renderPreview(pose, projection, preview, mc);
-        }
-        
-        for (GuiTreeItem child : item.items())
-            renderItem(child, pose, projection, mc);
-        
-        pose.popPose();
-    }
-    
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void renderAll(PoseStack pose, Matrix4f projection, Minecraft mc) {
-        
-        renderItem(tree.root(), pose, projection, mc);
-        
-        RenderSystem.depthMask(true);
-        RenderSystem.disableCull();
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.setShaderColor(1, 1, 1, 1);
-        
-        RenderSystem.applyModelViewMatrix();
-        
-        GuiTreeItemStructure selected = (GuiTreeItemStructure) tree.selected();
-        
-        if (highlightSelected && selected != null) {
-            LittleVecGrid offset = selected.getOverallOffest();
-            double x = 0;
-            double y = 0;
-            double z = 0;
-            if (offset != null) {
-                x = offset.getPosX();
-                y = offset.getPosY();
-                z = offset.getPosZ();
-            }
-            
-            LittleGrid grid = selected.group.getGrid();
-            List<ABB> boxes = new ArrayList<>();
-            for (LittleBox box : selected.group.allBoxes())
-                boxes.add(box.getABB(grid));
-            
-            Tesselator tesselator = Tesselator.getInstance();
-            BufferBuilder bufferbuilder = tesselator.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL);
-            
-            RenderSystem.setShader(GameRenderer::getRendertypeLinesShader);
-            
-            RenderSystem.lineWidth(1.0F);
-            PreviewRenderer.renderShape(pose, bufferbuilder, BoxesVoxelShape.create(boxes), x, y, z, 1, 1, 1, 1);
-            BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
-        }
-        
-        if (hasOverlap()) {
-            RenderSystem.setShader(GameRenderer::getRendertypeLinesShader);
-            Tesselator tesselator = Tesselator.getInstance();
-            BufferBuilder bufferBuilder = tesselator.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL);
-            int colorAlpha = 102;
-            LittleBoxesNoOverlap overlap = overlappingBoxes;
-            LittleGrid grid = overlap.getGrid();
-            for (Entry<BlockPos, ArrayList<LittleBox>> entry : overlap.generateBlockWise().entrySet()) {
-                pose.pushPose();
-                pose.translate(entry.getKey().getX(), entry.getKey().getY(), entry.getKey().getZ());
-                for (LittleBox box : entry.getValue())
-                    box.getRenderingBox(grid).buildLines(pose, bufferBuilder, colorAlpha);
-                pose.popPose();
-            }
-            
-            RenderSystem.disableDepthTest();
-            RenderSystem.lineWidth(4.0F);
-            BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
-            
-            bufferBuilder = tesselator.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL);
-            for (Entry<BlockPos, ArrayList<LittleBox>> entry : overlap.generateBlockWise().entrySet()) {
-                pose.pushPose();
-                pose.translate(entry.getKey().getX(), entry.getKey().getY(), entry.getKey().getZ());
-                for (LittleBox box : entry.getValue())
-                    box.getRenderingBox(grid).buildLines(pose, bufferBuilder, colorAlpha);
-                pose.popPose();
-            }
-            
-            RenderSystem.lineWidth(2.0F);
-            RenderSystem.setShaderColor(1, 0, 0, 1);
-            BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
-            
-            RenderSystem.setShaderColor(1, 1, 1, 1);
-            
-            RenderSystem.disableDepthTest();
-        }
-        selected = null;
-    }
+    // TODO(quasar): renderItem/renderAll (tree of previews + selection outline + overlap boxes, GL immediate lines) move to the client preview renderer
+    // with the render rewrite; see upstream 1.21 GuiBlueprintAnimationStorage.renderAll.
     
     private void updateBox() {
         if (availablePreviews.isEmpty()) {
