@@ -533,6 +533,11 @@ public class LittleAnimationLevel extends Level implements LittleSubLevel, Itera
     }
     
     @Override
+    public int getSeaLevel() {
+        return parentLevel.getSeaLevel();
+    }
+    
+    @Override
     public void setRespawnData(LevelData.RespawnData data) {}
     
     @Override

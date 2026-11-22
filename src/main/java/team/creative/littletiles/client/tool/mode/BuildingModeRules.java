@@ -97,7 +97,7 @@ public class BuildingModeRules extends BuildingModeFeature implements BuildingMo
         }
         if (parent.parent() != null) {
             parent = parent.parent();
-            var entry = ex.get().getEntry(parent.path());
+            var entry = ex.get().createEntryTree().get(parent.path());
             if (entry == null)
                 return;
             entry.close();
@@ -111,7 +111,7 @@ public class BuildingModeRules extends BuildingModeFeature implements BuildingMo
         if (parent == null)
             return;
         if (parent.hasChildren()) {
-            var entry = ex.get().getEntry(selected);
+            var entry = ex.get().createEntryTree().get(selected);
             if (entry == null)
                 return;
             
