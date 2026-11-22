@@ -76,7 +76,7 @@ public class LittleStorage extends LittleStructure {
         if (filter == null)
             return false;
         for (CreativeIngredient ingredient : filter)
-            if (ingredient.is(stack))
+            if (ingredient.is(null, stack))
                 return true;
         return false;
     }
@@ -98,13 +98,18 @@ public class LittleStorage extends LittleStructure {
                 public boolean canPlaceItem(int index, ItemStack stack) {
                     return isValidItem(stack);
                 }
+                
+                @Override
+                public void setChanged() {
+                    super.setChanged();
+                    onInventoryChanged();
+                }
             };
-            InventoryUtils.load(inventory, provider, invNBT);
+            SimpleContainer loaded = InventoryUtils.load(provider, invNBT, inventory.getContainerSize());
+            for (int i = 0; i < inventory.getContainerSize(); i++)
+                inventory.setItem(i, loaded.getItem(i));
         } else
             inventory = null;
-        
-        if (inventory != null)
-            inventory.addListener(x -> onInventoryChanged());
         
         invisibleStorageTiles = nbt.getBooleanOr("invisibleStorage", false);
         whitelist = nbt.getBooleanOr("f_white", false);

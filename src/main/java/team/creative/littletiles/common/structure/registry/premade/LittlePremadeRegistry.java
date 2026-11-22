@@ -1,5 +1,6 @@
 package team.creative.littletiles.common.structure.registry.premade;
 
+import team.creative.littletiles.common.util.QuasarCompat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -60,7 +61,7 @@ public class LittlePremadeRegistry {
                 ItemStack stack = type.createItemStackEmpty();
                 CompoundTag structureNBT = new CompoundTag();
                 structureNBT.putString("id", type.id);
-                CompoundTag nbt = TagParser.parseTag(IOUtils.toString(LittleStructurePremade.class.getClassLoader().getResourceAsStream(
+                CompoundTag nbt = QuasarCompat.parseTag(IOUtils.toString(LittleStructurePremade.class.getClassLoader().getResourceAsStream(
                     "data/" + type.modid + "/premade/" + (type.path.isBlank() ? type.path : type.path + "/") + type.id + ".struct"), Charsets.UTF_8));
                 
                 CompoundTag originalNBT = nbt.contains(LittleGroup.STRUCTURE_KEY) ? nbt.getCompoundOrEmpty(LittleGroup.STRUCTURE_KEY) : null;

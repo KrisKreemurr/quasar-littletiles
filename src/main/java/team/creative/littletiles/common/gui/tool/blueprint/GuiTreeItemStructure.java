@@ -231,11 +231,11 @@ public class GuiTreeItemStructure extends GuiTreeItem implements AnimationContex
     public void load() {
         blueprint.animation.reset();
         gui = blueprint.types.selected();
-        blueprint.control = gui.create(this);
-        blueprint.control.setExpandableY();
         blueprint.config.clear();
-        GuiScrollY scroll = new GuiScrollY(this, "config").setHover(true);
+        GuiScrollY scroll = new GuiScrollY(blueprint.config, "config").setHover(true);
         scroll.setFormatting(ControlFormatting.TRANSPARENT);
+        blueprint.control = gui.create(scroll, this);
+        blueprint.control.setExpandableY();
         scroll.add(blueprint.control);
         blueprint.config.add(scroll);
         blueprint.control.create(structure);

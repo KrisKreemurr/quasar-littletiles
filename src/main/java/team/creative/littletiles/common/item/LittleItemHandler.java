@@ -6,7 +6,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.common.util.TriState;
+import net.minecraft.util.TriState;
 import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.BreakSpeed;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.LeftClickBlock;
@@ -60,8 +60,8 @@ public class LittleItemHandler {
                     entityItem.discard();
                     
                     event.setCanPickup(TriState.FALSE);
-                    player.level().playSound(null, player.getX(), player.getY() + 0.5, player.getZ(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.2F, ((player.level().random
-                            .nextFloat() - player.level().random.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+                    player.level().playSound(null, player.getX(), player.getY() + 0.5, player.getZ(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.2F, ((player.level().getRandom()
+                            .nextFloat() - player.level().getRandom().nextFloat()) * 0.7F + 1.0F) * 2.0F);
                 }
             } catch (NotEnoughIngredientsException e1) {}
         }

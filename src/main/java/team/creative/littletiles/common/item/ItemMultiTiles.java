@@ -1,5 +1,6 @@
 package team.creative.littletiles.common.item;
 
+import team.creative.littletiles.common.util.QuasarCompat;
 import net.minecraft.world.item.component.TooltipDisplay;
 import java.util.function.Consumer;
 import java.util.ArrayList;
@@ -75,7 +76,7 @@ public class ItemMultiTiles extends Item implements ILittlePlacer, IItemTooltip 
             try {
                 ItemStack stack = new ItemStack(LittleTilesRegistry.ITEM_TILES.value());
                 var in = file.getValue().open();
-                CompoundTag nbt = TagParser.parseTag(IOUtils.toString(in, Charsets.UTF_8));
+                CompoundTag nbt = QuasarCompat.parseTag(IOUtils.toString(in, Charsets.UTF_8));
                 if (OldLittleTilesDataParser.isOld(nbt))
                     nbt = OldLittleTilesDataParser.convert(nbt);
                 ILittleTool.setData(stack, nbt);

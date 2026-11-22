@@ -1,22 +1,19 @@
 package team.creative.littletiles.common.structure.type;
 
+import team.creative.littletiles.common.util.QuasarCompat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.mojang.brigadier.StringReader;
 
-import net.minecraft.commands.ParserUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -50,7 +47,10 @@ public class LittleStructureMessage extends LittleStructure {
         if (allowRightClick) {
             if (!level.isClientSide()) {
                 for (int i = 0; i < text.size(); i++)
-                    player.displayClientMessage(message(i), status);
+                    if (status)
+                        player.sendOverlayMessage(message(i));
+                    else
+                        player.sendSystemMessage(message(i));
             }
             return InteractionResult.SUCCESS;
         }
@@ -84,7 +84,7 @@ public class LittleStructureMessage extends LittleStructure {
     
     public Component message(int i) {
         try {
-            return ParserUtils.parseJson(getStructureLevel().registryAccess(), new StringReader(text.get(i)), ComponentSerialization.CODEC);
+            return QuasarCompat.parseComponent(getStructureLevel().registryAccess(), text.get(i));
         } catch (Exception exception) {
             return Component.literal(text.get(i));
         }

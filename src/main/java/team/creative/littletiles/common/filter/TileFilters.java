@@ -71,7 +71,7 @@ public class TileFilters {
         }
         
         public TileBlockFilter(CompoundTag nbt) {
-            block = BuiltInRegistries.BLOCK.get(Identifier.parse(nbt.getStringOr("block", "")));
+            block = BuiltInRegistries.BLOCK.getValue(Identifier.parse(nbt.getStringOr("block", "")));
         }
         
         @Override

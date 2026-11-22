@@ -72,7 +72,7 @@ public class LittleDoorActivatorGui extends LittleStructureGuiControl {
     
     public int[] generateActivated() {
         IntList list = new IntArrayList();
-        for (GuiControl control : controls)
+        for (GuiControl control : this)
             if (control instanceof GuiCheckBox box && box.get() && box.name.startsWith("c"))
                 list.add(Integer.parseInt(box.name.replace("c", "")));
         return list.toIntArray();

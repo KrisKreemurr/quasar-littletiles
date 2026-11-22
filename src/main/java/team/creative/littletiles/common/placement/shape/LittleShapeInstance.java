@@ -98,7 +98,7 @@ public class LittleShapeInstance {
         tooltip.accept(Component.translatable("gui.shape").append(": ").append(shape.translatable()));
         var config = getConfig(context.registries(), Side.CLIENT);
         if (config != null)
-            tooltip.addAll(config.information());
+            config.information().forEach(tooltip);
     }
     
     public Component translatable() {

@@ -54,7 +54,7 @@ public class PlacementResult {
         for (BETiles beTiles : blocks) {
             var chunk = level.getChunk(beTiles.getBlockPos());
             if (chunk instanceof LevelChunk l && !map.containsKey(l))
-                map.put(l, level.getChunkSource().chunkMap.getVisibleChunkIfPresent(l.getPos().asLong()));
+                map.put(l, level.getChunkSource().chunkMap.getVisibleChunkIfPresent(l.getPos().pack()));
         }
         
         for (Entry<LevelChunk, ChunkHolder> entry : map.entrySet())

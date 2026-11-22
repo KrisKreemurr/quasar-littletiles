@@ -1,5 +1,6 @@
 package team.creative.littletiles.common.structure.type;
 
+import team.creative.littletiles.common.util.QuasarCompat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,13 +68,13 @@ public class LittleItemHolder extends LittleStructure {
     
     @Override
     protected void loadExtra(CompoundTag nbt, HolderLookup.Provider provider) {
-        stack = ItemStack.parseOptional(provider, nbt.getCompoundOrEmpty("stack"));
+        stack = QuasarCompat.loadItem(provider, nbt.getCompoundOrEmpty("stack"));
         loadSettings(nbt, provider);
     }
     
     @Override
     protected void saveExtra(CompoundTag nbt, HolderLookup.Provider provider) {
-        nbt.put("stack", stack.saveOptional(provider));
+        nbt.put("stack", QuasarCompat.saveItem(provider, stack));
         nbt.putBoolean("locked", locked);
         nbt.putBoolean("f_white", whitelist);
         if (filter != null) {
@@ -101,7 +102,7 @@ public class LittleItemHolder extends LittleStructure {
         if (filter == null)
             return false;
         for (CreativeIngredient ingredient : filter)
-            if (ingredient.is(stack))
+            if (ingredient.is(null, stack))
                 return true;
         return false;
     }
@@ -112,7 +113,7 @@ public class LittleItemHolder extends LittleStructure {
             return InteractionResult.SUCCESS;
         ItemStack mainStack = player.getMainHandItem();
         if (mainStack.isEmpty() && !stack.isEmpty()) {
-            if (player.getInventory().add(player.getInventory().selected, stack))
+            if (player.getInventory().add(player.getInventory().getSelectedSlot(), stack))
                 stack = ItemStack.EMPTY;
             updateInput();
             updateStructure(true);

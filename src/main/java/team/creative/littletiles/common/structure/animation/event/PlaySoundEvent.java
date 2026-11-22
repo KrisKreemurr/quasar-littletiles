@@ -9,7 +9,7 @@ import team.creative.littletiles.common.structure.animation.context.AnimationCon
 public class PlaySoundEvent extends AnimationEvent<CompoundTag> {
     
     public static SoundEvent get(Identifier location) {
-        SoundEvent sound = BuiltInRegistries.SOUND_EVENT.get(location);
+        SoundEvent sound = BuiltInRegistries.SOUND_EVENT.getValue(location);
         if (sound != null)
             return sound;
         return SoundEvent.createVariableRangeEvent(location);
@@ -34,7 +34,7 @@ public class PlaySoundEvent extends AnimationEvent<CompoundTag> {
     @Override
     public CompoundTag save() {
         CompoundTag nbt = new CompoundTag();
-        nbt.putString("s", sound.getLocation().toString());
+        nbt.putString("s", sound.location().toString());
         nbt.putFloat("v", volume);
         nbt.putFloat("p", pitch);
         return nbt;

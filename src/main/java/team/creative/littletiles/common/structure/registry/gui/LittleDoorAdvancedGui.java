@@ -5,9 +5,6 @@ import team.creative.creativecore.common.gui.IGuiParent;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;
@@ -26,7 +23,6 @@ import team.creative.creativecore.common.gui.control.timeline.GuiTimeline;
 import team.creative.creativecore.common.gui.control.timeline.GuiTimelineChannelDouble;
 import team.creative.creativecore.common.gui.control.timeline.GuiTimelineKey;
 import team.creative.creativecore.common.gui.flow.GuiFlow;
-import team.creative.creativecore.common.util.math.geo.Rect;
 import team.creative.creativecore.common.util.math.vec.Vec1d;
 import team.creative.creativecore.common.util.text.TextMapBuilder;
 import team.creative.littletiles.common.grid.LittleGrid;
@@ -393,27 +389,23 @@ public class LittleDoorAdvancedGui extends LittleStructureGuiControl {
             if (!limited || lastDuration == timeline.getDuration())
                 return;
             
-            controls.remove(start);
+            remove(start);
             start = new GuiTimelineKey<Double>(this, 0, 0D);
             start.modifiable = false;
             add(start);
-            adjustPosition(start);
             
-            controls.remove(end);
+            remove(end);
             end = new GuiTimelineKey<Double>(this, timeline.getDuration(), 0D);
             end.modifiable = false;
             add(end);
-            adjustPosition(end);
             
             lastDuration = timeline.getDuration();
         }
         
         @Override
-        @Environment(EnvType.CLIENT)
-        @OnlyIn(Dist.CLIENT)
-        protected void renderContent(GuiGraphics graphics, Rect contentRect, Rect realContentRect, double scale, int mouseX, int mouseY) {
+        public void tick() {
             updateFixedKeys();
-            super.renderContent(graphics, contentRect, realContentRect, scale, mouseX, mouseY);
+            super.tick();
         }
         
         @Override
