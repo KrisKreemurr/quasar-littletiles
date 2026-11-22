@@ -4,14 +4,10 @@ import org.joml.Matrix4f;
 import org.joml.Vector3d;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.FluidTags;
@@ -19,8 +15,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.client.event.RenderBlockScreenEffectEvent;
-import net.neoforged.neoforge.client.event.RenderBlockScreenEffectEvent.OverlayType;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import team.creative.creativecore.common.util.mc.ColorUtils;
 import team.creative.creativecore.common.util.mc.TickUtils;
@@ -39,7 +33,6 @@ public class LittleClientEventHandler {
     public synchronized void levelUnload(LevelEvent.Unload event) {}
 
     @SubscribeEvent
-    public void renderOverlay(RenderBlockScreenEffectEvent event) {}
 
 }
 
