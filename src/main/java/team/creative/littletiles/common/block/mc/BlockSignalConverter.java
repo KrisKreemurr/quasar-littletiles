@@ -32,8 +32,8 @@ public class BlockSignalConverter extends BaseEntityBlock {
     
     public static final DirectionProperty HORIZONTAL_FACING = BlockStateProperties.HORIZONTAL_FACING;
     
-    public BlockSignalConverter() {
-        super(BlockBehaviour.Properties.of().sound(SoundType.METAL).strength(1.5F, 6.0F));
+    public BlockSignalConverter(BlockBehaviour.Properties properties) {
+        super(properties.sound(SoundType.METAL).strength(1.5F, 6.0F));
     }
     
         // 26.3: blocks no longer have codecs

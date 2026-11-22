@@ -13,8 +13,8 @@ import team.creative.littletiles.common.item.tooltip.IItemTooltip;
 
 public class ItemLittleSaw extends Item implements IItemTooltip {
     
-    public ItemLittleSaw() {
-        super(new Item.Properties().stacksTo(1));
+    public ItemLittleSaw(Item.Properties properties) {
+        super(properties.stacksTo(1));
     }
     
     @Override

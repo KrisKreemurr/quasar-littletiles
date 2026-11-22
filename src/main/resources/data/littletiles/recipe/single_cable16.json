@@ -1,18 +1,24 @@
 {
     "result": {
         "id": "littletiles:premade",
-        "count": 1
+        "count": 1,
+        "components": {
+            "littletiles:tool_config": {
+                "s": {
+                    "id": "single_cable16"
+                }
+            }
+        }
     },
-    "structure": "single_cable16",
     "pattern": [
         "CC",
         "CC"
     ],
     "category": "redstone",
-    "type": "littletiles:crafting_shaped_premade",
+    "type": "minecraft:crafting_shaped",
     "key": {
         "C": {
-            "type": "littletiles:structure",
+            "neoforge:ingredient_type": "littletiles:structure",
             "structure": "single_cable4"
         }
     }

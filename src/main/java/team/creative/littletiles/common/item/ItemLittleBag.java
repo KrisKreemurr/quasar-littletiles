@@ -28,8 +28,8 @@ import team.creative.littletiles.common.ingredient.LittleInventory;
 
 public class ItemLittleBag extends Item implements ILittleIngredientInventory, ItemGuiCreator {
     
-    public ItemLittleBag() {
-        super(new Item.Properties().stacksTo(1));
+    public ItemLittleBag(Item.Properties properties) {
+        super(properties.stacksTo(1));
     }
     
     @Override

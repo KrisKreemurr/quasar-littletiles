@@ -46,8 +46,8 @@ import team.creative.littletiles.common.structure.exception.NotYetConnectedExcep
 
 public class ItemLittlePaintBrush extends Item implements ILittleShaper, IItemTooltip {
     
-    public ItemLittlePaintBrush() {
-        super(new Item.Properties().stacksTo(1));
+    public ItemLittlePaintBrush(Item.Properties properties) {
+        super(properties.stacksTo(1));
     }
     
     @Override

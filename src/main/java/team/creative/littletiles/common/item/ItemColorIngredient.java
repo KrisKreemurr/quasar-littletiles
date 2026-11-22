@@ -22,8 +22,8 @@ public class ItemColorIngredient extends Item implements ILittleIngredientInvent
     
     public ColorIngredientType type;
     
-    public ItemColorIngredient(ColorIngredientType type) {
-        super(new Item.Properties().stacksTo(1));
+    public ItemColorIngredient(Item.Properties properties, ColorIngredientType type) {
+        super(properties.stacksTo(1));
         this.type = type;
     }
     

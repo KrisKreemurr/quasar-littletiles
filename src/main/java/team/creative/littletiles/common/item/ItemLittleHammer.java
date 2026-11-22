@@ -37,8 +37,8 @@ import team.creative.littletiles.common.placement.shape.ShapeRegistry;
 
 public class ItemLittleHammer extends Item implements ILittleShaper, IItemTooltip, ItemGuiCreator {
     
-    public ItemLittleHammer() {
-        super(new Item.Properties().stacksTo(1));
+    public ItemLittleHammer(Item.Properties properties) {
+        super(properties.stacksTo(1));
     }
     
     @Override

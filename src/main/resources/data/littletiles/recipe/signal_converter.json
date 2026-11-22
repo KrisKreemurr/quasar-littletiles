@@ -9,11 +9,7 @@
     ],
     "type": "minecraft:crafting_shaped",
     "key": {
-        "C": {
-            "item": "minecraft:cobblestone"
-        },
-        "R": {
-            "item": "minecraft:redstone_block"
-        }
+        "C": "minecraft:cobblestone",
+        "R": "minecraft:redstone_block"
     }
 }

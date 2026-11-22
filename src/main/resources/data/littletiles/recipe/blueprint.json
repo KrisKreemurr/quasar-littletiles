@@ -11,14 +11,8 @@
     ],
     "type": "minecraft:crafting_shaped",
     "key": {
-        "X": {
-            "item": "minecraft:paper"
-        },
-        "L": {
-            "item": "minecraft:lapis_lazuli"
-        },
-        "R": {
-            "item": "minecraft:redstone"
-        }
+        "X": "minecraft:paper",
+        "L": "minecraft:lapis_lazuli",
+        "R": "minecraft:redstone"
     }
 }

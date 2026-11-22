@@ -4,9 +4,7 @@
     },
     "category": "building",
     "ingredients": [
-        {
-            "item": "minecraft:lava_bucket"
-        }
+        "minecraft:lava_bucket"
     ],
     "type": "minecraft:crafting_shapeless"
 }

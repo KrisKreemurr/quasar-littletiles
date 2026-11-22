@@ -1,5 +1,9 @@
 package team.creative.littletiles.common.recipe;
 
+import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
+import net.minecraft.world.item.Item;
+import net.minecraft.core.Holder;
 import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
@@ -41,8 +45,13 @@ public class StructureIngredient implements ICustomIngredient {
     }
     
     @Override
-    public Stream<ItemStack> getItems() {
-        return Stream.of(ItemPremadeStructure.of(structureType));
+    public Stream<Holder<Item>> items() {
+        return Stream.of(LittleTilesRegistry.PREMADE, LittleTilesRegistry.ITEM_TILES);
+    }
+    
+    @Override
+    public SlotDisplay display() {
+        return new SlotDisplay.ItemStackSlotDisplay(ItemStackTemplate.fromNonEmptyStack(ItemPremadeStructure.of(structureType)));
     }
     
     @Override

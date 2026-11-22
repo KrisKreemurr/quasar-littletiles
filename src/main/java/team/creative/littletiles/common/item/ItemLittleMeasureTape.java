@@ -25,8 +25,8 @@ import team.creative.littletiles.common.math.measure.LittleMeasurement;
 
 public class ItemLittleMeasureTape extends Item implements ILittleMeasure, IItemTooltip {
     
-    public ItemLittleMeasureTape() {
-        super(new Item.Properties().stacksTo(1));
+    public ItemLittleMeasureTape(Item.Properties properties) {
+        super(properties.stacksTo(1));
     }
     
     @Override

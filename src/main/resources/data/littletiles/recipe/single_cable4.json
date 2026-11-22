@@ -1,22 +1,24 @@
 {
     "result": {
         "id": "littletiles:premade",
-        "count": 32
+        "count": 32,
+        "components": {
+            "littletiles:tool_config": {
+                "s": {
+                    "id": "single_cable4"
+                }
+            }
+        }
     },
-    "structure": "single_cable4",
     "category": "redstone",
     "pattern": [
         "CCC",
         "CRC",
         "CCC"
     ],
-    "type": "littletiles:crafting_shaped_premade",
+    "type": "minecraft:crafting_shaped",
     "key": {
-        "R": {
-            "item": "minecraft:redstone_block"
-        },
-        "C": {
-            "item": "minecraft:black_concrete"
-        }
+        "R": "minecraft:redstone_block",
+        "C": "minecraft:black_concrete"
     }
 }

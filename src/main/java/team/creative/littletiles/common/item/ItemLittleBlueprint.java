@@ -53,8 +53,8 @@ public class ItemLittleBlueprint extends Item implements ILittlePlacer, ILittleS
         return nbt;
     }
     
-    public ItemLittleBlueprint() {
-        super(new Item.Properties());
+    public ItemLittleBlueprint(Item.Properties properties) {
+        super(properties);
     }
     
     @Override

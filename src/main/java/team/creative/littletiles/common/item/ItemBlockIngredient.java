@@ -22,8 +22,8 @@ import team.creative.littletiles.common.ingredient.LittleInventory;
 
 public class ItemBlockIngredient extends Item implements ILittleIngredientInventory {
     
-    public ItemBlockIngredient() {
-        super(new Item.Properties().stacksTo(1));
+    public ItemBlockIngredient(Item.Properties properties) {
+        super(properties.stacksTo(1));
     }
     
     public static ItemStack of(BlockIngredientEntry entry) {

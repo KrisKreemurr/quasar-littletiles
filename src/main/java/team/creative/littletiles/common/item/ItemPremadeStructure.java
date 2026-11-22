@@ -55,8 +55,8 @@ public class ItemPremadeStructure extends Item implements ILittlePlacer, IItemTo
         return LittlePremadeRegistry.get(ILittleTool.getData(stack).getCompoundOrEmpty(LittleGroup.STRUCTURE_KEY).getStringOr("id", ""));
     }
     
-    public ItemPremadeStructure() {
-        super(new Item.Properties());
+    public ItemPremadeStructure(Item.Properties properties) {
+        super(properties);
     }
     
     @Override

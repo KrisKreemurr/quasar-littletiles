@@ -1,17 +1,23 @@
 {
     "result": {
         "id": "littletiles:premade",
-        "count": 4
+        "count": 4,
+        "components": {
+            "littletiles:tool_config": {
+                "s": {
+                    "id": "signal_display_1"
+                }
+            }
+        }
     },
-    "structure": "signal_display_1",
     "pattern": [
         "C"
     ],
     "category": "redstone",
-    "type": "littletiles:crafting_shaped_premade",
+    "type": "minecraft:crafting_shaped",
     "key": {
         "C": {
-            "type": "littletiles:structure",
+            "neoforge:ingredient_type": "littletiles:structure",
             "structure": "signal_display_4"
         }
     }

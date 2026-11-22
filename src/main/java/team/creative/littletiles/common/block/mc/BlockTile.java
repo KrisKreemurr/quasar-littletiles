@@ -193,8 +193,8 @@ public class BlockTile extends BaseEntityBlock implements LittlePhysicBlock, Sim
     public final boolean ticking;
     public final boolean rendered;
     
-    public BlockTile(boolean ticking, boolean rendered) {
-        super(BlockBehaviour.Properties.of().destroyTime(1).explosionResistance(3.0F).sound(SILENT).dynamicShape().noOcclusion().isValidSpawn((a, b, c, d) -> false));
+    public BlockTile(BlockBehaviour.Properties properties, boolean ticking, boolean rendered) {
+        super(properties.destroyTime(1).explosionResistance(3.0F).sound(SILENT).dynamicShape().noOcclusion().isValidSpawn((a, b, c, d) -> false));
         this.registerDefaultState(this.stateDefinition.any().setValue(WATERLOGGED, false));
         this.ticking = ticking;
         this.rendered = rendered;

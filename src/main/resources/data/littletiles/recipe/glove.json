@@ -10,11 +10,7 @@
     ],
     "type": "minecraft:crafting_shaped",
     "key": {
-        "L": {
-            "item": "minecraft:leather"
-        },
-        "I": {
-            "item": "minecraft:lapis_lazuli"
-        }
+        "L": "minecraft:leather",
+        "I": "minecraft:lapis_lazuli"
     }
 }

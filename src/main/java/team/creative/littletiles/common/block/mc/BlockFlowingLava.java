@@ -42,8 +42,8 @@ public class BlockFlowingLava extends Block implements ILittleMCBlock, IFakeRend
     
     public final Holder<Block> still;
     
-    public BlockFlowingLava(Holder<Block> still) {
-        super(BlockBehaviour.Properties.of().liquid().strength(1.5F, 6.0F));
+    public BlockFlowingLava(BlockBehaviour.Properties properties, Holder<Block> still) {
+        super(properties.liquid().strength(1.5F, 6.0F));
         this.still = still;
     }
     

@@ -10,11 +10,7 @@
     ],
     "type": "minecraft:crafting_shaped",
     "key": {
-        "X": {
-            "item": "minecraft:white_wool"
-        },
-        "L": {
-            "item": "minecraft:lapis_lazuli"
-        }
+        "X": "minecraft:white_wool",
+        "L": "minecraft:lapis_lazuli"
     }
 }

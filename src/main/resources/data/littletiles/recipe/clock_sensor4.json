@@ -1,17 +1,21 @@
 {
     "result": {
         "id": "littletiles:premade",
-        "count": 1
+        "count": 1,
+        "components": {
+            "littletiles:tool_config": {
+                "s": {
+                    "id": "clock_sensor4"
+                }
+            }
+        }
     },
-    "structure": "clock_sensor4",
     "category": "redstone",
-    "type": "littletiles:crafting_shapeless_premade",
+    "type": "minecraft:crafting_shapeless",
     "ingredients": [
+        "minecraft:clock",
         {
-            "item": "minecraft:clock"
-        },
-        {
-            "type": "littletiles:structure",
+            "neoforge:ingredient_type": "littletiles:structure",
             "structure": "single_output4"
         }
     ]

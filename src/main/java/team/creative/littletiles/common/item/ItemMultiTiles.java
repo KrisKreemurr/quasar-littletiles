@@ -94,8 +94,8 @@ public class ItemMultiTiles extends Item implements ILittlePlacer, IItemTooltip 
             output.accept(stack);
     }
     
-    public ItemMultiTiles() {
-        super(new Item.Properties());
+    public ItemMultiTiles(Item.Properties properties) {
+        super(properties);
     }
     
     public static String getStructure(ItemStack stack) {

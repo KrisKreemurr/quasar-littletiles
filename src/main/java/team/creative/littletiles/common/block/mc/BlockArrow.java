@@ -14,8 +14,8 @@ public class BlockArrow extends Block {
     
     public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
     
-    public BlockArrow() {
-        super(BlockBehaviour.Properties.of());
+    public BlockArrow(BlockBehaviour.Properties properties) {
+        super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.EAST));
     }
     

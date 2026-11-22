@@ -21,8 +21,8 @@ import team.creative.littletiles.common.item.tooltip.IItemTooltip;
 
 public class ItemLittleScrewdriver extends Item implements ILittleSelector, IItemTooltip {
     
-    public ItemLittleScrewdriver() {
-        super(new Item.Properties().stacksTo(1));
+    public ItemLittleScrewdriver(Item.Properties properties) {
+        super(properties.stacksTo(1));
     }
     
     @Override

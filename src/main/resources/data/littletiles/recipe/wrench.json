@@ -10,11 +10,7 @@
     ],
     "type": "minecraft:crafting_shaped",
     "key": {
-        "X": {
-            "item": "minecraft:iron_ingot"
-        },
-        "L": {
-            "item": "minecraft:lapis_lazuli"
-        }
+        "X": "minecraft:iron_ingot",
+        "L": "minecraft:lapis_lazuli"
     }
 }

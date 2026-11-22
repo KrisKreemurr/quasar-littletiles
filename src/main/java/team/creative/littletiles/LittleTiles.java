@@ -41,8 +41,7 @@ import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.NeoForgeConfig;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import team.creative.creativecore.common.config.holder.CreativeConfigRegistry;
 import team.creative.creativecore.common.network.CreativeNetwork;
@@ -78,7 +77,6 @@ import team.creative.littletiles.common.level.handler.LittleAnimationHandler;
 import team.creative.littletiles.common.level.handler.LittleAnimationHandlers;
 import team.creative.littletiles.common.level.tick.LittleTickers;
 import team.creative.littletiles.common.math.box.LittleBox;
-import team.creative.littletiles.common.mod.theoneprobe.TheOneProbeManager;
 import team.creative.littletiles.common.packet.LittlePacketTypes;
 import team.creative.littletiles.common.packet.action.ActionMessagePacket;
 import team.creative.littletiles.common.packet.action.BlockPacket;
@@ -142,7 +140,7 @@ public class LittleTiles {
     public LittleTiles(IEventBus bus) {
         bus.addListener(this::init);
         bus.addListener(this::registerCapabilities);
-        if (FMLLoader.getDist() == Dist.CLIENT)
+        if (FMLLoader.getCurrent().getDist() == Dist.CLIENT)
             LittleTilesClient.load(bus);
         
         NeoForge.EVENT_BUS.addListener(this::serverStarting);
@@ -223,8 +221,7 @@ public class LittleTiles {
         
         LittleTilesServer.init(event);
         
-        if (ModList.get().isLoaded(TheOneProbeManager.modid))
-            TheOneProbeManager.init();
+        // TheOneProbe compat is not part of the Quasar build (TOP has no 26.3 release).
         
         //NeoForge.EVENT_BUS.register(ChiselAndBitsConveration.class);
         NeoForge.EVENT_BUS.register(EntitySizeHandler.class);
@@ -236,8 +233,8 @@ public class LittleTiles {
         TileFilters.init();
     }
     
-    private void reloadListener(AddReloadListenerEvent event) {
-        event.addListener(new SimplePreparableReloadListener<Void>() {
+    private void reloadListener(AddServerReloadListenersEvent event) {
+        event.addListener(Identifier.fromNamespaceAndPath(MODID, "example_structures"), new SimplePreparableReloadListener<Void>() {
             @SuppressWarnings("NullableProblems")
             @Override
             protected @Nullable Void prepare(@NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profilerFiller) {
@@ -271,7 +268,7 @@ public class LittleTiles {
     }
     
     private void serverStarting(final ServerStartingEvent event) {
-        NeoForgeConfig.SERVER.fullBoundingBoxLadders.set(true);
+        // TODO(quasar): NeoForge 26.x dropped the fullBoundingBoxLadders server config; check climbing little-tile ladders in game.
         
         event.getServer().getCommands().getDispatcher().register(Commands.literal("lt-tovanilla").executes((x) -> {
             List<BETiles> blocks = new ArrayList<>();

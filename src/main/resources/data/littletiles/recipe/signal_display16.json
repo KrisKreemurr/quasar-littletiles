@@ -1,27 +1,25 @@
 {
     "result": {
-        "id": "littletiles:premade"
+        "id": "littletiles:premade",
+        "components": {
+            "littletiles:tool_config": {
+                "s": {
+                    "id": "signal_display_16"
+                }
+            }
+        }
     },
-    "structure": "signal_display_16",
     "category": "redstone",
     "pattern": [
         "SSS",
         "GRG",
         "CCC"
     ],
-    "type": "littletiles:crafting_shaped_premade",
+    "type": "minecraft:crafting_shaped",
     "key": {
-        "R": {
-            "item": "minecraft:redstone"
-        },
-        "C": {
-            "item": "minecraft:black_concrete"
-        },
-        "G": {
-            "item": "minecraft:glowstone_dust"
-        },
-        "S": {
-            "item": "minecraft:black_stained_glass"
-        }
+        "R": "minecraft:redstone",
+        "C": "minecraft:black_concrete",
+        "G": "minecraft:glowstone_dust",
+        "S": "minecraft:black_stained_glass"
     }
 }

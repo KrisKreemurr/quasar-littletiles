@@ -4,12 +4,8 @@
     },
     "category": "building",
     "ingredients": [
-        {
-            "item": "minecraft:milk_bucket"
-        },
-        {
-            "item": "littletiles:colored_lava"
-        }
+        "minecraft:milk_bucket",
+        "littletiles:colored_lava"
     ],
     "type": "minecraft:crafting_shapeless"
 }

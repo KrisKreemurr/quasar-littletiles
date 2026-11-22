@@ -27,8 +27,8 @@ import team.creative.littletiles.common.placement.PlacementPreview;
 
 public class ItemLittleGlove extends Item implements ILittleTransformer, IItemTooltip {
     
-    public ItemLittleGlove() {
-        super(new Item.Properties().stacksTo(1));
+    public ItemLittleGlove(Item.Properties properties) {
+        super(properties.stacksTo(1));
     }
     
     @Override

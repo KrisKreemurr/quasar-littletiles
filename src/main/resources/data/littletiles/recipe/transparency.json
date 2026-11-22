@@ -7,9 +7,7 @@
     },
     "category": "building",
     "ingredients": [
-        {
-            "item": "minecraft:glass"
-        }
+        "minecraft:glass"
     ],
     "type": "minecraft:crafting_shapeless"
 }

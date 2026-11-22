@@ -12,8 +12,8 @@ import team.creative.littletiles.common.item.tooltip.IItemTooltip;
 
 public class ItemLittleWrench extends Item implements ILittleTool, IItemTooltip {
     
-    public ItemLittleWrench() {
-        super(new Item.Properties().stacksTo(1));
+    public ItemLittleWrench(Item.Properties properties) {
+        super(properties.stacksTo(1));
     }
     
     @Override

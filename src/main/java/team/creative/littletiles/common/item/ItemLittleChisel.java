@@ -45,8 +45,8 @@ import team.creative.littletiles.common.placement.shape.ShapeRegistry;
 
 public class ItemLittleChisel extends Item implements ILittleShaper, IItemTooltip {
     
-    public ItemLittleChisel() {
-        super(new Item.Properties().stacksTo(1));
+    public ItemLittleChisel(Item.Properties properties) {
+        super(properties.stacksTo(1));
     }
     
     @Override

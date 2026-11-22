@@ -1,24 +1,24 @@
 {
     "result": {
-        "id": "littletiles:premade"
+        "id": "littletiles:premade",
+        "components": {
+            "littletiles:tool_config": {
+                "s": {
+                    "id": "workbench"
+                }
+            }
+        }
     },
-    "structure": "workbench",
     "category": "building",
     "pattern": [
         "XWX",
         "XLX",
         "X X"
     ],
-    "type": "littletiles:crafting_shaped_premade",
+    "type": "minecraft:crafting_shaped",
     "key": {
-        "X": {
-            "tag": "minecraft:planks"
-        },
-        "W": {
-            "item": "minecraft:crafting_table"
-        },
-        "L": {
-            "item": "littletiles:wrench"
-        }
+        "X": "#minecraft:planks",
+        "W": "minecraft:crafting_table",
+        "L": "littletiles:wrench"
     }
 }
