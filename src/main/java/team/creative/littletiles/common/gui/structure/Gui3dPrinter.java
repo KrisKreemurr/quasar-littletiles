@@ -186,7 +186,7 @@ public class Gui3dPrinter extends GuiLayer {
         GuiParent playerInventory = new GuiParent(this, GuiFlow.STACK_Y).setAlign(Align.CENTER);
         inventories.add(playerInventory.setExpandable());
         playerInventory.add(new GuiLabel(this, "inventory_label").setTranslate("gui.player.inventory"));
-        playerInventory.add(new GuiPlayerInventoryGrid(this)).setUnexpandable());
+        playerInventory.add(new GuiPlayerInventoryGrid(this).setUnexpandable());
         
         updateSpeedLabel();
     }
