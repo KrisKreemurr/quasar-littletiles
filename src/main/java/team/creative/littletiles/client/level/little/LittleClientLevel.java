@@ -69,7 +69,7 @@ public abstract class LittleClientLevel extends ClientLevel implements LittleLev
     
     protected LittleClientLevel(ClientLevelData data, ResourceKey<Level> dimension, Supplier<ProfilerFiller> supplier, boolean debug, long seed, RegistryAccess.Frozen access) {
         super(FakeClientPacketListener.get(access), data, dimension, access.lookupOrThrow(Registries.DIMENSION_TYPE).getOrThrow(
-            LittleTilesRegistry.FAKE_DIMENSION), 3, 3, supplier, null, debug, seed);
+            LittleTilesRegistry.FAKE_DIMENSION), 3, 3, null, debug, seed, 63);
     }
     
     @Override
@@ -88,8 +88,6 @@ public abstract class LittleClientLevel extends ClientLevel implements LittleLev
         return renderManager;
     }
     
-    @Override
-    public abstract RecipeManager getRecipeManager();
     
     @Override
     public abstract FeatureFlagSet enabledFeatures();
@@ -209,7 +207,7 @@ public abstract class LittleClientLevel extends ClientLevel implements LittleLev
             renderManager.unload();
     }
     
-    @Override
+    // 26.3: map ids are server-side only now
     public MapId getFreeMapId() {
         return new MapId(0);
     }

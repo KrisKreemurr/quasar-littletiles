@@ -5,7 +5,6 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -32,15 +31,13 @@ public class FakeClientLevel extends LittleClientLevel {
     
     public boolean shouldRender;
     private final Scoreboard scoreboard = new Scoreboard();
-    private DimensionSpecialEffects effects;
     
     public static FakeClientLevel createFakeWorldClient(String name, ClientLevelData info) {
-        return new FakeClientLevel(info, Minecraft.getInstance()::getProfiler, false, 0);
+        return new FakeClientLevel(info, null, false, 0);
     }
     
     protected FakeClientLevel(ClientLevelData worldInfo, Supplier<ProfilerFiller> supplier, boolean debug, long seed) {
         super(worldInfo, OVERWORLD, supplier, debug, seed, Minecraft.getInstance().getConnection().registryAccess());
-        effects = DimensionSpecialEffects.forType(dimensionType());
     }
     
     @Override

@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel.ClientLevelData;
-import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -44,7 +43,6 @@ public class FakeServerLevel extends LittleServerLevel {
     }
     
     private final ServerScoreboard scoreboard;
-    private DimensionSpecialEffects effects;
     
     protected FakeServerLevel(MinecraftServer server, ServerLevelData worldInfo, boolean debug, long seed) {
         super(server, worldInfo, OVERWORLD, debug, seed, server.registryAccess());
@@ -114,9 +112,7 @@ public class FakeServerLevel extends LittleServerLevel {
     }
     
     @Override
-    public RecipeAccess recipeAccess() {
-        if (isClientSide())
-            return Minecraft.getInstance().getConnection().recipes();
+    public RecipeManager recipeAccess() {
         return getServer().getRecipeManager();
     }
     

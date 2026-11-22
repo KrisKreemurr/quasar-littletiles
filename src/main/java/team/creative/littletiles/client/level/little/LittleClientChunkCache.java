@@ -58,9 +58,9 @@ public class LittleClientChunkCache extends ClientChunkCache {
     }
     
     @Override
-    public LevelChunk replaceWithPacketData(int x, int z, FriendlyByteBuf buffer, CompoundTag tag, Consumer<ClientboundLevelChunkPacketData.BlockEntityTagOutput> consumer) {
+    public LevelChunk replaceWithPacketData(int x, int z, ClientboundLevelChunkPacketData data) {
         LevelChunk chunk = getChunk(x, z, ChunkStatus.FULL, true);
-        chunk.replaceWithPacketData(buffer, tag, consumer);
+        chunk.replaceWithPacketData(x, z, data);
         getLevel().onChunkLoaded(chunk);
         NeoForge.EVENT_BUS.post(new ChunkEvent.Load(chunk, false));
         return chunk;

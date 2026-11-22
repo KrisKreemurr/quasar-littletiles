@@ -101,7 +101,7 @@ public class LittleAnimationLevelServerCallback extends LittleAnimationLevelCall
     
     private boolean shouldDiscardEntity(Entity entity) {
         // 26.3: the server-wide animal/NPC switches became the spawnMobs game rule
-        boolean spawnMobs = level.getGameRules().get(GameRules.SPAWN_MOBS);
+        boolean spawnMobs = level.getServer().getGameRules().get(GameRules.SPAWN_MOBS);
         if (spawnMobs || !(entity instanceof Animal) && !(entity instanceof WaterAnimal))
             return !spawnMobs && entity instanceof Npc;
         return true;

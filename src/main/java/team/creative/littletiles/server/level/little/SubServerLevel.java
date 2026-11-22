@@ -184,8 +184,8 @@ public class SubServerLevel extends LittleServerLevel implements LittleSubLevel 
     }
     
     @Override
-    public RecipeAccess recipeAccess() {
-        return getRealLevel().recipeAccess();
+    public RecipeManager recipeAccess() {
+        return ((ServerLevel) getRealLevel()).recipeAccess();
     }
     
     @Override
