@@ -1,11 +1,5 @@
 package team.creative.littletiles.client.level;
 
-
-
-
-
-
-@OnlyIn(Dist.CLIENT)
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.UUID;
