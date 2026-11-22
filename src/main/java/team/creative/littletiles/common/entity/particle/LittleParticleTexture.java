@@ -1,12 +1,12 @@
 package team.creative.littletiles.common.entity.particle;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import team.creative.creativecore.common.util.mc.LanguageUtils;
 
 public enum LittleParticleTexture {
     
-    dust_fade_out(ResourceLocation.withDefaultNamespace("smoke"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
+    dust_fade_out(Identifier.withDefaultNamespace("smoke"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
         
         @Override
         public void init(LittleParticle particle) {}
@@ -17,7 +17,7 @@ public enum LittleParticleTexture {
         }
         
     },
-    dust(ResourceLocation.withDefaultNamespace("smoke"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
+    dust(Identifier.withDefaultNamespace("smoke"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
         
         @Override
         public void init(LittleParticle particle) {
@@ -28,7 +28,7 @@ public enum LittleParticleTexture {
         public void tick(LittleParticle particle) {}
         
     },
-    dust_grow(ResourceLocation.withDefaultNamespace("smoke"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
+    dust_grow(Identifier.withDefaultNamespace("smoke"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
         
         @Override
         public void init(LittleParticle particle) {}
@@ -39,7 +39,7 @@ public enum LittleParticleTexture {
         }
         
     },
-    bubble(ResourceLocation.withDefaultNamespace("bubble"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
+    bubble(Identifier.withDefaultNamespace("bubble"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
         
         @Override
         public void init(LittleParticle particle) {
@@ -50,7 +50,7 @@ public enum LittleParticleTexture {
         public void tick(LittleParticle particle) {}
         
     },
-    diamond(ResourceLocation.withDefaultNamespace("totem_of_undying"), LittleParticleRenderType.PARTICLE_SHEET_TRANSLUCENT) {
+    diamond(Identifier.withDefaultNamespace("totem_of_undying"), LittleParticleRenderType.PARTICLE_SHEET_TRANSLUCENT) {
         
         @Override
         public void init(LittleParticle particle) {
@@ -61,7 +61,7 @@ public enum LittleParticleTexture {
         public void tick(LittleParticle particle) {}
         
     },
-    spark(ResourceLocation.withDefaultNamespace("firework"), LittleParticleRenderType.PARTICLE_SHEET_TRANSLUCENT) {
+    spark(Identifier.withDefaultNamespace("firework"), LittleParticleRenderType.PARTICLE_SHEET_TRANSLUCENT) {
         
         @Override
         public void init(LittleParticle particle) {
@@ -72,7 +72,7 @@ public enum LittleParticleTexture {
         public void tick(LittleParticle particle) {}
         
     },
-    spark_fade_out(ResourceLocation.withDefaultNamespace("firework"), LittleParticleRenderType.PARTICLE_SHEET_TRANSLUCENT) {
+    spark_fade_out(Identifier.withDefaultNamespace("firework"), LittleParticleRenderType.PARTICLE_SHEET_TRANSLUCENT) {
         
         @Override
         public void init(LittleParticle particle) {}
@@ -83,7 +83,7 @@ public enum LittleParticleTexture {
         }
         
     },
-    spiral(ResourceLocation.withDefaultNamespace("entity_effect"), LittleParticleRenderType.PARTICLE_SHEET_TRANSLUCENT) {
+    spiral(Identifier.withDefaultNamespace("entity_effect"), LittleParticleRenderType.PARTICLE_SHEET_TRANSLUCENT) {
         
         @Override
         public void init(LittleParticle particle) {}
@@ -94,7 +94,7 @@ public enum LittleParticleTexture {
         }
         
     },
-    note(ResourceLocation.withDefaultNamespace("note"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
+    note(Identifier.withDefaultNamespace("note"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
         
         @Override
         public void init(LittleParticle particle) {
@@ -105,7 +105,7 @@ public enum LittleParticleTexture {
         public void tick(LittleParticle particle) {}
         
     },
-    flame(ResourceLocation.withDefaultNamespace("flame"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
+    flame(Identifier.withDefaultNamespace("flame"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
         
         @Override
         public void init(LittleParticle particle) {
@@ -116,7 +116,7 @@ public enum LittleParticleTexture {
         public void tick(LittleParticle particle) {}
         
     },
-    happy(ResourceLocation.withDefaultNamespace("happy_villager"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
+    happy(Identifier.withDefaultNamespace("happy_villager"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
         
         @Override
         public void init(LittleParticle particle) {
@@ -127,7 +127,7 @@ public enum LittleParticleTexture {
         public void tick(LittleParticle particle) {}
         
     },
-    angry(ResourceLocation.withDefaultNamespace("angry_villager"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
+    angry(Identifier.withDefaultNamespace("angry_villager"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
         
         @Override
         public void init(LittleParticle particle) {
@@ -138,7 +138,7 @@ public enum LittleParticleTexture {
         public void tick(LittleParticle particle) {}
         
     },
-    damage(ResourceLocation.withDefaultNamespace("damage_indicator"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
+    damage(Identifier.withDefaultNamespace("damage_indicator"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
         
         @Override
         public void init(LittleParticle particle) {
@@ -149,7 +149,7 @@ public enum LittleParticleTexture {
         public void tick(LittleParticle particle) {}
         
     },
-    letter(ResourceLocation.withDefaultNamespace("enchant"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
+    letter(Identifier.withDefaultNamespace("enchant"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
         
         @Override
         public void init(LittleParticle particle) {
@@ -160,7 +160,7 @@ public enum LittleParticleTexture {
         public void tick(LittleParticle particle) {}
         
     },
-    dripping(ResourceLocation.withDefaultNamespace("dripping_water"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
+    dripping(Identifier.withDefaultNamespace("dripping_water"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
         
         @Override
         public void init(LittleParticle particle) {
@@ -171,7 +171,7 @@ public enum LittleParticleTexture {
         public void tick(LittleParticle particle) {}
         
     },
-    falling(ResourceLocation.withDefaultNamespace("falling_water"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
+    falling(Identifier.withDefaultNamespace("falling_water"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
         
         @Override
         public void init(LittleParticle particle) {
@@ -182,7 +182,7 @@ public enum LittleParticleTexture {
         public void tick(LittleParticle particle) {}
         
     },
-    heart(ResourceLocation.withDefaultNamespace("heart"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
+    heart(Identifier.withDefaultNamespace("heart"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
         
         @Override
         public void init(LittleParticle particle) {
@@ -193,7 +193,7 @@ public enum LittleParticleTexture {
         public void tick(LittleParticle particle) {}
         
     },
-    lava(ResourceLocation.withDefaultNamespace("lava"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
+    lava(Identifier.withDefaultNamespace("lava"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
         
         @Override
         public void init(LittleParticle particle) {
@@ -204,7 +204,7 @@ public enum LittleParticleTexture {
         public void tick(LittleParticle particle) {}
         
     },
-    soul(ResourceLocation.withDefaultNamespace("soul"), LittleParticleRenderType.PARTICLE_SHEET_TRANSLUCENT) {
+    soul(Identifier.withDefaultNamespace("soul"), LittleParticleRenderType.PARTICLE_SHEET_TRANSLUCENT) {
         
         @Override
         public void init(LittleParticle particle) {}
@@ -215,7 +215,7 @@ public enum LittleParticleTexture {
         }
         
     },
-    soul_flame(ResourceLocation.withDefaultNamespace("soul_fire_flame"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
+    soul_flame(Identifier.withDefaultNamespace("soul_fire_flame"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
         
         @Override
         public void init(LittleParticle particle) {
@@ -226,7 +226,7 @@ public enum LittleParticleTexture {
         public void tick(LittleParticle particle) {}
         
     },
-    big_smoke(ResourceLocation.withDefaultNamespace("campfire_cosy_smoke"), LittleParticleRenderType.PARTICLE_SHEET_TRANSLUCENT) {
+    big_smoke(Identifier.withDefaultNamespace("campfire_cosy_smoke"), LittleParticleRenderType.PARTICLE_SHEET_TRANSLUCENT) {
         
         @Override
         public void init(LittleParticle particle) {}
@@ -237,7 +237,7 @@ public enum LittleParticleTexture {
         }
         
     },
-    nautilus(ResourceLocation.withDefaultNamespace("nautilus"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
+    nautilus(Identifier.withDefaultNamespace("nautilus"), LittleParticleRenderType.PARTICLE_SHEET_OPAQUE) {
         
         @Override
         public void init(LittleParticle particle) {
@@ -256,10 +256,10 @@ public enum LittleParticleTexture {
         return dust_fade_out;
     }
     
-    public final ResourceLocation particleTexture;
+    public final Identifier particleTexture;
     public final LittleParticleRenderType type;
     
-    private LittleParticleTexture(ResourceLocation particleTexture, LittleParticleRenderType type) {
+    private LittleParticleTexture(Identifier particleTexture, LittleParticleRenderType type) {
         this.particleTexture = particleTexture;
         this.type = type;
     }

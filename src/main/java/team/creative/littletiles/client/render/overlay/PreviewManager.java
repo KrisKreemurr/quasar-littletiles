@@ -8,7 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -54,7 +54,7 @@ import team.creative.littletiles.common.mod.sable.SableManager;
 
 public class PreviewManager implements LevelAwareHandler {
     
-    public static final ResourceLocation WHITE_TEXTURE = ResourceLocation.tryBuild(LittleTiles.MODID, "textures/preview.png");
+    public static final Identifier WHITE_TEXTURE = Identifier.tryBuild(LittleTiles.MODID, "textures/preview.png");
     public static final Minecraft MC = Minecraft.getInstance();
     
     public final PreviewRenderer renderer = new PreviewRenderer(this);

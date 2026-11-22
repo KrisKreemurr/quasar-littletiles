@@ -3,7 +3,7 @@ package team.creative.littletiles.common.filter;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import team.creative.creativecore.common.util.CompoundSerializer;
@@ -71,7 +71,7 @@ public class TileFilters {
         }
         
         public TileBlockFilter(CompoundTag nbt) {
-            block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(nbt.getString("block")));
+            block = BuiltInRegistries.BLOCK.get(Identifier.parse(nbt.getString("block")));
         }
         
         @Override
@@ -140,7 +140,7 @@ public class TileFilters {
         }
         
         public TileTagFilter(CompoundTag nbt) {
-            tag = TagKey.create(Registries.BLOCK, ResourceLocation.parse(nbt.getString("tag")));
+            tag = TagKey.create(Registries.BLOCK, Identifier.parse(nbt.getString("tag")));
         }
         
         @Override

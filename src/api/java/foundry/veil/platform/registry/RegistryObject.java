@@ -4,7 +4,7 @@ import java.util.function.Supplier;
 
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /** Represents a lazy wrapper for registry object.
  *
@@ -20,8 +20,8 @@ public interface RegistryObject<T> extends Supplier<T> {
     /** Gets the id of the object.
      *
      * @return the id of the object */
-    default ResourceLocation getId() {
-        return this.getResourceKey().location();
+    default Identifier getId() {
+        return this.getResourceKey().identifier();
     }
     
     /** @return If the initializer has been registered and assigned */

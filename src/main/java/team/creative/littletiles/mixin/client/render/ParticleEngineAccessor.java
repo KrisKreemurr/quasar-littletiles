@@ -7,12 +7,12 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.client.particle.SpriteSet;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 @Mixin(ParticleEngine.class)
 public interface ParticleEngineAccessor {
     
     @Accessor
-    public Map<ResourceLocation, ? extends SpriteSet> getSpriteSets();
+    public Map<Identifier, ? extends SpriteSet> getSpriteSets();
     
 }

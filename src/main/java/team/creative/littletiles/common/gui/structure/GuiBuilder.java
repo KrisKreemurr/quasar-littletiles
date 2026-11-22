@@ -3,7 +3,7 @@ package team.creative.littletiles.common.gui.structure;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import team.creative.creativecore.common.gui.GuiLayer;
@@ -40,7 +40,7 @@ public class GuiBuilder extends GuiLayer {
             int width = nbt.getInt("width");
             int height = nbt.getInt("height");
             int thickness = nbt.getInt("thickness");
-            Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(nbt.getString("block")));
+            Block block = BuiltInRegistries.BLOCK.get(Identifier.parse(nbt.getString("block")));
             LittleGrid grid = LittleGrid.get(nbt.getInt("grid"));
             
             builder.lastBlockState = block.defaultBlockState();

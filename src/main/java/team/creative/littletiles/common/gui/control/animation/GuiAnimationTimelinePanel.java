@@ -5,7 +5,7 @@ import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import team.creative.creativecore.common.gui.GuiControl;
 import team.creative.creativecore.common.gui.GuiParent;
 import team.creative.creativecore.common.gui.VAlign;
@@ -137,9 +137,9 @@ public class GuiAnimationTimelinePanel extends GuiTimelinePanel {
                 reflow();
             } else if (x.control.channel instanceof GuiSoundTimelineChannel) {
                 PlaySoundEvent value = (PlaySoundEvent) x.control.value;
-                GuiComboBox<ResourceLocation> box = new GuiComboBox<ResourceLocation>("sound", new TextMapBuilder<ResourceLocation>().addComponent(Minecraft.getInstance()
+                GuiComboBox<Identifier> box = new GuiComboBox<Identifier>("sound", new TextMapBuilder<Identifier>().addComponent(Minecraft.getInstance()
                         .getSoundManager().getAvailableSounds(), y -> {
-                            if (y.getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE))
+                            if (y.getNamespace().equals(Identifier.DEFAULT_NAMESPACE))
                                 return Component.literal(y.getPath());
                             return Component.literal(y.toString());
                         })).setSearchbar(true);
@@ -174,7 +174,7 @@ public class GuiAnimationTimelinePanel extends GuiTimelinePanel {
             
             if (edited != null && edited.value instanceof PlaySoundEvent value) {
                 if (x.control.is("sound") && x.control instanceof GuiComboBox box)
-                    value.sound = PlaySoundEvent.get((ResourceLocation) box.selected());
+                    value.sound = PlaySoundEvent.get((Identifier) box.selected());
                 else if (x.control.is("volume") && x.control instanceof GuiSlider slider)
                     value.volume = (float) slider.getValue();
                 else if (x.control.is("pitch") && x.control instanceof GuiSlider slider)

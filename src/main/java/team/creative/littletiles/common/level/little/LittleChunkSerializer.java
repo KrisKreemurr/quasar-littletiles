@@ -21,7 +21,7 @@ import net.minecraft.nbt.LongArrayTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -102,9 +102,9 @@ public class LittleChunkSerializer {
             }
         }
         
-        LevelChunkTicks<Block> blockTicks = LevelChunkTicks.load(nbt.getList("block_ticks", 10), (x) -> BuiltInRegistries.BLOCK.getOptional(ResourceLocation.tryParse(x)),
+        LevelChunkTicks<Block> blockTicks = LevelChunkTicks.load(nbt.getList("block_ticks", 10), (x) -> BuiltInRegistries.BLOCK.getOptional(Identifier.tryParse(x)),
             chunkpos);
-        LevelChunkTicks<Fluid> fluidTicks = LevelChunkTicks.load(nbt.getList("fluid_ticks", 10), (x) -> BuiltInRegistries.FLUID.getOptional(ResourceLocation.tryParse(x)),
+        LevelChunkTicks<Fluid> fluidTicks = LevelChunkTicks.load(nbt.getList("fluid_ticks", 10), (x) -> BuiltInRegistries.FLUID.getOptional(Identifier.tryParse(x)),
             chunkpos);
         
         LevelChunk chunk = new LevelChunk(level.asLevel(), chunkpos, UpgradeData.EMPTY, blockTicks, fluidTicks, nbt.getLong("InhabitedTime"), alevelchunksection, postLoadChunk(

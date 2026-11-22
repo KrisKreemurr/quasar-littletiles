@@ -8,7 +8,7 @@ import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -78,7 +78,7 @@ public abstract class LittleStructurePremade extends LittleStructure {
         @OnlyIn(Dist.CLIENT)
         public ModelResourceLocation getItemTexture() {
             if (texture == null)
-                texture = new ModelResourceLocation(ResourceLocation.tryBuild(modid, "item/premade/" + path + "" + id), ModelResourceLocation.STANDALONE_VARIANT);
+                texture = new ModelResourceLocation(Identifier.tryBuild(modid, "item/premade/" + path + "" + id), ModelResourceLocation.STANDALONE_VARIANT);
             return texture;
         }
         

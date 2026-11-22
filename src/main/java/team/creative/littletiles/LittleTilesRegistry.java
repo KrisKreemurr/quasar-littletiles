@@ -14,7 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
@@ -207,8 +207,8 @@ public class LittleTilesRegistry {
     
     // BLOCK-TAGS
     
-    public static final TagKey<Block> STORAGE_BLOCKS_TAG = BlockTags.create(ResourceLocation.tryBuild(LittleTiles.MODID, "storage_blocks"));
-    public static final TagKey<Block> INCOMPATIBLE_TAG = BlockTags.create(ResourceLocation.tryBuild(LittleTiles.MODID, "incompatible"));
+    public static final TagKey<Block> STORAGE_BLOCKS_TAG = BlockTags.create(Identifier.tryBuild(LittleTiles.MODID, "storage_blocks"));
+    public static final TagKey<Block> INCOMPATIBLE_TAG = BlockTags.create(Identifier.tryBuild(LittleTiles.MODID, "incompatible"));
     
     // BLOCK_ENTITY
     
@@ -241,7 +241,7 @@ public class LittleTilesRegistry {
     
     // DIMENSION
     
-    public static final ResourceKey FAKE_DIMENSION = ResourceKey.create(Registries.DIMENSION_TYPE, ResourceLocation.tryBuild(LittleTiles.MODID, "fake"));
+    public static final ResourceKey FAKE_DIMENSION = ResourceKey.create(Registries.DIMENSION_TYPE, Identifier.tryBuild(LittleTiles.MODID, "fake"));
     
     // Recipe Serializer
     

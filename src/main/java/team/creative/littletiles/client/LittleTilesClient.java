@@ -21,7 +21,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -270,7 +270,7 @@ public class LittleTilesClient {
         BlockEntityRenderers.register(LittleTilesRegistry.BE_TILES_TYPE_RENDERED.get(), x -> BLOCK_TILES_RENDERER);
         
         event.enqueueWork(() -> {
-            ResourceLocation filled = ResourceLocation.tryBuild(LittleTiles.MODID, "filled");
+            Identifier filled = Identifier.tryBuild(LittleTiles.MODID, "filled");
             ClampedItemPropertyFunction function = (stack, level, entity, x) -> ((ItemColorIngredient) stack.getItem()).getColor(stack) / (float) ColorIngredient.BOTTLE_SIZE;
             ItemProperties.register(LittleTilesRegistry.BLACK_COLOR.value(), filled, function);
             ItemProperties.register(LittleTilesRegistry.CYAN_COLOR.value(), filled, function);
@@ -302,8 +302,8 @@ public class LittleTilesClient {
     }
     
     private static void modelEvent(RegisterGeometryLoaders event) {
-        CreativeCoreClient.registerItemBoxModel(ResourceLocation.tryBuild(LittleTiles.MODID, "tiles"), new LittleModelItemTilesBig());
-        CreativeCoreClient.registerItemBoxModel(ResourceLocation.tryBuild(LittleTiles.MODID, "premade"), new LittleModelItemTilesBig() {
+        CreativeCoreClient.registerItemBoxModel(Identifier.tryBuild(LittleTiles.MODID, "tiles"), new LittleModelItemTilesBig());
+        CreativeCoreClient.registerItemBoxModel(Identifier.tryBuild(LittleTiles.MODID, "premade"), new LittleModelItemTilesBig() {
             @Override
             public List<? extends RenderBox> getBoxes(ItemStack stack, boolean translucent) {
                 if (!ILittleTool.getData(stack).contains(LittleGroup.STRUCTURE_KEY))
@@ -333,11 +333,11 @@ public class LittleTilesClient {
             }
         });
         
-        CreativeCoreClient.registerItemPreviewModel(ResourceLocation.tryBuild(LittleTiles.MODID, "glove"), (LittleModelItemPreview) stack -> LittleElement.getOrDefault(stack));
+        CreativeCoreClient.registerItemPreviewModel(Identifier.tryBuild(LittleTiles.MODID, "glove"), (LittleModelItemPreview) stack -> LittleElement.getOrDefault(stack));
         
-        CreativeCoreClient.registerItemPreviewModel(ResourceLocation.tryBuild(LittleTiles.MODID, "chisel"), (LittleModelItemPreview) stack -> LittleElement.getOrDefault(stack));
+        CreativeCoreClient.registerItemPreviewModel(Identifier.tryBuild(LittleTiles.MODID, "chisel"), (LittleModelItemPreview) stack -> LittleElement.getOrDefault(stack));
         
-        CreativeCoreClient.registerItemBoxModel(ResourceLocation.tryBuild(LittleTiles.MODID, "blockingredient"), new ItemModelBox() {
+        CreativeCoreClient.registerItemBoxModel(Identifier.tryBuild(LittleTiles.MODID, "blockingredient"), new ItemModelBox() {
             
             @Override
             public List<? extends RenderBox> getBoxes(ItemStack stack, boolean translucent) {

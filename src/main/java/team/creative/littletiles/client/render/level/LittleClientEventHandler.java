@@ -15,7 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -34,7 +34,7 @@ import team.creative.littletiles.common.block.little.tile.parent.IParentCollecti
 
 public class LittleClientEventHandler {
     
-    private static final ResourceLocation RES_UNDERWATER_OVERLAY = ResourceLocation.withDefaultNamespace("textures/misc/underwater.png");
+    private static final Identifier RES_UNDERWATER_OVERLAY = Identifier.withDefaultNamespace("textures/misc/underwater.png");
     
     @SubscribeEvent
     public synchronized void levelUnload(LevelEvent.Unload event) {

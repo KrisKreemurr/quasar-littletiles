@@ -13,7 +13,7 @@ import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.entity.player.Player;
@@ -68,8 +68,8 @@ public class ItemMultiTiles extends Item implements ILittlePlacer, IItemTooltip 
     
     public static void reloadExampleStructures(ResourceManager manager) {
         EXAMPLES.clear();
-        Map<ResourceLocation, Resource> files = manager.listResources("example", x -> x.getNamespace().equals(LittleTiles.MODID) && x.getPath().endsWith(".struct"));
-        for (Entry<ResourceLocation, Resource> file : files.entrySet()) {
+        Map<Identifier, Resource> files = manager.listResources("example", x -> x.getNamespace().equals(LittleTiles.MODID) && x.getPath().endsWith(".struct"));
+        for (Entry<Identifier, Resource> file : files.entrySet()) {
             try {
                 ItemStack stack = new ItemStack(LittleTilesRegistry.ITEM_TILES.value());
                 var in = file.getValue().open();

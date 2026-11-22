@@ -11,7 +11,7 @@ import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.ISubtypeRegistration;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import team.creative.littletiles.LittleTiles;
 import team.creative.littletiles.LittleTilesRegistry;
@@ -26,8 +26,8 @@ public class LittleJEIPlugin implements IModPlugin {
     public static final RecipeType<BleachRecipe> BLEACHING = RecipeType.create(LittleTiles.MODID, "bleaching", BleachRecipe.class);
     
     @Override
-    public ResourceLocation getPluginUid() {
-        return ResourceLocation.fromNamespaceAndPath(LittleTiles.MODID, "jei_plugin");
+    public Identifier getPluginUid() {
+        return Identifier.fromNamespaceAndPath(LittleTiles.MODID, "jei_plugin");
     }
     
     @Override

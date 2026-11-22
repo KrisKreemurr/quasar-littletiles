@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -31,7 +31,7 @@ import team.creative.littletiles.mixin.common.entity.EntityAccessor;
 public abstract class LittleEntityPhysic<T extends LittleEntity<? extends LittleEntityPhysic>> {
     
     private static final Predicate<Entity> NO_ANIMATION = x -> !(x instanceof INoPushEntity);
-    private static final TagKey<EntityType<?>> NO_COLLISION = TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(LittleTiles.MODID, "no_collision"));
+    private static final TagKey<EntityType<?>> NO_COLLISION = TagKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(LittleTiles.MODID, "no_collision"));
     
     protected double minX;
     protected double minY;

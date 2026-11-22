@@ -3,7 +3,7 @@ package team.creative.littletiles.client.render.entity;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.InventoryMenu;
 import team.creative.littletiles.common.entity.LittleEntity;
 
@@ -19,7 +19,7 @@ public class LittleEntityRenderer extends EntityRenderer<LittleEntity> {
     }
     
     @Override
-    public ResourceLocation getTextureLocation(LittleEntity animation) {
+    public Identifier getTextureLocation(LittleEntity animation) {
         return InventoryMenu.BLOCK_ATLAS;
     }
     

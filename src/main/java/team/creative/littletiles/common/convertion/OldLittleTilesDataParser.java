@@ -16,7 +16,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import team.creative.creativecore.common.util.math.base.Axis;
 import team.creative.creativecore.common.util.math.base.Facing;
 import team.creative.creativecore.common.util.math.vec.Vec1d;
@@ -149,7 +149,7 @@ public class OldLittleTilesDataParser {
         for (int i = 0; i < list.size(); i++) {
             CompoundTag eventTag = list.getCompound(i);
             AnimationEvent event = switch (eventTag.getString("id")) {
-                case "sound-event" -> eventTag.getBoolean("opening") == opening ? new PlaySoundEvent(PlaySoundEvent.get(ResourceLocation.parse(eventTag.getString(
+                case "sound-event" -> eventTag.getBoolean("opening") == opening ? new PlaySoundEvent(PlaySoundEvent.get(Identifier.parse(eventTag.getString(
                     "sound"))), eventTag.getFloat("volume"), eventTag.getFloat("pitch")) : null;
                 case "child" -> new ChildDoorEvent(eventTag.getInt("childId"));
                 default -> null;

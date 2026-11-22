@@ -11,7 +11,7 @@ import com.mojang.serialization.Codec;
 
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -46,7 +46,7 @@ public class LittleBlockRegistry {
         LittleBlock little = NAME_MAP.get(name);
         if (little != null)
             return little;
-        return create(name, BuiltInRegistries.BLOCK.get(ResourceLocation.parse(name)));
+        return create(name, BuiltInRegistries.BLOCK.get(Identifier.parse(name)));
     }
     
     public static LittleBlock get(Block block) {
@@ -81,9 +81,9 @@ public class LittleBlockRegistry {
             parts = new String[] { name };
         if (parts.length == 0)
             return LittleTilesRegistry.MISSING.value().defaultBlockState();
-        ResourceLocation location;
+        Identifier location;
         try {
-            location = ResourceLocation.parse(parts[0]);
+            location = Identifier.parse(parts[0]);
         } catch (ResourceLocationException e) {
             return LittleTilesRegistry.MISSING.value().defaultBlockState();
         }

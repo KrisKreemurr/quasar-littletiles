@@ -14,7 +14,7 @@ import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -132,7 +132,7 @@ public class LittleTiles {
     
     public static LittleTilesConfig CONFIG;
     public static final Logger LOGGER = LogManager.getLogger(LittleTiles.MODID);
-    public static final CreativeNetwork NETWORK = new CreativeNetwork(1, LOGGER, ResourceLocation.tryBuild(LittleTiles.MODID, "main"));
+    public static final CreativeNetwork NETWORK = new CreativeNetwork(1, LOGGER, Identifier.tryBuild(LittleTiles.MODID, "main"));
     public static final LittleAnimationHandlers ANIMATION_HANDLERS = new LittleAnimationHandlers();
     public static final LittleTickers TICKERS = new LittleTickers();
     
@@ -227,7 +227,7 @@ public class LittleTiles {
         //NeoForge.EVENT_BUS.register(ChiselAndBitsConveration.class);
         NeoForge.EVENT_BUS.register(EntitySizeHandler.class);
         
-        STORAGE_BLOCKS = BlockTags.create(ResourceLocation.tryBuild(MODID, "storage_blocks"));
+        STORAGE_BLOCKS = BlockTags.create(Identifier.tryBuild(MODID, "storage_blocks"));
         
         LittleTilesGuiRegistry.init();
         LittleBlocks.init();
