@@ -1,5 +1,8 @@
 package team.creative.littletiles.common.block.mc;
 
+import net.minecraft.world.entity.InsideBlockEffectApplier;
+import net.minecraft.world.level.redstone.Orientation;
+import net.minecraft.world.level.ScheduledTickAccess;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -197,7 +200,7 @@ public class BlockTile extends BaseEntityBlock implements LittlePhysicBlock, Sim
         this.rendered = rendered;
     }
     
-    @Override
+        // 26.3: blocks no longer have codecs
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return null;
     }
@@ -213,9 +216,9 @@ public class BlockTile extends BaseEntityBlock implements LittlePhysicBlock, Sim
     }
     
     @Override
-    public BlockState updateShape(BlockState state, Direction direction, BlockState oldState, LevelAccessor level, BlockPos pos, BlockPos neighbor) {
+    public BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos, Direction direction, BlockPos neighbor, BlockState oldState, RandomSource random) {
         if (state.getValue(WATERLOGGED))
-            level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+            ticks.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
         return state;
     }
     
@@ -271,13 +274,10 @@ public class BlockTile extends BaseEntityBlock implements LittlePhysicBlock, Sim
     }
     
     @Override
-    public boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
-        if (!state.getFluidState().isEmpty())
-            return false;
-        BETiles be = loadBE(level, pos);
-        if (be != null)
-            return be.sideCache.getYAxis().doesBlockLight();
-        return true;
+    public boolean propagatesSkylightDown(BlockState state) {
+        // TODO(quasar): 26.3 asks per block state (no level/pos), so tiles can't be inspected here.
+        // Same answer LittleTiles gave when no tile data was loaded. Revisit with the lighting work.
+        return state.getFluidState().isEmpty();
     }
     
     @Override
@@ -300,22 +300,9 @@ public class BlockTile extends BaseEntityBlock implements LittlePhysicBlock, Sim
     }
     
     @Override
-    public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
-        // its cached state wise ... which is a big problem, maybe try to keep the cache empty????
-        // DISABLED at the moment due to noOcclusion in the constructor
-        List<ABB> boxes = new ArrayList<>();
-        BETiles be = loadBE(level, pos);
-        if (be != null) {
-            for (Pair<IParentCollection, LittleTile> pair : be.allTiles()) {
-                if (pair.key.isStructure() && LittleStructureAttribute.lightEmitter(pair.key.getAttribute()))
-                    continue;
-                if (pair.value.getBlock().isTranslucent())
-                    continue;
-                pair.value.collectBoxes(pair.key, boxes);
-            }
-        }
-        
-        return BoxesVoxelShape.create(boxes);
+    public VoxelShape getOcclusionShape(BlockState state) {
+        // 26.3 asks per block state (no level/pos). LittleTiles had occlusion disabled anyway (noOcclusion).
+        return Shapes.empty();
     }
     
     @Override
@@ -361,10 +348,10 @@ public class BlockTile extends BaseEntityBlock implements LittlePhysicBlock, Sim
         return PathType.BLOCKED;
     }
     
-    @Override
+        // TODO(quasar): NeoForge 26.3 removed the bed hooks; LittleTiles beds need a new hook
     public void setBedOccupied(BlockState state, Level world, BlockPos pos, LivingEntity sleeper, boolean occupied) {}
     
-    @Override
+        // TODO(quasar): NeoForge 26.3 removed the bed hooks; LittleTiles beds need a new hook
     public boolean isBed(BlockState state, BlockGetter level, BlockPos pos, LivingEntity sleeper) {
         return getBed(level, pos, sleeper) != null;
     }
@@ -380,7 +367,7 @@ public class BlockTile extends BaseEntityBlock implements LittlePhysicBlock, Sim
         return null;
     }
     
-    @Override
+        // TODO(quasar): NeoForge 26.3 removed the bed hooks; LittleTiles beds need a new hook
     public Direction getBedDirection(BlockState state, LevelReader world, BlockPos pos) {
         return Direction.SOUTH;
     }
@@ -427,8 +414,7 @@ public class BlockTile extends BaseEntityBlock implements LittlePhysicBlock, Sim
     @Override
     public void destroy(LevelAccessor level, BlockPos pos, BlockState state) {}
     
-    @Override
-    protected void spawnDestroyParticles(Level level, Player player, BlockPos pos, BlockState state) {
+        protected void spawnDestroyParticles(Level level, Player player, BlockPos pos, BlockState state) {
         level.levelEvent(player, 2001, pos, getId(state));
     }
     
@@ -547,7 +533,7 @@ public class BlockTile extends BaseEntityBlock implements LittlePhysicBlock, Sim
     }
     
     @Override
-    public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
+    public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, ItemStack tool, boolean willHarvest, FluidState fluid) {
         if (level.isClientSide())
             return removedByPlayerClient(state, level, pos, player, willHarvest, fluid);
         return true;
@@ -590,7 +576,7 @@ public class BlockTile extends BaseEntityBlock implements LittlePhysicBlock, Sim
     }
     
     @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData, Player player) {
         if (!level.isClientSide())
             return ItemStack.EMPTY;
         
@@ -714,7 +700,7 @@ public class BlockTile extends BaseEntityBlock implements LittlePhysicBlock, Sim
     }
     
     @Override
-    public float getEnchantPowerBonus(BlockState state, LevelReader level, BlockPos pos) {
+    public float getEnchantPowerBonus(BlockState state, BlockGetter level, BlockPos pos) {
         float bonus = 0F;
         BETiles be = loadBE(level, pos);
         if (be != null)
@@ -724,10 +710,11 @@ public class BlockTile extends BaseEntityBlock implements LittlePhysicBlock, Sim
     }
     
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos origin, boolean p_60514_) {
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, @Nullable Orientation orientation, boolean p_60514_) {
         BETiles te = loadBE(level, pos);
         if (te != null) {
-            te.onNeighbourChanged(origin.equals(pos) ? null : Facing.direction(origin, pos));
+            // 26.3 no longer says which neighbour changed: null = "unknown side", tiles re-check everything
+            te.onNeighbourChanged(null);
             if (!level.isClientSide())
                 LittleTilesServer.NEIGHBOR.add(level, pos);
         }
@@ -741,7 +728,7 @@ public class BlockTile extends BaseEntityBlock implements LittlePhysicBlock, Sim
     }
     
     @Override
-    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effects, boolean intersects) {
         BETiles te = loadBE(level, pos);
         if (te != null && te.shouldCheckForCollision()) {
             for (IStructureParentCollection list : te.structures())
@@ -829,7 +816,7 @@ public class BlockTile extends BaseEntityBlock implements LittlePhysicBlock, Sim
     }
     
     @Override
-    public void onBlockExploded(BlockState state, Level level, BlockPos pos, Explosion explosion) {
+    public void onBlockExploded(BlockState state, ServerLevel level, BlockPos pos, Explosion explosion) {
         BETiles be = loadBE(level, pos);
         if (be != null) {
             be.updateTiles((x) -> {

@@ -1,5 +1,7 @@
 package team.creative.littletiles.common.block.mc;
 
+import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.level.redstone.Orientation;
 import java.util.Optional;
 
 import com.mojang.serialization.MapCodec;
@@ -34,7 +36,7 @@ public class BlockSignalConverter extends BaseEntityBlock {
         super(BlockBehaviour.Properties.of().sound(SoundType.METAL).strength(1.5F, 6.0F));
     }
     
-    @Override
+        // 26.3: blocks no longer have codecs
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return null;
     }
@@ -65,8 +67,8 @@ public class BlockSignalConverter extends BaseEntityBlock {
     }
     
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos origin, boolean p_60514_) {
-        super.neighborChanged(state, level, pos, block, origin, p_60514_);
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, @Nullable Orientation orientation, boolean p_60514_) {
+        super.neighborChanged(state, level, pos, block, orientation, p_60514_);
         changed(level, pos);
     }
     
@@ -102,7 +104,7 @@ public class BlockSignalConverter extends BaseEntityBlock {
         return 0;
     }
     
-    @Override
+        // TODO(quasar): NeoForge 26.3 removed canConnectRedstone; redstone wire connection needs a new hook
     public boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, Direction direction) {
         return state.getValue(HORIZONTAL_FACING) == direction;
     }
