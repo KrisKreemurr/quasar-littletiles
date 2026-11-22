@@ -50,7 +50,7 @@ public class BuildingModeToggle extends BuildingModeFeature implements BuildingM
     
     @Override
     public void createInfo(GuiParent parent) {
-        parent.add(box = new GuiCheckBox(title, enabled).setTitle(Component.translatable(title).append(" (").append(key.getTranslatedKeyMessage()).append(")")));
+        parent.add(box = new GuiCheckBox(parent, title, enabled).setTitle(Component.translatable(title).append(" (").append(key.getTranslatedKeyMessage()).append(")")));
     }
     
     public void toggle() {

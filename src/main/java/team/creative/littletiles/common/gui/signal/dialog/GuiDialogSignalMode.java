@@ -21,8 +21,8 @@ public class GuiDialogSignalMode extends GuiLayer {
     public GuiSignalModeConfiguration config;
     public GuiDialogSignal dialog;
     
-    public GuiDialogSignalMode() {
-        super("gui.dialog.signal.mode", 100, 100);
+    public GuiDialogSignalMode(boolean client) {
+        super(client, "gui.dialog.signal.mode", 100, 100);
         registerEventChanged(this::changed);
         flow = GuiFlow.STACK_Y;
     }
@@ -39,25 +39,25 @@ public class GuiDialogSignalMode extends GuiLayer {
         if (event == null)
             return;
         
-        GuiComboBox<SignalMode> box = new GuiComboBox<SignalMode>("mode", new TextMapBuilder<SignalMode>().addComponent(SignalMode.values(), x -> Component.translatable(
+        GuiComboBox<SignalMode> box = new GuiComboBox<SignalMode>(this, "mode", new TextMapBuilder<SignalMode>().addComponent(SignalMode.values(), x -> Component.translatable(
             x.translateKey)));
         box.select(event.getModeConfiguration().getMode());
         add(box.setExpandableX());
         
-        GuiParent delayLine = new GuiParent(GuiFlow.STACK_X);
+        GuiParent delayLine = new GuiParent(this, GuiFlow.STACK_X);
         add(delayLine.setExpandableX());
         
-        delayLine.add(new GuiLabel("delay_label").setTitle(Component.translatable("gui.delay").append(":")));
-        delayLine.add(new GuiTextfield("delay", "" + config.delay).setNumbersOnly().setExpandableX());
+        delayLine.add(new GuiLabel(this, "delay_label").setTitle(Component.translatable("gui.delay").append(":")));
+        delayLine.add(new GuiTextfield(this, "delay", "" + config.delay).setNumbersOnly().setExpandableX());
         
-        GuiParent panel = new GuiParent("panel", GuiFlow.STACK_Y);
+        GuiParent panel = new GuiParent(this, "panel", GuiFlow.STACK_Y);
         add(panel.setExpandable());
         
-        GuiLeftRightBox bottom = new GuiLeftRightBox();
+        GuiLeftRightBox bottom = new GuiLeftRightBox(this);
         add(bottom);
         
-        bottom.addLeft(new GuiButton("cancel", x -> closeThisLayer()).setTranslate("gui.cancel"));
-        bottom.addRight(new GuiButton("save", x -> {
+        bottom.addLeft(new GuiButton(this, "cancel", x -> closeThisLayer()).setTranslate("gui.cancel"));
+        bottom.addRight(new GuiButton(this, "save", x -> {
             SignalMode mode = box.selected();
             GuiTextfield text = (GuiTextfield) get("delay");
             int delay = text.parseInteger();

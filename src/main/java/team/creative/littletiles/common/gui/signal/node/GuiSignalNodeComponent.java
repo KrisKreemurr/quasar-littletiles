@@ -10,8 +10,8 @@ public abstract class GuiSignalNodeComponent extends GuiSignalNode {
     public final String underline;
     public final GuiSignalComponent component;
     
-    public GuiSignalNodeComponent(GuiSignalComponent component, @Nullable SignalPosition position) {
-        super(component.name(), position);
+    public GuiSignalNodeComponent(IGuiParent parent, GuiSignalComponent component, @Nullable SignalPosition position) {
+        super(parent, component.name(), position);
         this.component = component;
         this.underline = component.name().equals(component.totalName()) ? null : component.totalName();
     }

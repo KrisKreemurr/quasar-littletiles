@@ -8,8 +8,8 @@ import team.creative.littletiles.common.structure.LittleStructure;
 @OnlyIn(Dist.CLIENT)
 public class LittleStructureGuiNotFound extends LittleStructureGuiControl {
     
-    public LittleStructureGuiNotFound(LittleStructureGui gui, GuiTreeItemStructure item) {
-        super(gui, item);
+    public LittleStructureGuiNotFound(IGuiParent parent, LittleStructureGui gui, GuiTreeItemStructure item) {
+        super(parent, gui, item);
     }
     
     @Override

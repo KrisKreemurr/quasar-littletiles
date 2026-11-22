@@ -79,8 +79,8 @@ public class GuiBlueprintSelection extends GuiConfigure {
         LittleTilesGuiRegistry.OPEN_CONFIG.open(getPlayer());
     });
     
-    public GuiBlueprintSelection(ContainerSlotView view) {
-        super("blueprint_selection", 200, 200, view);
+    public GuiBlueprintSelection(boolean client, ContainerSlotView view) {
+        super(client, "blueprint_selection", 200, 200, view);
         flow = GuiFlow.STACK_Y;
         
         registerEventChanged(x -> {
@@ -104,53 +104,53 @@ public class GuiBlueprintSelection extends GuiConfigure {
             return;
         ItemStack stack = tool.get();
         SelectionComponent component = SelectionComponent.getOrDefault(stack);
-        GuiComboBox<SelectionMode> box = new GuiComboBox<>("selection_mode", new TextMapBuilder<SelectionMode>().addEntrySet(SelectionMode.REGISTRY.entrySet(), x -> x.getValue()
+        GuiComboBox<SelectionMode> box = new GuiComboBox<>(this, "selection_mode", new TextMapBuilder<SelectionMode>().addEntrySet(SelectionMode.REGISTRY.entrySet(), x -> x.getValue()
                 .getTranslation()));
         box.select(component.mode);
         add(box.setExpandableX());
         
         result = component.mode.scan(getPlayer().level(), stack, component);
         
-        GuiCheckBox vanilla = new GuiCheckBox("includeVanilla", false).setTranslate("selection.include.vanilla");
+        GuiCheckBox vanilla = new GuiCheckBox(this, "includeVanilla", false).setTranslate("selection.include.vanilla");
         if (result != null && result.hasBlocks())
             vanilla.setTooltip(result.blockInfo());
         else
             vanilla.enabled = false;
         add(vanilla);
         
-        GuiCheckBox cb = new GuiCheckBox("includeCB", true).setTranslate("selection.include.cb");
+        GuiCheckBox cb = new GuiCheckBox(this, "includeCB", true).setTranslate("selection.include.cb");
         if (result != null && result.hasCB())
             cb.setTooltip(result.cbInfo());
         else
             cb.enabled = false;
         add(cb);
         
-        GuiCheckBox lt = new GuiCheckBox("includeLT", true).setTranslate("selection.include.lt");
+        GuiCheckBox lt = new GuiCheckBox(this, "includeLT", true).setTranslate("selection.include.lt");
         if (result != null && result.hasTiles())
             cb.setTooltip(result.ltInfo());
         else
             lt.enabled = false;
         add(lt);
         
-        add(new GuiCheckBox("remember_structure", true).setTranslate("selection.include.structure"));
+        add(new GuiCheckBox(this, "remember_structure", true).setTranslate("selection.include.structure"));
         // accurate
-        GuiParent scale = new GuiParent(GuiFlow.STACK_X);
+        GuiParent scale = new GuiParent(this, GuiFlow.STACK_X);
         add(scale);
         
-        GuiLabel label = new GuiLabel("label_scale").setTitle(Component.translatable("selection.scale").append(": "));
+        GuiLabel label = new GuiLabel(this, "label_scale").setTitle(Component.translatable("selection.scale").append(": "));
         scale.add(label);
-        scale.add(new GuiArraySlider("scale").setExpandableX());
+        scale.add(new GuiArraySlider(this, "scale").setExpandableX());
         updateSlider();
         
-        GuiLeftRightBox bottom = new GuiLeftRightBox();
+        GuiLeftRightBox bottom = new GuiLeftRightBox(this);
         add(bottom.setAlign(Align.RIGHT).setExpandableX());
-        bottom.addRight(new GuiButton("clear", x -> {
+        bottom.addRight(new GuiButton(this, "clear", x -> {
             GuiDialogHandler.openDialog(getIntegratedParent(), "clear_sekection", Component.translatable("gui.selection.dialog.clear"), (g, b) -> {
                 if (b == DialogButton.YES)
                     CLEAR_SELECTION.send(EndTag.INSTANCE);
             }, DialogButton.NO, DialogButton.YES);
         }).setTranslate("selection.clear"));
-        bottom.addRight(new GuiButton("save", x -> {
+        bottom.addRight(new GuiButton(this, "save", x -> {
             SelectionParameters selection = new SelectionParameters(get("includeVanilla", GuiCheckBox.class).value, get("includeCB", GuiCheckBox.class).value, get("includeLT",
                 GuiCheckBox.class).value, get("remember_structure", GuiCheckBox.class).value);
             

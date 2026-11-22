@@ -12,8 +12,8 @@ public class LittleParticleGui extends LittleStructureGuiControl {
     
     public GuiParticleControl control;
     
-    public LittleParticleGui(LittleStructureGui gui, GuiTreeItemStructure item) {
-        super(gui, item);
+    public LittleParticleGui(IGuiParent parent, LittleStructureGui gui, GuiTreeItemStructure item) {
+        super(parent, gui, item);
     }
     
     @Override
@@ -37,7 +37,7 @@ public class LittleParticleGui extends LittleStructureGuiControl {
             locked = false;
         }
         
-        add(control = new GuiParticleControl(spread, settings, count, delay, locked));
+        add(control = new GuiParticleControl(this, spread, settings, count, delay, locked));
     }
     
     @Override

@@ -101,7 +101,7 @@ public class ItemLittleChisel extends Item implements ILittleShaper, IItemToolti
     
     @Override
     public GuiConfigure getConfigure(Player player, ContainerSlotView view, boolean secondary) {
-        return new GuiChisel(view);
+        return new GuiChisel(player.level().isClientSide(), view);
     }
     
     @Override

@@ -70,7 +70,7 @@ public class ItemPremadeStructure extends Item implements ILittlePlacer, IItemTo
     
     @Override
     public GuiConfigure getConfigure(Player player, ContainerSlotView view, boolean secondary) {
-        return new GuiModeSelector(view, PlacementPlayerSetting.grid(player), PlacementPlayerSetting.placementMode(player)) {
+        return new GuiModeSelector(player.level().isClientSide(), view, PlacementPlayerSetting.grid(player), PlacementPlayerSetting.placementMode(player)) {
             
             @Override
             public boolean saveConfiguration(DataComponentMap data, LittleGrid grid, PlacementMode mode) {

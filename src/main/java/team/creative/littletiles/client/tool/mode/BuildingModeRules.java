@@ -41,7 +41,7 @@ public class BuildingModeRules extends BuildingModeFeature implements BuildingMo
     
     @Override
     public void createInfo(GuiParent parent) {
-        parent.add(label = new GuiLabel("rules").setTitle(Component.translatable("building.rules").append(" (").append(key.getTranslatedKeyMessage()).append(")")));
+        parent.add(label = new GuiLabel(parent, "rules").setTitle(Component.translatable("building.rules").append(" (").append(key.getTranslatedKeyMessage()).append(")")));
         ex = new GuiExtensionCreator<GuiLabel, GuiMenuRoot<BooleanSupplier>>(label);
     }
     
@@ -62,7 +62,7 @@ public class BuildingModeRules extends BuildingModeFeature implements BuildingMo
     }
     
     protected GuiMenuRoot<BooleanSupplier> createBox(GuiExtensionCreator<GuiLabel, GuiMenuRoot<BooleanSupplier>> creator) {
-        return new GuiMenuRoot<BooleanSupplier>(data, creator, x -> {
+        return new GuiMenuRoot<BooleanSupplier>(PARENT_TODO, data, creator, x -> {
             if (x.equals("info"))
                 return Component.translatable("building." + x, MC.options.keyUp.getTranslatedKeyMessage(), MC.options.keyLeft.getTranslatedKeyMessage(), MC.options.keyDown
                         .getTranslatedKeyMessage(), MC.options.keyRight.getTranslatedKeyMessage(), MC.options.keyJump.getTranslatedKeyMessage());

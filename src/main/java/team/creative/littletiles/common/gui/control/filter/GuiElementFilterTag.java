@@ -19,8 +19,8 @@ public class GuiElementFilterTag extends GuiElementFilter {
     
     protected GuiComboBox<TagKey<Block>> box;
     
-    public GuiElementFilterTag(TagKey<Block> selected) {
-        add(box = new GuiComboBox<>("tag", new TextMapBuilder<TagKey<Block>>().addComponents(BuiltInRegistries.BLOCK.getTagNames().toList(), x -> {
+    public GuiElementFilterTag(IGuiParent parent, TagKey<Block> selected) {
+        add(box = new GuiComboBox<>(this, "tag", new TextMapBuilder<TagKey<Block>>().addComponents(BuiltInRegistries.BLOCK.getTagNames().toList(), x -> {
             TextBuilder builder = new TextBuilder();
             Optional<Named<Block>> tag = BuiltInRegistries.BLOCK.getTag(x);
             if (tag.isPresent() && tag.get().size() > 0)

@@ -24,8 +24,8 @@ public class GuiSignalNodeOperator extends GuiSignalNode {
     private SignalInputCondition testCondition;
     private SignalContext testContext;
     
-    public GuiSignalNodeOperator(SignalLogicOperator operator, @Nullable SignalPosition position) {
-        super(operator.display, position);
+    public GuiSignalNodeOperator(IGuiParent parent, SignalLogicOperator operator, @Nullable SignalPosition position) {
+        super(parent, operator.display, position);
         this.operator = operator;
     }
     
@@ -109,7 +109,7 @@ public class GuiSignalNodeOperator extends GuiSignalNode {
         
         if (testContext != null) {
             if (testLabel == null)
-                testLabel = new GuiLabel("");
+                testLabel = new GuiLabel(this, "");
             insertControlBefore(button, testLabel);
             testCondition = condition;
             this.testContext = testContext;

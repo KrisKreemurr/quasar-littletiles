@@ -19,8 +19,8 @@ import team.creative.littletiles.common.structure.type.bed.LittleBed;
 
 public class LittleBedGui extends LittleStructureGuiControl {
     
-    public LittleBedGui(LittleStructureGui gui, GuiTreeItemStructure item) {
-        super(gui, item);
+    public LittleBedGui(IGuiParent parent, LittleStructureGui gui, GuiTreeItemStructure item) {
+        super(parent, gui, item);
         registerEventChanged(x -> {
             if (x instanceof GuiAnimationViewChangedEvent || x.control.is("direction")) {
                 GuiIsoAnimationViewer viewer = LittleBedGui.this.get("viewer");
@@ -39,12 +39,12 @@ public class LittleBedGui extends LittleStructureGuiControl {
     
     @Override
     public void create(@Nullable LittleStructure structure) {
-        GuiParent right = new GuiParent();
+        GuiParent right = new GuiParent(this);
         add(right);
         
-        right.add(new GuiIsoAnimationPanel(item, new LittleBox(item.group.getMinVec()), item.group.getGrid(), false).setVisibleAxis(false).setViewerDim(200, 200));
+        right.add(new GuiIsoAnimationPanel(this, item, new LittleBox(item.group.getMinVec()), item.group.getGrid(), false).setVisibleAxis(false).setViewerDim(200, 200));
         
-        GuiParent left = new GuiParent();
+        GuiParent left = new GuiParent(this);
         add(left);
         
         LittleVec size = item.group.getSize();
@@ -53,11 +53,11 @@ public class LittleBedGui extends LittleStructureGuiControl {
             facing = Facing.SOUTH;
         if (structure instanceof LittleBed)
             facing = ((LittleBed) structure).direction;
-        GuiComboBox<Facing> button = new GuiComboBox<Facing>("direction", new TextMapBuilder<Facing>().addComponent(Facing.HORIZONTA_VALUES, x -> Component.literal(x.name)));
+        GuiComboBox<Facing> button = new GuiComboBox<Facing>(this, "direction", new TextMapBuilder<Facing>().addComponent(Facing.HORIZONTA_VALUES, x -> Component.literal(x.name)));
         button.select(facing);
         left.add(button);
         
-        GuiDirectionIndicator indicator = new GuiDirectionIndicator("relativeDirection", Facing.UP);
+        GuiDirectionIndicator indicator = new GuiDirectionIndicator(this, "relativeDirection", Facing.UP);
         left.add(indicator);
         
         raiseEvent(new GuiAnimationViewChangedEvent(get("viewer")));

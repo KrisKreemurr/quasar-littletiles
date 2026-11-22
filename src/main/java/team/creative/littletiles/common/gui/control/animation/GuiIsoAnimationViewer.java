@@ -66,8 +66,8 @@ public class GuiIsoAnimationViewer extends GuiControl {
     
     public boolean visibleAxis = true;
     
-    public GuiIsoAnimationViewer(String name, GuiTreeItemStructure item, LittleBox box, LittleGrid grid, boolean even) {
-        super(name);
+    public GuiIsoAnimationViewer(IGuiParent parent, String name, GuiTreeItemStructure item, LittleBox box, LittleGrid grid, boolean even) {
+        super(parent, name);
         this.item = item;
         this.setView(GuiIsoView.UP);
         this.box = box.copy();

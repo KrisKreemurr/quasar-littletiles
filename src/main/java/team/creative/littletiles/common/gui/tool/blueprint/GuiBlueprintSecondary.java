@@ -22,8 +22,8 @@ import team.creative.littletiles.common.placement.setting.PlacementPlayerSetting
 
 public class GuiBlueprintSecondary extends GuiConfigureTool {
     
-    public GuiBlueprintSecondary(ContainerSlotView view) {
-        super("blueprint_secondary", 160, 240, view);
+    public GuiBlueprintSecondary(boolean client, ContainerSlotView view) {
+        super(client, "blueprint_secondary", 160, 240, view);
         flow = GuiFlow.STACK_Y;
         align = Align.STRETCH;
         spacing = 4;
@@ -51,20 +51,20 @@ public class GuiBlueprintSecondary extends GuiConfigureTool {
     public void create() {
         if (!isClient())
             return;
-        add(new GuiLabel("label").setTranslate("gui.blueprint.color.primary"));
-        add(new GuiColorPicker("picker", new Color(tool.get().getOrDefault(LittleTilesRegistry.COLOR, ItemLittleBlueprint.DEFAULT_COLOR)), LittleTiles.CONFIG.isTransparencyEnabled(
+        add(new GuiLabel(this, "label").setTranslate("gui.blueprint.color.primary"));
+        add(new GuiColorPicker(this, "picker", new Color(tool.get().getOrDefault(LittleTilesRegistry.COLOR, ItemLittleBlueprint.DEFAULT_COLOR)), LittleTiles.CONFIG.isTransparencyEnabled(
             getPlayer()), LittleTiles.CONFIG.getMinimumTransparency(getPlayer())));
         
-        add(new GuiLabel("label").setTranslate("gui.blueprint.color.secondary"));
-        add(new GuiColorPicker("picker2", new Color(tool.get().getOrDefault(LittleTilesRegistry.COLOR_SECONDARY, ItemLittleBlueprint.DEFAULT_COLOR_SECONDARY)), LittleTiles.CONFIG
+        add(new GuiLabel(this, "label").setTranslate("gui.blueprint.color.secondary"));
+        add(new GuiColorPicker(this, "picker2", new Color(tool.get().getOrDefault(LittleTilesRegistry.COLOR_SECONDARY, ItemLittleBlueprint.DEFAULT_COLOR_SECONDARY)), LittleTiles.CONFIG
                 .isTransparencyEnabled(getPlayer()), LittleTiles.CONFIG.getMinimumTransparency(getPlayer())));
         
-        add(new GuiGridConfig("grid", getPlayer(), PlacementPlayerSetting.grid(getPlayer()), LittleTilesClient::grid));
+        add(new GuiGridConfig(this, "grid", getPlayer(), PlacementPlayerSetting.grid(getPlayer()), LittleTilesClient::grid));
         
-        GuiComboBox<PlacementMode> modeBox = new GuiComboBox<>("mode", PlacementMode.map());
+        GuiComboBox<PlacementMode> modeBox = new GuiComboBox<>(this, "mode", PlacementMode.map());
         modeBox.select(PlacementPlayerSetting.placementMode(getPlayer()));
         add(modeBox);
-        add(new GuiLabel("text"));
+        add(new GuiLabel(this, "text"));
         raiseEvent(new GuiControlChangedEvent(modeBox));
     }
     

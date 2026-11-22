@@ -38,8 +38,8 @@ public class GuiSoundEventPanel extends GuiTimelinePanel {
     
     public GuiTimelineKey<PlaySoundEvent> edited;
     
-    public GuiSoundEventPanel(GuiBlueprintAnimationHandler handler, AnimationTimeline opening, AnimationTimeline closing, int duration) {
-        super(handler, duration);
+    public GuiSoundEventPanel(IGuiParent parent, GuiBlueprintAnimationHandler handler, AnimationTimeline opening, AnimationTimeline closing, int duration) {
+        super(parent, handler, duration);
         List<AnimationEventEntry> openingEvents = extract(opening, PlaySoundEvent.class);
         List<AnimationEventEntry> closingEvents = extract(closing, PlaySoundEvent.class);
         List<AnimationEventEntry> bothEvents = new ArrayList<>();
@@ -64,25 +64,25 @@ public class GuiSoundEventPanel extends GuiTimelinePanel {
         createChannels(openingEvents, AnimationDirection.OPENING);
         createChannels(closingEvents, AnimationDirection.CLOSING);
         
-        GuiParent channelControl = new GuiParent();
+        GuiParent channelControl = new GuiParent(this);
         add(channelControl);
-        var soundDirection = new GuiComboBox<>("sound_direction", new TextMapBuilder<AnimationDirection>().addComponent(AnimationDirection.values(), x -> x.title()));
+        var soundDirection = new GuiComboBox<>(this, "sound_direction", new TextMapBuilder<AnimationDirection>().addComponent(AnimationDirection.values(), x -> x.title()));
         channelControl.add(soundDirection);
-        channelControl.add(new GuiButton("add", x -> createChannel(soundDirection.selected())).setTranslate("gui.add"));
-        channelControl.add(new GuiButton("removed_unused", x -> {
+        channelControl.add(new GuiButton(this, "add", x -> createChannel(soundDirection.selected())).setTranslate("gui.add"));
+        channelControl.add(new GuiButton(this, "removed_unused", x -> {
             clearUnusedChannel(bothChannels);
             clearUnusedChannel(openingChannels);
             clearUnusedChannel(closingChannels);
             reflow();
         }).setTranslate("gui.door.clean.channel"));
         
-        GuiParent editKey = new GuiParent(GuiFlow.STACK_Y);
+        GuiParent editKey = new GuiParent(this, GuiFlow.STACK_Y);
         add(editKey.setExpandableX());
         registerEvent(GuiTimeline.KeySelectedEvent.class, x -> {
             editKey.clear();
             if (x.control.channel instanceof GuiSoundTimelineChannel) {
                 PlaySoundEvent value = (PlaySoundEvent) x.control.value;
-                GuiComboBox<Identifier> box = new GuiComboBox<Identifier>("sound", new TextMapBuilder<Identifier>().addComponent(Minecraft.getInstance()
+                GuiComboBox<Identifier> box = new GuiComboBox<Identifier>(this, "sound", new TextMapBuilder<Identifier>().addComponent(Minecraft.getInstance()
                         .getSoundManager().getAvailableSounds(), y -> {
                             if (y.getNamespace().equals(Identifier.DEFAULT_NAMESPACE))
                                 return Component.literal(y.getPath());
@@ -90,10 +90,10 @@ public class GuiSoundEventPanel extends GuiTimelinePanel {
                         })).setSearchbar(true);
                 box.select(value.sound.getLocation());
                 editKey.add(box);
-                GuiParent other = new GuiParent().setVAlign(VAlign.CENTER);
-                other.add(new GuiLabeledControl(GuiControl.translatable("gui.volume").append(":"), new GuiSlider("volume", value.volume, 0, 1).setDim(40, 10)));
-                other.add(new GuiLabeledControl(GuiControl.translatable("gui.pitch").append(":"), new GuiSlider("pitch", value.pitch, 0.5, 2).setDim(40, 10)));
-                other.add(new GuiButtonIcon("play", Icon.PLAY, y -> {
+                GuiParent other = new GuiParent(this).setVAlign(VAlign.CENTER);
+                other.add(new GuiLabeledControl(this, GuiControl.translatable("gui.volume").append(":"), new GuiSlider(this, "volume", value.volume, 0, 1).setDim(40, 10)));
+                other.add(new GuiLabeledControl(this, GuiControl.translatable("gui.pitch").append(":"), new GuiSlider(this, "pitch", value.pitch, 0.5, 2).setDim(40, 10)));
+                other.add(new GuiButtonIcon(this, "play", Icon.PLAY, y -> {
                     GuiSlider volume = other.get("volume");
                     GuiSlider pitch = other.get("pitch");
                     GuiControl.playSound(PlaySoundEvent.get(box.selected()), (float) volume.getValue(), (float) pitch.getValue());
@@ -122,7 +122,7 @@ public class GuiSoundEventPanel extends GuiTimelinePanel {
     
     @Override
     protected void addBefore() {
-        add(new GuiLabel("soundLabel").setTitle(translatable("gui.door.sound").append(":")));
+        add(new GuiLabel(this, "soundLabel").setTitle(translatable("gui.door.sound").append(":")));
     }
     
     public boolean isSoundEmpty() {
@@ -151,7 +151,7 @@ public class GuiSoundEventPanel extends GuiTimelinePanel {
     }
     
     protected void createChannel(AnimationDirection direction) {
-        GuiSoundTimelineChannel channel = new GuiSoundTimelineChannel(time);
+        GuiSoundTimelineChannel channel = new GuiSoundTimelineChannel(this, time);
         List<GuiSoundTimelineChannel> channels = switch (direction) {
             case BOTH -> bothChannels;
             case OPENING -> openingChannels;
@@ -170,7 +170,7 @@ public class GuiSoundEventPanel extends GuiTimelinePanel {
             int id = 0;
             while (true) {
                 while (id >= channels.size()) {
-                    GuiSoundTimelineChannel channel = new GuiSoundTimelineChannel(time);
+                    GuiSoundTimelineChannel channel = new GuiSoundTimelineChannel(this, time);
                     channels.add(channel);
                     time.addGuiTimelineChannel(direction.title().append("" + id), channel);
                 }
@@ -191,8 +191,8 @@ public class GuiSoundEventPanel extends GuiTimelinePanel {
     
     public static class GuiSoundTimelineChannel extends GuiTimelineChannel<PlaySoundEvent> {
         
-        public GuiSoundTimelineChannel(GuiTimeline timeline) {
-            super(timeline);
+        public GuiSoundTimelineChannel(IGuiParent parent, GuiTimeline timeline) {
+            super(parent, timeline);
         }
         
         @Override

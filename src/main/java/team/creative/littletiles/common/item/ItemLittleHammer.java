@@ -96,7 +96,7 @@ public class ItemLittleHammer extends Item implements ILittleShaper, IItemToolti
     
     @Override
     public GuiConfigure getConfigure(Player player, ContainerSlotView view, boolean secondary) {
-        return new GuiHammer(view);
+        return new GuiHammer(player.level().isClientSide(), view);
     }
     
     @Override

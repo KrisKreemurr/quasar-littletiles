@@ -78,8 +78,8 @@ public class GuiBag extends GuiConfigure {
         }
     });
     
-    public GuiBag(ContainerSlotView view) {
-        super("bag", view);
+    public GuiBag(boolean client, ContainerSlotView view) {
+        super(client, "bag", view);
         registerEventClick(x -> {
             if (x.control instanceof GuiColorProgressBar)
                 DROP_COLOR.send(StringTag.valueOf(x.control.name));
@@ -109,16 +109,16 @@ public class GuiBag extends GuiConfigure {
         bag = ((ItemLittleBag) tool.get().getItem()).getInventory(tool.get());
         ColorIngredient unit = bag.get(ColorIngredient.class);
         
-        GuiParent upper = new GuiParent(GuiFlow.STACK_X);
+        GuiParent upper = new GuiParent(this, GuiFlow.STACK_X);
         add(upper);
-        GuiParent left = new GuiParent();
+        GuiParent left = new GuiParent(this);
         upper.add(left);
         
-        GuiParent right = new GuiParent(GuiFlow.STACK_Y);
+        GuiParent right = new GuiParent(this, GuiFlow.STACK_Y);
         upper.add(right.setAlign(Align.STRETCH).setExpandableX());
         
         GuiInventoryGrid inputInventory;
-        right.add(inputInventory = new GuiInventoryGrid("input", input).addListener(x -> {
+        right.add(inputInventory = new GuiInventoryGrid(this, "input", input).addListener(x -> {
             Player player = getPlayer();
             ItemStack input = GuiBag.this.input.getItem(0);
             
@@ -189,19 +189,19 @@ public class GuiBag extends GuiConfigure {
             
         }));
         int colorStorage = LittleTiles.CONFIG.general.bag.colorStorage;
-        right.add(new GuiColorProgressBar("black", unit.black, colorStorage, Color.BLACK));
-        right.add(new GuiColorProgressBar("cyan", unit.cyan, colorStorage, Color.CYAN));
-        right.add(new GuiColorProgressBar("magenta", unit.magenta, colorStorage, Color.MAGENTA));
-        right.add(new GuiColorProgressBar("yellow", unit.yellow, colorStorage, Color.YELLOW));
-        right.add(new GuiColorProgressBar("alpha", unit.alpha, colorStorage, Color.WHITE));
+        right.add(new GuiColorProgressBar(this, "black", unit.black, colorStorage, Color.BLACK));
+        right.add(new GuiColorProgressBar(this, "cyan", unit.cyan, colorStorage, Color.CYAN));
+        right.add(new GuiColorProgressBar(this, "magenta", unit.magenta, colorStorage, Color.MAGENTA));
+        right.add(new GuiColorProgressBar(this, "yellow", unit.yellow, colorStorage, Color.YELLOW));
+        right.add(new GuiColorProgressBar(this, "alpha", unit.alpha, colorStorage, Color.WHITE));
         
         bag = ((ItemLittleBag) tool.get().getItem()).getInventory(tool.get());
         
         bagInventory = new SimpleContainer(LittleTiles.CONFIG.general.bag.inventorySize);
-        left.add(bagInventoryGui = new GuiInventoryGrid(name, bagInventory, LittleTiles.CONFIG.general.bag.inventoryWidth, LittleTiles.CONFIG.general.bag.inventoryHeight, (c,
+        left.add(bagInventoryGui = new GuiInventoryGrid(this, name, bagInventory, LittleTiles.CONFIG.general.bag.inventoryWidth, LittleTiles.CONFIG.general.bag.inventoryHeight, (c,
                 i) -> new BagSlot(c, i)));
         
-        add(addInventory(new GuiPlayerInventoryGrid(getPlayer())).disableSlot(tool.index));
+        add(addInventory(new GuiPlayerInventoryGrid(this, getPlayer())).disableSlot(tool.index));
         
         addInventory(inputInventory);
         addInventory(bagInventoryGui);

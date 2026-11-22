@@ -23,8 +23,8 @@ public class LittleItemHolderGui extends LittleStructureGuiControl {
     public GuiCheckBox locked;
     public GuiConfigSubControlNested sortingControl;
     
-    public LittleItemHolderGui(LittleStructureGui gui, GuiTreeItemStructure item) {
-        super(gui, item);
+    public LittleItemHolderGui(IGuiParent parent, LittleStructureGui gui, GuiTreeItemStructure item) {
+        super(parent, gui, item);
         flow = GuiFlow.STACK_Y;
     }
     
@@ -43,13 +43,13 @@ public class LittleItemHolderGui extends LittleStructureGuiControl {
             filter = null;
         }
         
-        add(this.locked = new GuiCheckBox("locked", locked).setTranslate("gui.structure.locked"));
+        add(this.locked = new GuiCheckBox(this, "locked", locked).setTranslate("gui.structure.locked"));
         SortingList sortingList = new SortingList(whitelist);
         if (filter != null)
             sortingList.entries.addAll(filter);
         
         ICreativeConfigHolder holder = ConfigHolderObject.createUnrelated(CreativeConfigRegistry.ROOT, Side.SERVER, sortingList, new SortingList());
-        add(sortingControl = new GuiConfigSubControlNested("filter", ConfigTypeConveration.FAKE_PARENT, null, Side.SERVER, null, true));
+        add(sortingControl = new GuiConfigSubControlNested(this, "filter", ConfigTypeConveration.FAKE_PARENT, null, Side.SERVER, null, true));
         sortingControl.setDim(new GuiSizeRules().maxWidth(200).maxHeight(200));
         sortingControl.load(holder, sortingList);
         sortingControl.createControls();

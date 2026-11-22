@@ -37,8 +37,8 @@ public class GuiDialogSignal extends GuiLayer {
     protected IConditionConfiguration event;
     public List<GuiSignalComponent> inputs;
     
-    public GuiDialogSignal() {
-        super("gui.dialog.signal", 420, 300);
+    public GuiDialogSignal(boolean client) {
+        super(client, "gui.dialog.signal", 420, 300);
         flow = GuiFlow.STACK_Y;
         registerEventChanged(this::changed);
     }
@@ -74,28 +74,28 @@ public class GuiDialogSignal extends GuiLayer {
         if (inputs == null)
             return;
         
-        GuiLeftRightBox top = new GuiLeftRightBox();
+        GuiLeftRightBox top = new GuiLeftRightBox(this);
         add(top.setVAlign(VAlign.CENTER));
-        top.addLeft(new GuiLabel("result").setTranslate("gui.signal.configuration.result"));
-        top.addRight(new GuiLabel("delay"));
+        top.addLeft(new GuiLabel(this, "result").setTranslate("gui.signal.configuration.result"));
+        top.addRight(new GuiLabel(this, "delay"));
         
         if (event.hasModeConfiguration())
-            top.addRight(new GuiButton("mode", x -> LittleTilesGuiRegistry.MODE_DIALOG.open(getIntegratedParent(), new CompoundTag()).init(GuiDialogSignal.this, event)));
+            top.addRight(new GuiButton(this, "mode", x -> LittleTilesGuiRegistry.MODE_DIALOG.open(getIntegratedParent(), new CompoundTag()).init(GuiDialogSignal.this, event)));
         
-        GuiSignalController controller = new GuiSignalController("controller", event.getOutput(), inputs);
+        GuiSignalController controller = new GuiSignalController(this, "controller", event.getOutput(), inputs);
         add(controller.setExpandable());
         
-        GuiLeftRightBox bottom = new GuiLeftRightBox();
+        GuiLeftRightBox bottom = new GuiLeftRightBox(this);
         add(bottom);
         
         List<GuiSignalComponent> allInputs = new ArrayList<>(inputs);
         allInputs.add(new GuiSignalComponent("[]", true, false, -1, 1, null, null, SignalMode.EQUAL));
         allInputs.add(new GuiSignalComponent("number", true, false, -1, 1, null, null, SignalMode.EQUAL));
         
-        GuiComboBox<GuiSignalComponent> inputs = new GuiComboBox<GuiSignalComponent>("inputs", new TextMapBuilder<GuiSignalComponent>().addComponent(allInputs, x -> Component
+        GuiComboBox<GuiSignalComponent> inputs = new GuiComboBox<GuiSignalComponent>(this, "inputs", new TextMapBuilder<GuiSignalComponent>().addComponent(allInputs, x -> Component
                 .literal(x.info())));
         bottom.addLeft(inputs);
-        bottom.addLeft(new GuiButton("add", x -> {
+        bottom.addLeft(new GuiButton(this, "add", x -> {
             GuiSignalComponent com = inputs.selected();
             if (com.name().equals("[]"))
                 controller.addVirtualInput();
@@ -125,16 +125,16 @@ public class GuiDialogSignal extends GuiLayer {
         map.addComponent(x -> x.addGate(false), Component.literal("gate"));
         map.addComponent(x -> x.addGate(true), Component.literal("ngate"));
         
-        GuiComboBox<Consumer<GuiSignalController>> operators = new GuiComboBox<>("operators", map);
+        GuiComboBox<Consumer<GuiSignalController>> operators = new GuiComboBox<>(this, "operators", map);
         bottom.addLeft(operators);
-        bottom.addLeft(new GuiButton("add", x -> operators.selected().accept(controller)).setTranslate("gui.plus"));
+        bottom.addLeft(new GuiButton(this, "add", x -> operators.selected().accept(controller)).setTranslate("gui.plus"));
         
         if (event.getCondition() != null)
             controller.setCondition(event.getOutputPosition(), event.getCondition(), this);
         
-        bottom.addRight(new GuiCheckBox("testing", false).setTranslate("gui.signal.configuration.testing"));
-        bottom.addRight(new GuiCheckBox("testingNumbers", false).setTranslate("gui.signal.configuration.testing_numbers"));
-        bottom.addRight(new GuiButton("save", x -> {
+        bottom.addRight(new GuiCheckBox(this, "testing", false).setTranslate("gui.signal.configuration.testing"));
+        bottom.addRight(new GuiCheckBox(this, "testingNumbers", false).setTranslate("gui.signal.configuration.testing_numbers"));
+        bottom.addRight(new GuiButton(this, "save", x -> {
             try {
                 event.setCondition(controller.generatePattern(), controller.outputPosition());
                 event.update();

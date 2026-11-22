@@ -20,8 +20,8 @@ public class GuiPaintBrush extends GuiConfigureTool {
     
     protected GuiElementFilter filter;
     
-    public GuiPaintBrush(ContainerSlotView view) {
-        super("paint_brush", 140, 200, view);
+    public GuiPaintBrush(boolean client, ContainerSlotView view) {
+        super(client, "paint_brush", 140, 200, view);
         flow = GuiFlow.STACK_Y;
         align = Align.STRETCH;
     }
@@ -39,11 +39,11 @@ public class GuiPaintBrush extends GuiConfigureTool {
         if (!isClient())
             return;
         Color color = new Color(tool.get().getOrDefault(LittleTilesRegistry.COLOR, ColorUtils.WHITE));
-        add(new GuiColorPicker("picker", color, LittleTiles.CONFIG.isTransparencyEnabled(getPlayer()), LittleTiles.CONFIG.getMinimumTransparency(getPlayer())));
+        add(new GuiColorPicker(this, "picker", color, LittleTiles.CONFIG.isTransparencyEnabled(getPlayer()), LittleTiles.CONFIG.getMinimumTransparency(getPlayer())));
         
-        add(new GuiShapeConfiguration(getPlayer(), "shape", tool));
-        add(new GuiGridConfig("grid", getPlayer(), PlacementPlayerSetting.grid(getPlayer()), LittleTilesClient::grid));
-        add(new GuiFilterConfiguration(getPlayer(), "filter", tool));
+        add(new GuiShapeConfiguration(this, getPlayer(), "shape", tool));
+        add(new GuiGridConfig(this, "grid", getPlayer(), PlacementPlayerSetting.grid(getPlayer()), LittleTilesClient::grid));
+        add(new GuiFilterConfiguration(this, getPlayer(), "filter", tool));
     }
     
 }

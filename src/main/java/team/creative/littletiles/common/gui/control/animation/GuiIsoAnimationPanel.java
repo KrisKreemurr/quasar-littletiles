@@ -11,16 +11,16 @@ import team.creative.littletiles.common.math.box.LittleBox;
 
 public class GuiIsoAnimationPanel extends GuiParent {
     
-    public GuiIsoAnimationPanel(GuiTreeItemStructure item, LittleBox box, LittleGrid grid, boolean even) {
+    public GuiIsoAnimationPanel(IGuiParent parent, GuiTreeItemStructure item, LittleBox box, LittleGrid grid, boolean even) {
         flow = GuiFlow.STACK_Y;
         align = Align.STRETCH;
-        GuiIsoAnimationViewer viewer = new GuiIsoAnimationViewer("viewer", item, box, grid, even);
+        GuiIsoAnimationViewer viewer = new GuiIsoAnimationViewer(this, "viewer", item, box, grid, even);
         add(viewer);
-        GuiParent buttons = new GuiParent(GuiFlow.STACK_X).setAlign(Align.CENTER);
+        GuiParent buttons = new GuiParent(this, GuiFlow.STACK_X).setAlign(Align.CENTER);
         add(buttons);
-        buttons.add(new GuiButtonIcon("reset", Icon.HOUSE, x -> viewer.resetView()));
-        buttons.add(new GuiButtonIcon("axis", Icon.COORDS, x -> viewer.nextAxis()));
-        buttons.add(new GuiButtonIcon("flip", Icon.MIRROR, x -> viewer.mirrorView()));
+        buttons.add(new GuiButtonIcon(this, "reset", Icon.HOUSE, x -> viewer.resetView()));
+        buttons.add(new GuiButtonIcon(this, "axis", Icon.COORDS, x -> viewer.nextAxis()));
+        buttons.add(new GuiButtonIcon(this, "flip", Icon.MIRROR, x -> viewer.mirrorView()));
     }
     
     public GuiIsoAnimationPanel setVisibleAxis(boolean visible) {

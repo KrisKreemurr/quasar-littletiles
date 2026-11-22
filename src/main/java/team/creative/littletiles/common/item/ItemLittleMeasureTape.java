@@ -51,7 +51,7 @@ public class ItemLittleMeasureTape extends Item implements ILittleMeasure, IItem
     
     @Override
     public GuiConfigure getConfigure(Player player, ContainerSlotView view, boolean secondary) {
-        return new GuiMesaurementTape(view);
+        return new GuiMesaurementTape(player.level().isClientSide(), view);
     }
     
     @Override

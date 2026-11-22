@@ -26,15 +26,15 @@ public abstract class GuiSignalNode extends GuiParent {
     
     public GuiButton button;
     
-    public GuiSignalNode(String caption, @Nullable SignalPosition position) {
-        super();
+    public GuiSignalNode(IGuiParent parent, String caption, @Nullable SignalPosition position) {
+        super(parent);
         if (position != null) {
             x = position.x();
             y = position.y();
         }
         
         beforeAddingButton();
-        add(button = new GuiButton(caption, x -> {
+        add(button = new GuiButton(this, caption, x -> {
             GuiSignalController controller = controller();
             if (x == 1 && removable()) {
                 controller.removeNode(GuiSignalNode.this);

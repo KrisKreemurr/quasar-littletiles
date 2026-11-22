@@ -24,15 +24,15 @@ public class GuiExport extends GuiLayer {
     public GuiTextfield textfield;
     public Container exportSlot = new SimpleContainer(1);
     
-    public GuiExport() {
-        super("export");
+    public GuiExport(boolean client) {
+        super(client, "export");
         this.flow = GuiFlow.STACK_Y;
         this.align = Align.STRETCH;
     }
     
     @Override
     public void create() {
-        add(new GuiInventoryGrid("export", exportSlot).addListener(x -> {
+        add(new GuiInventoryGrid(this, "export", exportSlot).addListener(x -> {
             ItemStack stack = exportSlot.getItem(0);
             if (!stack.isEmpty() && stack.getItem() instanceof ILittlePlacer p && p.hasTiles(stack))
                 textfield.setText(((GuiComboBox<LittleExportType>) get("type")).selected().export(stack));
@@ -40,19 +40,19 @@ public class GuiExport extends GuiLayer {
                 textfield.setText("");
         }));
         
-        add(new GuiComboBox<LittleExportType>("type", new TextMapBuilder<LittleExportType>().addEntrySet(LittleExportType.REGISTRY.entrySet(), x -> Component.translatable(
+        add(new GuiComboBox<LittleExportType>(this, "type", new TextMapBuilder<LittleExportType>().addEntrySet(LittleExportType.REGISTRY.entrySet(), x -> Component.translatable(
             "gui.export." + x.getKey()))));
         
-        GuiParent row = new GuiParent(GuiFlow.STACK_X);
+        GuiParent row = new GuiParent(this, GuiFlow.STACK_X);
         add(row);
-        textfield = new GuiTextfield("export");
+        textfield = new GuiTextfield(this, "export");
         textfield.setMaxStringLength(Integer.MAX_VALUE);
         row.add(textfield);
         
         if (isClient())
-            row.add(new GuiButton("Copy", x -> Minecraft.getInstance().keyboardHandler.setClipboard(textfield.getText())).setTranslate("gui.copy"));
+            row.add(new GuiButton(this, "Copy", x -> Minecraft.getInstance().keyboardHandler.setClipboard(textfield.getText())).setTranslate("gui.copy"));
         
-        add(new GuiPlayerInventoryGrid(getPlayer()).setUnexpandableX());
+        add(new GuiPlayerInventoryGrid(this, getPlayer()).setUnexpandableX());
         
     }
     

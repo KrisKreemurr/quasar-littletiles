@@ -14,8 +14,8 @@ public class GuiColorProgressBar extends GuiProgressbar {
     
     public Color color;
     
-    public GuiColorProgressBar(String name, double pos, double max, Color color) {
-        super(name, pos, max);
+    public GuiColorProgressBar(IGuiParent parent, String name, double pos, double max, Color color) {
+        super(parent, name, pos, max);
         this.color = color;
     }
     

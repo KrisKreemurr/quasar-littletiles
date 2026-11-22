@@ -72,27 +72,27 @@ public class GuiWorkbench extends GuiLayer {
                     BlockIngredient blocks = missing.get(BlockIngredient.class);
                     if (blocks != null)
                         for (BlockIngredientEntry ingredient : blocks)
-                            listBox.addItem(new GuiLabel("").setTitle(MutableComponent.create(new ContentItemStack(ingredient.getBlockStack())).append(BlockIngredient.printVolume(
+                            listBox.addItem(new GuiLabel(this, "").setTitle(MutableComponent.create(new ContentItemStack(ingredient.getBlockStack())).append(BlockIngredient.printVolume(
                                 ingredient.value, true))));
                         
                     ColorIngredient color = missing.get(ColorIngredient.class);
                     if (color != null) {
                         if (color.black > 0)
-                            listBox.addItem(new GuiLabel("").setTitle(Component.literal(color.getBlackDescription())));
+                            listBox.addItem(new GuiLabel(this, "").setTitle(Component.literal(color.getBlackDescription())));
                         if (color.cyan > 0)
-                            listBox.addItem(new GuiLabel("").setTitle(Component.literal(color.getCyanDescription())));
+                            listBox.addItem(new GuiLabel(this, "").setTitle(Component.literal(color.getCyanDescription())));
                         if (color.magenta > 0)
-                            listBox.addItem(new GuiLabel("").setTitle(Component.literal(color.getMagentaDescription())));
+                            listBox.addItem(new GuiLabel(this, "").setTitle(Component.literal(color.getMagentaDescription())));
                         if (color.yellow > 0)
-                            listBox.addItem(new GuiLabel("").setTitle(Component.literal(color.getYellowDescription())));
+                            listBox.addItem(new GuiLabel(this, "").setTitle(Component.literal(color.getYellowDescription())));
                         if (color.alpha > 0)
-                            listBox.addItem(new GuiLabel("").setTitle(Component.literal(color.getAlphaDescription())));
+                            listBox.addItem(new GuiLabel(this, "").setTitle(Component.literal(color.getAlphaDescription())));
                     }
                     
                     StackIngredient stacks = missing.get(StackIngredient.class);
                     if (stacks != null)
                         for (StackIngredientEntry stack : stacks)
-                            listBox.addItem(new GuiLabel("").setTitle(MutableComponent.create(new ContentItemStack(stack.stack)).append("" + stack.count)));
+                            listBox.addItem(new GuiLabel(this, "").setTitle(MutableComponent.create(new ContentItemStack(stack.stack)).append("" + stack.count)));
                 }
                 
             } else if (ChiselsAndBitsManager.isChiselsAndBitsStructure(input1)) {
@@ -108,17 +108,17 @@ public class GuiWorkbench extends GuiLayer {
         }
     });
     
-    public GuiWorkbench() {
-        super("workbench");
+    public GuiWorkbench(boolean client) {
+        super(client, "workbench");
     }
     
     @Override
     public void create() {
         flow = GuiFlow.STACK_Y;
         align = Align.CENTER;
-        add(new CraftingGrid());
-        add(new GuiListBoxBase<GuiLabel>("missing", false, new ArrayList<>()).setDim(150, 100));
-        add(new GuiPlayerInventoryGrid(getPlayer()).setUnexpandableX());
+        add(new CraftingGrid(this));
+        add(new GuiListBoxBase<GuiLabel>(this, "missing", false, new ArrayList<>()).setDim(150, 100));
+        add(new GuiPlayerInventoryGrid(this, getPlayer()).setUnexpandableX());
     }
     
     @Override
@@ -131,13 +131,13 @@ public class GuiWorkbench extends GuiLayer {
         
         private List<GuiSlot> slots = new ArrayList<>();
         
-        public CraftingGrid() {
-            super("crafting", GuiFlow.STACK_X);
+        public CraftingGrid(IGuiParent parent) {
+            super(parent, "crafting", GuiFlow.STACK_X);
             setVAlign(VAlign.CENTER);
-            addSlot(new GuiSlot(crafting, 0));
-            add(new GuiLabel("->").setTitle(Component.literal("->")));
-            addSlot(new GuiSlot(crafting, 1));
-            add(new GuiButton("craft", x -> CRAFT.sendAndExecute(GuiWorkbench.this, EndTag.INSTANCE)).setTranslate("gui.craft"));
+            addSlot(new GuiSlot(this, crafting, 0));
+            add(new GuiLabel(this, "->").setTitle(Component.literal("->")));
+            addSlot(new GuiSlot(this, crafting, 1));
+            add(new GuiButton(this, "craft", x -> CRAFT.sendAndExecute(GuiWorkbench.this, EndTag.INSTANCE)).setTranslate("gui.craft"));
         }
         
         public GuiSlot addSlot(GuiSlot slot) {

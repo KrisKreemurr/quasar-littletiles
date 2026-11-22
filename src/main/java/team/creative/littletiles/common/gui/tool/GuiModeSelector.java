@@ -19,8 +19,8 @@ public abstract class GuiModeSelector extends GuiConfigure {
     public LittleGrid grid;
     public PlacementMode mode;
     
-    public GuiModeSelector(ContainerSlotView view, LittleGrid grid, PlacementMode mode) {
-        super("mode-selector", 150, 150, view);
+    public GuiModeSelector(boolean client, ContainerSlotView view, LittleGrid grid, PlacementMode mode) {
+        super(client, "mode-selector", 150, 150, view);
         this.grid = grid;
         this.mode = mode;
         registerEventChanged(x -> {
@@ -36,13 +36,13 @@ public abstract class GuiModeSelector extends GuiConfigure {
     
     @Override
     public void create() {
-        GuiParent place = new GuiParent(GuiFlow.STACK_Y);
+        GuiParent place = new GuiParent(this, GuiFlow.STACK_Y);
         add(place);
-        GuiComboBox<PlacementMode> box = new GuiComboBox<>("mode", PlacementMode.map());
+        GuiComboBox<PlacementMode> box = new GuiComboBox<>(this, "mode", PlacementMode.map());
         box.select(mode);
         place.add(box);
-        place.add(new GuiLabel("text"));
-        GuiGridConfig gridBox = new GuiGridConfig("grid", getPlayer(), grid, null);
+        place.add(new GuiLabel(this, "text"));
+        GuiGridConfig gridBox = new GuiGridConfig(this, "grid", getPlayer(), grid, null);
         gridBox.select(grid);
         add(gridBox);
         raiseEvent(new GuiControlChangedEvent(box));

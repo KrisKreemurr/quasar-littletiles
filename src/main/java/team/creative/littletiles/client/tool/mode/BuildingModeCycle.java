@@ -60,7 +60,7 @@ public class BuildingModeCycle<T> extends BuildingModeFeature implements Buildin
     
     @Override
     public void createInfo(GuiParent parent) {
-        parent.add(label = new GuiLabel(title));
+        parent.add(label = new GuiLabel(parent, title));
         changed();
     }
     

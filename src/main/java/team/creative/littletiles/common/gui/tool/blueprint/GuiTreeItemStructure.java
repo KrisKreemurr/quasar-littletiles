@@ -70,8 +70,8 @@ public class GuiTreeItemStructure extends GuiTreeItem implements AnimationContex
     private StructureAbsolute center;
     private StructureAbsolute lastCenter;
     
-    public GuiTreeItemStructure(GuiBlueprint blueprint, GuiTree tree, LittleGroup group, int index) {
-        super("tree_item", tree);
+    public GuiTreeItemStructure(IGuiParent parent, GuiBlueprint blueprint, GuiTree tree, LittleGroup group, int index) {
+        super(parent, "tree_item", tree);
         this.blueprint = blueprint;
         this.group = group;
         if (group.hasStructure()) {
@@ -231,7 +231,7 @@ public class GuiTreeItemStructure extends GuiTreeItem implements AnimationContex
         blueprint.control = gui.create(this);
         blueprint.control.setExpandableY();
         blueprint.config.clear();
-        GuiScrollY scroll = new GuiScrollY("config") {
+        GuiScrollY scroll = new GuiScrollY(this, "config") {
             
             @Override
             public ControlFormatting getControlFormatting() {
@@ -245,23 +245,23 @@ public class GuiTreeItemStructure extends GuiTreeItem implements AnimationContex
         blueprint.config.init();
         blueprint.types.setEnabled(blueprint.control.canChangeType());
         
-        GuiParent info = new GuiParent("infoStructure", GuiFlow.STACK_X).setVAlign(VAlign.CENTER);
+        GuiParent info = new GuiParent(this, "infoStructure", GuiFlow.STACK_X).setVAlign(VAlign.CENTER);
         blueprint.config.add(info);
         
-        info.add(new GuiLabel("info").setTitle(Component.literal(group.totalTiles() + " " + LanguageUtils.translate("gui.tile.count") + " " + group
+        info.add(new GuiLabel(this, "info").setTitle(Component.literal(group.totalTiles() + " " + LanguageUtils.translate("gui.tile.count") + " " + group
                 .totalBoxes() + " " + LanguageUtils.translate("gui.box.count"))));
         
-        GuiParent parent = new GuiParent("bottomStructure", GuiFlow.STACK_X).setVAlign(VAlign.CENTER);
+        GuiParent parent = new GuiParent(this, "bottomStructure", GuiFlow.STACK_X).setVAlign(VAlign.CENTER);
         blueprint.config.add(parent);
         
-        parent.add(new GuiLabel("name_label").setTranslate("gui.blueprint.structure.name"));
-        GuiTextfield text = new GuiTextfield("name");
+        parent.add(new GuiLabel(this, "name_label").setTranslate("gui.blueprint.structure.name"));
+        GuiTextfield text = new GuiTextfield(this, "name");
         if (structure != null && structure.name != null)
             text.setText(structure.name);
         else
             text.setText("");
         parent.add(text.setEnabled(gui.supportsName()).setDim(100, 7));
-        parent.add(new GuiButton("signal", x -> LittleTilesGuiRegistry.SIGNAL_EVENTS_DIALOG.open(getIntegratedParent(), new CompoundTag()).init(this)).setTranslate(
+        parent.add(new GuiButton(this, "signal", x -> LittleTilesGuiRegistry.SIGNAL_EVENTS_DIALOG.open(getIntegratedParent(), new CompoundTag()).init(this)).setTranslate(
             "gui.signal.events").setEnabled(gui.type() != null));
         updateSignalOutputs();
         
@@ -382,7 +382,7 @@ public class GuiTreeItemStructure extends GuiTreeItem implements AnimationContex
             nbt = new CompoundTag();
             structure.save(nbt, blueprint.provider());
         }
-        GuiTreeItemStructure item = new GuiTreeItemStructure(blueprint, tree, new LittleGroup(nbt, group.copy(), Collections.EMPTY_LIST), getParentItem().itemsCount());
+        GuiTreeItemStructure item = new GuiTreeItemStructure(this, blueprint, tree, new LittleGroup(nbt, group.copy(), Collections.EMPTY_LIST), getParentItem().itemsCount());
         for (GuiTreeItem child : items())
             if (child instanceof GuiTreeItemStructure s)
                 item.addItem(s.duplicate());

@@ -138,9 +138,9 @@ public class BlueprintSignalEquationTest extends BlueprintTestModule {
         public void create(GuiBlueprint blueprint, GuiParent parent, Runnable refresh) {
             List<GuiSignalComponent> inputs = structure.signalSearch.search(true, true, true);
             
-            parent.add(new GuiButton("edit", x -> LittleTilesGuiRegistry.SIGNAL_DIALOG.open(parent.getIntegratedParent(), new CompoundTag()).init(inputs, event)).setTranslate(
+            parent.add(new GuiButton(parent, "edit", x -> LittleTilesGuiRegistry.SIGNAL_DIALOG.open(parent.getIntegratedParent(), new CompoundTag()).init(inputs, event)).setTranslate(
                 "gui.edit"));
-            parent.add(new GuiButton("reset", x -> {
+            parent.add(new GuiButton(parent, "reset", x -> {
                 event.reset();
                 refresh.run();
             }).setTranslate("gui.clear"));

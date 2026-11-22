@@ -33,8 +33,8 @@ public class GuiDialogSignalVirtualInput extends GuiLayer {
     public List<GuiSignalComponent> inputs;
     public GuiVirtualInputIndexConfiguration[] config;
     
-    public GuiDialogSignalVirtualInput() {
-        super("gui.dialog.signal.virtual_input", 230, 200);
+    public GuiDialogSignalVirtualInput(boolean client) {
+        super(client, "gui.dialog.signal.virtual_input", 230, 200);
         flow = GuiFlow.STACK_Y;
         registerEventChanged(this::changed);
     }
@@ -49,17 +49,17 @@ public class GuiDialogSignalVirtualInput extends GuiLayer {
     public void create() {
         if (input == null)
             return;
-        GuiParent top = new GuiParent();
+        GuiParent top = new GuiParent(this);
         add(top);
-        top.add(new GuiLabel("bandwidth_label").setTitle(Component.translatable("gui.signal.bandwidth").append(":")));
-        top.add(new GuiCounter("bandwidth", input.conditions.length, 0, 256).setExpandableX());
-        add(new GuiScrollY("config").setExpandable());
+        top.add(new GuiLabel(this, "bandwidth_label").setTitle(Component.translatable("gui.signal.bandwidth").append(":")));
+        top.add(new GuiCounter(this, "bandwidth", input.conditions.length, 0, 256).setExpandableX());
+        add(new GuiScrollY(this, "config").setExpandable());
         
-        GuiLeftRightBox bottom = new GuiLeftRightBox();
+        GuiLeftRightBox bottom = new GuiLeftRightBox(this);
         add(bottom);
         
-        bottom.addLeft(new GuiButton("cancel", x -> closeThisLayer()).setTranslate("gui.cancel"));
-        bottom.addRight(new GuiButton("save", x -> {
+        bottom.addLeft(new GuiButton(this, "cancel", x -> closeThisLayer()).setTranslate("gui.cancel"));
+        bottom.addRight(new GuiButton(this, "save", x -> {
             input.conditions = new SignalInputCondition[config.length];
             for (int i = 0; i < config.length; i++)
                 input.conditions[i] = config[i].parse();
@@ -103,7 +103,7 @@ public class GuiDialogSignalVirtualInput extends GuiLayer {
         }
         
         public void create(GuiScrollY box) {
-            panel = new GuiPanel(index + "", GuiFlow.STACK_X);
+            panel = new GuiPanel(box, index + "", GuiFlow.STACK_X);
             panel.valign = VAlign.CENTER;
             box.add(panel.setExpandableX());
             
@@ -112,15 +112,15 @@ public class GuiDialogSignalVirtualInput extends GuiLayer {
                     update();
             });
             
-            panel.add(new GuiLabel("label").setTitle(Component.literal(index + ": " + (condition != null ? condition.write() : "0"))));
+            panel.add(new GuiLabel(box, "label").setTitle(Component.literal(index + ": " + (condition != null ? condition.write() : "0"))));
             int state = 0;
             if (condition instanceof SignalInputVirtualNumber virtual)
                 state = virtual.number == 1 ? 1 : 0;
             else
                 state = 2;
-            panel.add(new GuiStateButton<Integer>("type", state, new TextMapBuilder<Integer>().addComponent(0, Component.translatable("gui.false")).addComponent(1, Component
+            panel.add(new GuiStateButton<Integer>(box, "type", state, new TextMapBuilder<Integer>().addComponent(0, Component.translatable("gui.false")).addComponent(1, Component
                     .translatable("gui.true")).addComponent(2, Component.translatable("gui.signal.equation"))));
-            panel.add(new GuiButton("edit", x -> LittleTilesGuiRegistry.SIGNAL_DIALOG.open(getIntegratedParent(), new CompoundTag()).init(inputs,
+            panel.add(new GuiButton(box, "edit", x -> LittleTilesGuiRegistry.SIGNAL_DIALOG.open(getIntegratedParent(), new CompoundTag()).init(inputs,
                 GuiVirtualInputIndexConfiguration.this)).setTranslate("gui.edit"));
             update();
         }

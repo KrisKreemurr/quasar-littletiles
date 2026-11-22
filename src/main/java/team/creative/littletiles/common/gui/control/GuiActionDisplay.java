@@ -24,8 +24,8 @@ public class GuiActionDisplay extends GuiControl {
     private int fadeTime;
     private int totalTime;
     
-    public GuiActionDisplay(String name) {
-        super(name);
+    public GuiActionDisplay(IGuiParent parent, String name) {
+        super(parent, name);
         setTimer(5, 1);
         setMessageCount(6);
     }

@@ -26,8 +26,8 @@ public class GuiStorage extends GuiLayer {
         get("storage", GuiInventoryGrid.class).setChanged();
     });
     
-    public GuiStorage(LittleStorage storage, Player player) {
-        super("little_storage");
+    public GuiStorage(boolean client, LittleStorage storage, Player player) {
+        super(client, "little_storage");
         this.size = StorageSize.getSizeFromInventory(storage.inventory);
         if (size.expanded)
             setDim(size.guiWidth, size.guiHeight);
@@ -43,13 +43,13 @@ public class GuiStorage extends GuiLayer {
         
         GuiParent parent = this;
         if (size.scrollbox) {
-            parent = new GuiScrollY();
+            parent = new GuiScrollY(this);
             if (size.expanded)
                 parent.setExpandableX();
             add(parent);
         }
         
-        GuiInventoryGrid inv = new GuiInventoryGrid("storage", storage.inventory, size.cols, (int) Math.ceil(storage.inventory.getContainerSize() / (double) size.cols), (c, i) -> {
+        GuiInventoryGrid inv = new GuiInventoryGrid(this, "storage", storage.inventory, size.cols, (int) Math.ceil(storage.inventory.getContainerSize() / (double) size.cols), (c, i) -> {
             if (i + 1 == storage.numberOfSlots && storage.lastSlotStackSize > 0)
                 return new StorageSlot(c, i, storage.lastSlotStackSize);
             return new StorageSlot(c, i, -1);
@@ -59,9 +59,9 @@ public class GuiStorage extends GuiLayer {
         inv.setChanged();
         
         if (size.sort)
-            add(new GuiButton("sort", x -> SORT.send(EndTag.INSTANCE)).setTranslate("gui.sort"));
+            add(new GuiButton(this, "sort", x -> SORT.send(EndTag.INSTANCE)).setTranslate("gui.sort"));
         
-        GuiPlayerInventoryGrid playerGrid = new GuiPlayerInventoryGrid(getPlayer());
+        GuiPlayerInventoryGrid playerGrid = new GuiPlayerInventoryGrid(this, getPlayer());
         if (!size.expanded)
             playerGrid.setUnexpandableX();
         add(playerGrid);

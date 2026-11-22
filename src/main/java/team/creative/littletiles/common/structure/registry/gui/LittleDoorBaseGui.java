@@ -41,8 +41,8 @@ public abstract class LittleDoorBaseGui extends LittleStructureGuiControl {
     public GuiChildEventPanel childPanel;
     private boolean created = false;
     
-    public LittleDoorBaseGui(LittleStructureGui gui, GuiTreeItemStructure item) {
-        super(gui, item);
+    public LittleDoorBaseGui(IGuiParent parent, LittleStructureGui gui, GuiTreeItemStructure item) {
+        super(parent, gui, item);
     }
     
     protected abstract boolean hasAxis();
@@ -87,31 +87,31 @@ public abstract class LittleDoorBaseGui extends LittleStructureGuiControl {
         
         flow = GuiFlow.STACK_Y;
         align = Align.STRETCH;
-        GuiParent settings = new GuiParent(GuiFlow.FIT_X).setVAlign(VAlign.CENTER);
+        GuiParent settings = new GuiParent(this, GuiFlow.FIT_X).setVAlign(VAlign.CENTER);
         add(settings);
         
-        settings.add(new GuiLabeledControl(Component.translatable("gui.interpolation").append(
-            ":"), new GuiComboBox<ValueInterpolation>("inter", inter, new TextMapBuilder<ValueInterpolation>().addComponent(ValueInterpolation.values(), x -> x.translate()))));
+        settings.add(new GuiLabeledControl(this, Component.translatable("gui.interpolation").append(
+            ":"), new GuiComboBox<ValueInterpolation>(this, "inter", inter, new TextMapBuilder<ValueInterpolation>().addComponent(ValueInterpolation.values(), x -> x.translate()))));
         
-        settings.add(new GuiLabeledControl(Component.translatable("gui.duration").append(":"), new GuiSteppedSlider("duration", duration, 1, 500)));
+        settings.add(new GuiLabeledControl(this, Component.translatable("gui.duration").append(":"), new GuiSteppedSlider(this, "duration", duration, 1, 500)));
         
-        settings.add(new GuiCheckBox("stayAnimated", stayAnimated).setTranslate("gui.stay_animated").setTooltip("gui.door.stay_animated.tooltip"));
-        settings.add(new GuiCheckBox("rightClick", rightClick).setTranslate("gui.rightclick").setTooltip("gui.door.rightclick.tooltip"));
-        settings.add(new GuiCheckBox("noClip", noClip).setTranslate("gui.no_clip").setTooltip("gui.door.no_clip.tooltip"));
-        settings.add(new GuiCheckBox("playPlaceSounds", playPlaceSounds).setTranslate("gui.door.play_place_sound").setTooltip("gui.door.play_place_sound.tooltip"));
+        settings.add(new GuiCheckBox(this, "stayAnimated", stayAnimated).setTranslate("gui.stay_animated").setTooltip("gui.door.stay_animated.tooltip"));
+        settings.add(new GuiCheckBox(this, "rightClick", rightClick).setTranslate("gui.rightclick").setTooltip("gui.door.rightclick.tooltip"));
+        settings.add(new GuiCheckBox(this, "noClip", noClip).setTranslate("gui.no_clip").setTooltip("gui.door.no_clip.tooltip"));
+        settings.add(new GuiCheckBox(this, "playPlaceSounds", playPlaceSounds).setTranslate("gui.door.play_place_sound").setTooltip("gui.door.play_place_sound.tooltip"));
         
-        add(new GuiIsoAnimationPanel(item, box, grid, even).setVisibleAxis(hasAxis()).setViewerDim(200, 200));
+        add(new GuiIsoAnimationPanel(this, item, box, grid, even).setVisibleAxis(hasAxis()).setViewerDim(200, 200));
         
         createSpecific(structure instanceof LittleDoor ? (LittleDoor) structure : null);
         
-        GuiParent extraSettings = new GuiParent();
+        GuiParent extraSettings = new GuiParent(this);
         add(extraSettings);
         extraSettings.spacing = 4;
         
-        soundPanel = new GuiSoundEventPanel(item.blueprint.animation, opening, closing, duration);
+        soundPanel = new GuiSoundEventPanel(this, item.blueprint.animation, opening, closing, duration);
         extraSettings.add(soundPanel);
         
-        childPanel = new GuiChildEventPanel(item, item.blueprint.animation, opening, duration);
+        childPanel = new GuiChildEventPanel(this, item, item.blueprint.animation, opening, duration);
         extraSettings.add(childPanel);
         created = true;
         

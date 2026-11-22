@@ -62,7 +62,7 @@ public class BuildingModeTransformMode extends BuildingModeFeature implements Bu
     
     @Override
     public void createInfo(GuiParent parent) {
-        parent.add(label = new GuiLabel(title));
+        parent.add(label = new GuiLabel(parent, title));
         var stack = MC.player.getMainHandItem();
         changedLabel(stack.getOrDefault(LittleTilesRegistry.TRANSFORM_MODE, TransformMode.DEFAULT));
     }

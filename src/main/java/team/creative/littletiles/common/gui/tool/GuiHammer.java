@@ -13,8 +13,8 @@ import team.creative.littletiles.common.placement.setting.PlacementPlayerSetting
 
 public class GuiHammer extends GuiConfigureTool {
     
-    public GuiHammer(ContainerSlotView view) {
-        super("hammer", 140, 200, view);
+    public GuiHammer(boolean client, ContainerSlotView view) {
+        super(client, "hammer", 140, 200, view);
         flow = GuiFlow.STACK_Y;
         align = Align.STRETCH;
     }
@@ -31,9 +31,9 @@ public class GuiHammer extends GuiConfigureTool {
         if (!isClient())
             return;
         
-        add(new GuiShapeConfiguration(getPlayer(), "shape", tool));
-        add(new GuiGridConfig("grid", getPlayer(), PlacementPlayerSetting.grid(getPlayer()), LittleTilesClient::grid));
-        add(new GuiFilterConfiguration(getPlayer(), "filter", tool));
+        add(new GuiShapeConfiguration(this, getPlayer(), "shape", tool));
+        add(new GuiGridConfig(this, "grid", getPlayer(), PlacementPlayerSetting.grid(getPlayer()), LittleTilesClient::grid));
+        add(new GuiFilterConfiguration(this, getPlayer(), "filter", tool));
     }
     
 }

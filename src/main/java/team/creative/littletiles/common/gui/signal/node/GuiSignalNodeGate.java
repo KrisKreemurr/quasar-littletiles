@@ -43,17 +43,17 @@ public class GuiSignalNodeGate extends GuiSignalNode {
     private SignalInputCondition testCondition;
     private SignalContext testContext;
     
-    public GuiSignalNodeGate(boolean invert, SignalPosition position) {
-        super(invert ? "ngate" : "gate", position);
+    public GuiSignalNodeGate(IGuiParent parent, boolean invert, SignalPosition position) {
+        super(parent, invert ? "ngate" : "gate", position);
         this.invert = invert;
     }
     
     @Override
     protected void beforeAddingButton() {
         super.beforeAddingButton();
-        upper = new GuiParent();
+        upper = new GuiParent(this);
         add(upper.setScale(0.5));
-        upper.add(new GuiButton("", x -> {
+        upper.add(new GuiButton(this, "", x -> {
             if (x == 1) {
                 if (first != null)
                     first.disconnect(controller());
@@ -167,7 +167,7 @@ public class GuiSignalNodeGate extends GuiSignalNode {
         
         if (testContext != null) {
             if (testLabel == null)
-                testLabel = new GuiLabel("");
+                testLabel = new GuiLabel(this, "");
             add(testLabel);
             testCondition = condition;
             this.testContext = testContext;

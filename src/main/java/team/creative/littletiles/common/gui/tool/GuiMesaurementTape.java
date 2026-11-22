@@ -21,23 +21,23 @@ import team.creative.littletiles.common.math.measure.LittleMeasurementType;
 
 public class GuiMesaurementTape extends GuiConfigure {
     
-    public GuiMesaurementTape(ContainerSlotView tool) {
-        super("measurement_tape", 200, 200, tool);
+    public GuiMesaurementTape(boolean client, ContainerSlotView tool) {
+        super(client, "measurement_tape", 200, 200, tool);
     }
     
     @Override
     public void create() {
         flow = GuiFlow.STACK_Y;
         var measurements = ((ILittleMeasure) tool.get().getItem()).getMeasurements(getPlayer().level(), tool.get());
-        GuiStateButton<LittleMeasurementType> types = new GuiStateButton<>("type", new TextMapBuilder<LittleMeasurementType>().addComponent(LittleMeasurementType.REGISTRY.values(),
+        GuiStateButton<LittleMeasurementType> types = new GuiStateButton<>(this, "type", new TextMapBuilder<LittleMeasurementType>().addComponent(LittleMeasurementType.REGISTRY.values(),
             LittleMeasurementType::translatable));
         types.select(tool.get().has(LittleTilesRegistry.MEASUREMENT_TYPE) ? tool.get().get(LittleTilesRegistry.MEASUREMENT_TYPE).type : LittleMeasurementType.REGISTRY
                 .getDefault());
         add(types.setExpandableX());
         List<GuiMeasurement> controls = new ArrayList<>();
         for (LittleMeasurement m : measurements)
-            controls.add(new GuiMeasurement(m));
-        GuiListBoxBase<GuiMeasurement> list = new GuiListBoxBase<>("measures", true, controls);
+            controls.add(new GuiMeasurement(this, m));
+        GuiListBoxBase<GuiMeasurement> list = new GuiListBoxBase<>(this, "measures", true, controls);
         add(list.setExpandable());
     }
     
@@ -58,9 +58,9 @@ public class GuiMesaurementTape extends GuiConfigure {
         public final LittleMeasurement measurement;
         public final GuiColorPicker picker;
         
-        public GuiMeasurement(LittleMeasurement measurement) {
+        public GuiMeasurement(IGuiParent parent, LittleMeasurement measurement) {
             this.measurement = measurement;
-            this.picker = new GuiColorPicker("color", new Color(measurement.color), true, 0);
+            this.picker = new GuiColorPicker(this, "color", new Color(measurement.color), true, 0);
             add(picker);
         }
         

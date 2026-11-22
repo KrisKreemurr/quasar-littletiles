@@ -13,14 +13,14 @@ import team.creative.littletiles.common.structure.type.LittleLight;
 @OnlyIn(Dist.CLIENT)
 public class LittleLightGui extends LittleStructureGuiControl {
     
-    public LittleLightGui(LittleStructureGui gui, GuiTreeItemStructure item) {
-        super(gui, item);
+    public LittleLightGui(IGuiParent parent, LittleStructureGui gui, GuiTreeItemStructure item) {
+        super(parent, gui, item);
     }
     
     @Override
     public void create(@Nullable LittleStructure structure) {
-        add(new GuiSteppedSlider("level", structure instanceof LittleLight ? ((LittleLight) structure).level : 15, 0, 15));
-        add(new GuiCheckBox("rightclick", structure instanceof LittleLight ? ((LittleLight) structure).allowRightClick : true).setTranslate("gui.rightclick"));
+        add(new GuiSteppedSlider(this, "level", structure instanceof LittleLight ? ((LittleLight) structure).level : 15, 0, 15));
+        add(new GuiCheckBox(this, "rightclick", structure instanceof LittleLight ? ((LittleLight) structure).allowRightClick : true).setTranslate("gui.rightclick"));
     }
     
     @Override

@@ -105,7 +105,7 @@ public class BuildingModeGridScroll extends BuildingModeFeature implements ICrea
     
     @Override
     public void createInfo(GuiParent parent) {
-        parent.add(label = new GuiLabel("grid"));
+        parent.add(label = new GuiLabel(parent, "grid"));
         updateTitle();
     }
     

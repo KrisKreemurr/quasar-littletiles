@@ -97,10 +97,10 @@ public class ItemLittleBlueprint extends Item implements ILittlePlacer, ILittleS
     @Override
     public GuiConfigure getConfigure(Player player, ContainerSlotView view, boolean secondary) {
         if (secondary)
-            return new GuiBlueprintSecondary(view);
+            return new GuiBlueprintSecondary(player.level().isClientSide(), view);
         if (!((ItemLittleBlueprint) view.get().getItem()).hasTiles(view.get()))
-            return new GuiBlueprintSelection(view);
-        return new GuiBlueprint(view);
+            return new GuiBlueprintSelection(player.level().isClientSide(), view);
+        return new GuiBlueprint(player.level().isClientSide(), view);
     }
     
     @Override

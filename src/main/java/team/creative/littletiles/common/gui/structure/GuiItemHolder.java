@@ -30,27 +30,27 @@ public class GuiItemHolder extends GuiLayer {
     public GuiCheckBox locked;
     public GuiConfigSubControlNested sortingControl;
     
-    public GuiItemHolder(LittleItemHolder holder) {
-        super("item_holder", 200, 230);
+    public GuiItemHolder(boolean client, LittleItemHolder holder) {
+        super(client, "item_holder", 200, 230);
         this.holder = holder;
         flow = GuiFlow.STACK_Y;
     }
     
     @Override
     public void create() {
-        add(locked = new GuiCheckBox("locked", holder.locked).setTranslate("gui.structure.locked"));
+        add(locked = new GuiCheckBox(this, "locked", holder.locked).setTranslate("gui.structure.locked"));
         SortingList sortingList = new SortingList(holder.whitelist);
         if (holder.filter != null)
             sortingList.entries.addAll(holder.filter);
         
         ICreativeConfigHolder holder = ConfigHolderObject.createUnrelated(CreativeConfigRegistry.ROOT, Side.SERVER, sortingList, new SortingList());
-        add(sortingControl = new GuiConfigSubControlNested("filter", ConfigTypeConveration.FAKE_PARENT, null, Side.SERVER, null, true));
+        add(sortingControl = new GuiConfigSubControlNested(this, "filter", ConfigTypeConveration.FAKE_PARENT, null, Side.SERVER, null, true));
         sortingControl.load(holder, sortingList);
         sortingControl.createControls();
         
-        GuiLeftRightBox bottom = new GuiLeftRightBox();
+        GuiLeftRightBox bottom = new GuiLeftRightBox(this);
         add(bottom);
-        bottom.addRight(new GuiButton("save", x -> {
+        bottom.addRight(new GuiButton(this, "save", x -> {
             CompoundTag nbt = new CompoundTag();
             
             nbt.putBoolean("locked", locked.value);

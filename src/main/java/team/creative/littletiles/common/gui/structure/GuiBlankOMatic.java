@@ -88,8 +88,8 @@ public class GuiBlankOMatic extends GuiLayer {
         }
     });
     
-    public GuiBlankOMatic(LittleBlankOMatic whitener) {
-        super("whitener", 170, 200);
+    public GuiBlankOMatic(boolean client, LittleBlankOMatic whitener) {
+        super(client, "whitener", 170, 200);
         this.whitener = whitener;
         this.whiteInput.addListener(x -> whitener.markDirty());
         
@@ -115,15 +115,15 @@ public class GuiBlankOMatic extends GuiLayer {
     @Override
     public void create() {
         flow = GuiFlow.STACK_Y;
-        GuiParent machine = new GuiParent();
+        GuiParent machine = new GuiParent(this);
         add(machine);
-        GuiParent left = new GuiParent(GuiFlow.STACK_Y);
+        GuiParent left = new GuiParent(this, GuiFlow.STACK_Y);
         machine.add(left);
         
-        GuiParent leftUpper = new GuiParent();
+        GuiParent leftUpper = new GuiParent(this);
         left.add(leftUpper.setExpandable());
         
-        leftUpper.add(new GuiInventoryGrid("inv", whitener.inventory, 1, 1, (c, i) -> new Slot(c, i, 0, 0) {
+        leftUpper.add(new GuiInventoryGrid(this, "inv", whitener.inventory, 1, 1, (c, i) -> new Slot(c, i, 0, 0) {
             
             @Override
             public boolean mayPlace(ItemStack stack) {
@@ -132,12 +132,12 @@ public class GuiBlankOMatic extends GuiLayer {
             
         }).addListener(x -> updateVariants()));
         
-        leftUpper.add(new GuiVariantSelector("variant"));
+        leftUpper.add(new GuiVariantSelector(this, "variant"));
         
-        GuiParent leftLower = new GuiParent();
+        GuiParent leftLower = new GuiParent(this);
         left.add(leftLower);
         
-        leftLower.add(new GuiInventoryGrid("input", whiteInput, 1, 1, (c, i) -> new Slot(c, i, 0, 0) {
+        leftLower.add(new GuiInventoryGrid(this, "input", whiteInput, 1, 1, (c, i) -> new Slot(c, i, 0, 0) {
             
             @Override
             public boolean mayPlace(ItemStack stack) {
@@ -160,22 +160,22 @@ public class GuiBlankOMatic extends GuiLayer {
             }
         }));
         
-        leftLower.add(new GuiProgressbar("volume", whitener.whiteColor, BlankOMaticRecipeRegistry.bleachTotalVolume).setExpandableX());
+        leftLower.add(new GuiProgressbar(this, "volume", whitener.whiteColor, BlankOMaticRecipeRegistry.bleachTotalVolume).setExpandableX());
         
-        GuiParent right = new GuiParent(GuiFlow.STACK_Y);
+        GuiParent right = new GuiParent(this, GuiFlow.STACK_Y);
         machine.add(right);
         
-        right.add(new GuiButton("craft", x -> {
+        right.add(new GuiButton(this, "craft", x -> {
             CompoundTag nbt = new CompoundTag();
             nbt.putInt("amount", Screen.hasShiftDown() ? 2 : Screen.hasControlDown() ? 1 : 0);
             nbt.putInt("variant", get("variant", GuiVariantSelector.class).selected);
             CRAFT.send(nbt);
         }).setTranslate("gui.blancomatic.craft"));
         
-        right.add(new GuiLabel("cost"));
-        right.add(new GuiShowItem("item").setDim(50, 50));
+        right.add(new GuiLabel(this, "cost"));
+        right.add(new GuiShowItem(this, "item").setDim(50, 50));
         
-        add(new GuiPlayerInventoryGrid(getPlayer()));
+        add(new GuiPlayerInventoryGrid(this, getPlayer()));
         
         updateVariants();
     }
@@ -204,8 +204,8 @@ public class GuiBlankOMatic extends GuiLayer {
         public List<Pair<BleachRecipe, Block>> states;
         private int selected = 0;
         
-        public GuiVariantSelector(String name) {
-            super(name, GuiFlow.FIT_X);
+        public GuiVariantSelector(IGuiParent parent, String name) {
+            super(parent, name, GuiFlow.FIT_X);
         }
         
         @Override
@@ -262,8 +262,8 @@ public class GuiBlankOMatic extends GuiLayer {
         public final int index;
         public boolean selected = false;
         
-        public GuiSlotControlSelect(GuiVariantSelector selector, int index, ItemStack stack) {
-            super(stack);
+        public GuiSlotControlSelect(IGuiParent parent, GuiVariantSelector selector, int index, ItemStack stack) {
+            super(parent, stack);
             this.selector = selector;
             this.index = index;
         }

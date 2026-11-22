@@ -55,8 +55,8 @@ public class LittleDoorAdvancedGui extends LittleStructureGuiControl {
     public GuiTimelineConfig same;
     public GuiTimelineConfig different;
     
-    public LittleDoorAdvancedGui(LittleStructureGui gui, GuiTreeItemStructure item) {
-        super(gui, item);
+    public LittleDoorAdvancedGui(IGuiParent parent, LittleStructureGui gui, GuiTreeItemStructure item) {
+        super(parent, gui, item);
     }
     
     @Override
@@ -115,28 +115,28 @@ public class LittleDoorAdvancedGui extends LittleStructureGuiControl {
         flow = GuiFlow.STACK_Y;
         align = Align.STRETCH;
         
-        GuiParent upper = new GuiParent();
+        GuiParent upper = new GuiParent(this);
         add(upper);
         
-        upper.add(new GuiIsoAnimationPanel(item, box, grid, even).setViewerDim(100, 100).setVisibleAxis(true));
-        GuiParent settings = new GuiParent(GuiFlow.FIT_X).setVAlign(VAlign.CENTER);
+        upper.add(new GuiIsoAnimationPanel(this, item, box, grid, even).setViewerDim(100, 100).setVisibleAxis(true));
+        GuiParent settings = new GuiParent(this, GuiFlow.FIT_X).setVAlign(VAlign.CENTER);
         settings.spacing = 5;
         upper.add(settings);
         
-        settings.add(new GuiLabeledControl(Component.translatable("gui.interpolation").append(
-            ":"), new GuiComboBox<ValueInterpolation>("inter", inter, new TextMapBuilder<ValueInterpolation>().addComponent(ValueInterpolation.values(), x -> x.translate()))));
+        settings.add(new GuiLabeledControl(this, Component.translatable("gui.interpolation").append(
+            ":"), new GuiComboBox<ValueInterpolation>(this, "inter", inter, new TextMapBuilder<ValueInterpolation>().addComponent(ValueInterpolation.values(), x -> x.translate()))));
         
-        settings.add(new GuiCheckBox("stayAnimated", stayAnimated).setTranslate("gui.stay_animated").setTooltip("gui.door.stay_animated.tooltip"));
-        settings.add(new GuiCheckBox("rightClick", rightClick).setTranslate("gui.rightclick").setTooltip("gui.door.rightclick.tooltip"));
-        settings.add(new GuiCheckBox("noClip", noClip).setTranslate("gui.no_clip").setTooltip("gui.door.no_clip.tooltip"));
-        settings.add(new GuiCheckBox("playPlaceSounds", playPlaceSounds).setTranslate("gui.door.play_place_sound").setTooltip("gui.door.play_place_sound.tooltip"));
+        settings.add(new GuiCheckBox(this, "stayAnimated", stayAnimated).setTranslate("gui.stay_animated").setTooltip("gui.door.stay_animated.tooltip"));
+        settings.add(new GuiCheckBox(this, "rightClick", rightClick).setTranslate("gui.rightclick").setTooltip("gui.door.rightclick.tooltip"));
+        settings.add(new GuiCheckBox(this, "noClip", noClip).setTranslate("gui.no_clip").setTooltip("gui.door.no_clip.tooltip"));
+        settings.add(new GuiCheckBox(this, "playPlaceSounds", playPlaceSounds).setTranslate("gui.door.play_place_sound").setTooltip("gui.door.play_place_sound.tooltip"));
         
-        settings.add(new GuiLabeledControl(Component.translatable("gui.duration").append(":"), new GuiTextfield("duration", "" + duration).setNumbersOnly()));
+        settings.add(new GuiLabeledControl(this, Component.translatable("gui.duration").append(":"), new GuiTextfield(this, "duration", "" + duration).setNumbersOnly()));
         
         GuiIsoAnimationViewer viewer = upper.get("viewer");
-        settings.add(new GuiCheckBox("even", viewer.isEven()).setTranslate("gui.door.axis.even"));
+        settings.add(new GuiCheckBox(this, "even", viewer.isEven()).setTranslate("gui.door.axis.even"));
         
-        settings.add(new GuiGridConfig("grid", getPlayer(), viewer.getGrid(), x -> {
+        settings.add(new GuiGridConfig(this, "grid", getPlayer(), viewer.getGrid(), x -> {
             LittleBox viewerBox = viewer.getBox();
             viewerBox.convertTo(viewer.getGrid(), x);
             
@@ -165,15 +165,15 @@ public class LittleDoorAdvancedGui extends LittleStructureGuiControl {
                 updateTimeline();
         });
         
-        GuiTabs tabs = new GuiTabs("tabs");
+        GuiTabs tabs = new GuiTabs(this, "tabs");
         
         add(tabs.setExpandableX());
         
         tabs.createTab(Component.translatable("gui.door.same_transition")).add(
-            (GuiControl) (same = new GuiTimelineConfigSame(item, item.blueprint.animation, closed, opened, duration, opening)));
+            (GuiControl) (same = new GuiTimelineConfigSame(this, item, item.blueprint.animation, closed, opened, duration, opening)));
         
         tabs.createTab(Component.translatable("gui.door.different_transition")).add(
-            (GuiControl) (this.different = new GuiTimelineConfigDifferent(item, item.blueprint.animation, closed, opened, duration, opening, closing)));
+            (GuiControl) (this.different = new GuiTimelineConfigDifferent(this, item, item.blueprint.animation, closed, opened, duration, opening, closing)));
         
         tabs.select(sameTransition ? 0 : 1);
         
@@ -272,8 +272,8 @@ public class LittleDoorAdvancedGui extends LittleStructureGuiControl {
             return timeline;
         }
         
-        public GuiTimelineConfigSame(GuiTreeItemStructure item, GuiBlueprintAnimationHandler handler, PhysicalState closed, PhysicalState opened, int duration, AnimationTimeline timeline) {
-            super(item, handler, duration, setup(closed, opened, duration, timeline), false);
+        public GuiTimelineConfigSame(IGuiParent parent, GuiTreeItemStructure item, GuiBlueprintAnimationHandler handler, PhysicalState closed, PhysicalState opened, int duration, AnimationTimeline timeline) {
+            super(parent, item, handler, duration, setup(closed, opened, duration, timeline), false);
         }
         
         @Override
@@ -320,26 +320,26 @@ public class LittleDoorAdvancedGui extends LittleStructureGuiControl {
         public GuiAnimationTimelinePanel opening;
         public GuiAnimationTimelinePanel closing;
         
-        public GuiTimelineConfigDifferent(GuiTreeItemStructure item, GuiBlueprintAnimationHandler handler, PhysicalState closedState, PhysicalState openedState, int duration, AnimationTimeline opening, AnimationTimeline closing) {
+        public GuiTimelineConfigDifferent(IGuiParent parent, GuiTreeItemStructure item, GuiBlueprintAnimationHandler handler, PhysicalState closedState, PhysicalState openedState, int duration, AnimationTimeline opening, AnimationTimeline closing) {
             flow = GuiFlow.STACK_Y;
             
-            GuiParent stateConfig = new GuiParent();
+            GuiParent stateConfig = new GuiParent(this);
             add(stateConfig);
-            GuiParent closedParent = new GuiParent(GuiFlow.STACK_Y).setAlign(Align.CENTER);
+            GuiParent closedParent = new GuiParent(this, GuiFlow.STACK_Y).setAlign(Align.CENTER);
             stateConfig.add(closedParent);
-            closedParent.add(new GuiLabel("closedLabel").setTranslate("gui.door.closed"));
-            closedParent.add(closed = new GuiPhysicalStateControl("closed", closedState));
+            closedParent.add(new GuiLabel(this, "closedLabel").setTranslate("gui.door.closed"));
+            closedParent.add(closed = new GuiPhysicalStateControl(this, "closed", closedState));
             
-            GuiParent openedParent = new GuiParent(GuiFlow.STACK_Y).setAlign(Align.CENTER);
+            GuiParent openedParent = new GuiParent(this, GuiFlow.STACK_Y).setAlign(Align.CENTER);
             stateConfig.add(openedParent);
-            openedParent.add(new GuiLabel("openedLabel").setTranslate("gui.door.opened"));
-            openedParent.add(opened = new GuiPhysicalStateControl("opened", openedState));
+            openedParent.add(new GuiLabel(this, "openedLabel").setTranslate("gui.door.opened"));
+            openedParent.add(opened = new GuiPhysicalStateControl(this, "opened", openedState));
             
-            GuiTabs tabs = new GuiTabs("timelineTabs");
+            GuiTabs tabs = new GuiTabs(this, "timelineTabs");
             add(tabs);
             
-            tabs.createTab(translatable("gui.door.opening")).add(this.opening = new GuiAnimationTimelinePanel(item, handler, duration, opening, true));
-            tabs.createTab(translatable("gui.door.closing")).add(this.closing = new GuiAnimationTimelinePanel(item, handler, duration, closing, true));
+            tabs.createTab(translatable("gui.door.opening")).add(this.opening = new GuiAnimationTimelinePanel(this, item, handler, duration, opening, true));
+            tabs.createTab(translatable("gui.door.closing")).add(this.closing = new GuiAnimationTimelinePanel(this, item, handler, duration, closing, true));
             
             tabs.select(0);
         }
@@ -379,8 +379,8 @@ public class LittleDoorAdvancedGui extends LittleStructureGuiControl {
         private GuiTimelineKey<Double> start;
         private GuiTimelineKey<Double> end;
         
-        public GuiAdvancedTimelineChannel(GuiTimeline timeline, boolean distance, boolean limited) {
-            super(timeline);
+        public GuiAdvancedTimelineChannel(IGuiParent parent, GuiTimeline timeline, boolean distance, boolean limited) {
+            super(parent, timeline);
             this.distance = distance;
             this.limited = limited;
             updateFixedKeys();

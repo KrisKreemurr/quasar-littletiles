@@ -79,10 +79,10 @@ public class GuiBlueprint extends GuiConfigure {
         GuiBlueprint.super.closeThisLayer();
     });
     
-    public final GuiSyncLocalLayer<GuiBlueprintTest> OPEN_TEST = getSyncHolder().layer("test", tag -> new GuiBlueprintTest());
-    public final GuiSyncLocalLayer<GuiBlueprintAdd> OPEN_ADD = getSyncHolder().layer("add", tag -> new GuiBlueprintAdd());
-    public final GuiSyncLocalLayer<GuiBlueprintMove> OPEN_MOVE = getSyncHolder().layer("move", tag -> new GuiBlueprintMove());
-    public final GuiSyncLocalLayer<GuiBlueprintMerge> OPEN_MERGE = getSyncHolder().layer("merge", tag -> new GuiBlueprintMerge());
+    public final GuiSyncLocalLayer<GuiBlueprintTest> OPEN_TEST = getSyncHolder().layer("test", tag -> new GuiBlueprintTest(isClient()));
+    public final GuiSyncLocalLayer<GuiBlueprintAdd> OPEN_ADD = getSyncHolder().layer("add", tag -> new GuiBlueprintAdd(isClient()));
+    public final GuiSyncLocalLayer<GuiBlueprintMove> OPEN_MOVE = getSyncHolder().layer("move", tag -> new GuiBlueprintMove(isClient()));
+    public final GuiSyncLocalLayer<GuiBlueprintMerge> OPEN_MERGE = getSyncHolder().layer("merge", tag -> new GuiBlueprintMerge(isClient()));
     
     public GuiTree tree;
     public GuiComboBoxFlexible<LittleStructureGui> types;
@@ -95,8 +95,8 @@ public class GuiBlueprint extends GuiConfigure {
     public GuiBlueprintAnimationHandler animation = new GuiBlueprintAnimationHandler();
     private boolean selectedBefore = true;
     
-    public GuiBlueprint(ContainerSlotView view) {
-        super("blueprint", view);
+    public GuiBlueprint(boolean client, ContainerSlotView view) {
+        super(client, "blueprint", view);
         flow = GuiFlow.STACK_X;
         valign = VAlign.STRETCH;
         setDim(new GuiSizeRules().minWidth(500).minHeight(300));
@@ -206,10 +206,10 @@ public class GuiBlueprint extends GuiConfigure {
         // Load blueprint content
         LittleGroup group = LittleGroup.load(ItemLittleBlueprint.getContent(tool.get()));
         
-        GuiParent top = new GuiParent(GuiFlow.STACK_X);
+        GuiParent top = new GuiParent(this, GuiFlow.STACK_X);
         add(top.setExpandableY());
         
-        tree = new GuiTree("overview", false) {
+        tree = new GuiTree(this, "overview", false) {
             
             @Override
             public void updateTree() {
@@ -226,22 +226,22 @@ public class GuiBlueprint extends GuiConfigure {
         tree.root().setTitle(Component.literal("root"));
         tree.updateTree();
         
-        GuiParent sidebar = new GuiParent(GuiFlow.STACK_Y).setAlign(Align.STRETCH);
+        GuiParent sidebar = new GuiParent(this, GuiFlow.STACK_Y).setAlign(Align.STRETCH);
         top.add(sidebar.setDim(new GuiSizeRatioRules().widthRatio(0.2F).maxWidth(100)));
         sidebar.add(tree.setExpandableY());
         
-        sidebarButtons = new GuiParent(GuiFlow.FIT_X);
+        sidebarButtons = new GuiParent(this, GuiFlow.FIT_X);
         sidebar.add(sidebarButtons.setAlign(Align.CENTER));
         
-        sidebarButtons.add(new GuiButton("add", x -> OPEN_ADD.open(new CompoundTag()).init(this)).setTranslate("gui.plus").setAlign(Align.CENTER).setVAlign(VAlign.CENTER).setDim(
+        sidebarButtons.add(new GuiButton(this, "add", x -> OPEN_ADD.open(new CompoundTag()).init(this)).setTranslate("gui.plus").setAlign(Align.CENTER).setVAlign(VAlign.CENTER).setDim(
             15, 15).setTooltip(new TextBuilder().translate("gui.blueprint.add").build()));
-        sidebarButtons.add(new GuiButtonIcon("duplicate", Icon.DUPLICATE, x -> {
+        sidebarButtons.add(new GuiButtonIcon(this, "duplicate", Icon.DUPLICATE, x -> {
             if (tree.selected() == null)
                 return;
             tree.selected().getParentItem().addItem(((GuiTreeItemStructure) tree.selected()).duplicate());
             tree.updateTree();
         }).setDim(15, 15).setTooltip(new TextBuilder().translate("gui.blueprint.duplicate").build()));
-        sidebarButtons.add(new GuiButton("del", x -> {
+        sidebarButtons.add(new GuiButton(this, "del", x -> {
             if (tree.selected() == null)
                 return;
             GuiDialogHandler.openDialog(getIntegratedParent(), "delete_item", Component.translatable("gui.blueprint.dialog.delete", ((GuiTreeItemStructure) tree.selected())
@@ -251,50 +251,50 @@ public class GuiBlueprint extends GuiConfigure {
                     }, DialogButton.NO, DialogButton.YES);
         }).setTranslate("gui.del").setAlign(Align.CENTER).setVAlign(VAlign.CENTER).setDim(15, 15).setTooltip(new TextBuilder().translate("gui.blueprint.delete").build()));
         
-        sidebarButtons.add(new GuiButtonIcon("move", Icon.MOVE, x -> OPEN_MOVE.open(new CompoundTag()).init(this)).setDim(15, 15).setTooltip(new TextBuilder().translate(
+        sidebarButtons.add(new GuiButtonIcon(this, "move", Icon.MOVE, x -> OPEN_MOVE.open(new CompoundTag()).init(this)).setDim(15, 15).setTooltip(new TextBuilder().translate(
             "gui.blueprint.move").build()));
         
-        sidebarButtons.add(new GuiButtonIcon("up", Icon.ARROW_UP, x -> tree.moveUp()).setDim(15, 15).setTooltip(new TextBuilder().translate("gui.blueprint.moveup").build()));
-        sidebarButtons.add(new GuiButtonIcon("down", Icon.ARROW_DOWN, x -> tree.moveDown()).setDim(15, 15).setTooltip(new TextBuilder().translate("gui.blueprint.movedown")
+        sidebarButtons.add(new GuiButtonIcon(this, "up", Icon.ARROW_UP, x -> tree.moveUp()).setDim(15, 15).setTooltip(new TextBuilder().translate("gui.blueprint.moveup").build()));
+        sidebarButtons.add(new GuiButtonIcon(this, "down", Icon.ARROW_DOWN, x -> tree.moveDown()).setDim(15, 15).setTooltip(new TextBuilder().translate("gui.blueprint.movedown")
                 .build()));
-        sidebarButtons.add(new GuiButtonIcon("merge", Icon.MERGE, x -> OPEN_MERGE.open(new CompoundTag()).init(this)).setDim(15, 15).setTooltip(new TextBuilder().translate(
+        sidebarButtons.add(new GuiButtonIcon(this, "merge", Icon.MERGE, x -> OPEN_MERGE.open(new CompoundTag()).init(this)).setDim(15, 15).setTooltip(new TextBuilder().translate(
             "gui.blueprint.merge").build()));
         
-        GuiParent topCenter = new GuiParent(GuiFlow.STACK_Y).setAlign(Align.STRETCH);
+        GuiParent topCenter = new GuiParent(this, GuiFlow.STACK_Y).setAlign(Align.STRETCH);
         top.add(topCenter.setDim(new GuiSizeRatioRules().widthRatio(0.4F).maxWidth(400)).setExpandableY());
         
         // Actual blueprint configuration
-        types = new GuiComboBoxFlexible<>("type", new TextMapBuilder<LittleStructureGui>().addComponent(LittleStructureGuiRegistry.registered(), x -> x.translatable()), x -> x
+        types = new GuiComboBoxFlexible<>(this, "type", new TextMapBuilder<LittleStructureGui>().addComponent(LittleStructureGuiRegistry.registered(), x -> x.translatable()), x -> x
                 .translatable());
         topCenter.add(types);
-        config = new GuiParent("config", GuiFlow.STACK_Y).setAlign(Align.STRETCH);
+        config = new GuiParent(this, "config", GuiFlow.STACK_Y).setAlign(Align.STRETCH);
         topCenter.add(config.setExpandableY());
         config.registerEventChanged(x -> {
             if (x.control.is("name") && tree.selected() instanceof GuiTreeItemStructure item)
                 item.onNameChanged((GuiTextfield) x.control);
         });
         
-        top.add(new GuiAnimationPanel(tree, storage, true, animation));
+        top.add(new GuiAnimationPanel(this, tree, storage, true, animation));
         
-        GuiLeftRightBox bottom = new GuiLeftRightBox();
+        GuiLeftRightBox bottom = new GuiLeftRightBox(this);
         add(bottom.setVAlign(VAlign.CENTER).setExpandableX());
-        bottom.addLeft(new GuiButton("cancel", x -> closeThisLayer()).setTranslate("gui.cancel"));
-        bottom.addLeft(new GuiButton("selection", x -> {
+        bottom.addLeft(new GuiButton(this, "cancel", x -> closeThisLayer()).setTranslate("gui.cancel"));
+        bottom.addLeft(new GuiButton(this, "selection", x -> {
             GuiDialogHandler.openDialog(getIntegratedParent(), "remove_content", Component.translatable("gui.blueprint.dialog.clear"), (g, b) -> {
                 if (b == DialogButton.YES)
                     REMOVE_CONTENT.send(EndTag.INSTANCE);
             }, DialogButton.NO, DialogButton.YES);
         }).setTranslate("gui.blueprint.selection"));
-        bottom.addLeft(new GuiButton("clear", x -> {
+        bottom.addLeft(new GuiButton(this, "clear", x -> {
             GuiDialogHandler.openDialog(getIntegratedParent(), "clear_content", Component.translatable("gui.blueprint.dialog.clear"), (g, b) -> {
                 if (b == DialogButton.YES)
                     CLEAR_CONTENT.send(EndTag.INSTANCE);
             }, DialogButton.NO, DialogButton.YES);
         }).setTranslate("gui.blueprint.clear"));
         
-        bottom.addRight(testReport = new GuiLabel("report").setTitle(Component.empty()));
-        bottom.addRight(new GuiButton("check", x -> OPEN_TEST.open(new CompoundTag()).init(this)).setTranslate("gui.blueprint.test"));
-        bottom.addRight(new GuiButton("save", x -> {
+        bottom.addRight(testReport = new GuiLabel(this, "report").setTitle(Component.empty()));
+        bottom.addRight(new GuiButton(this, "check", x -> OPEN_TEST.open(new CompoundTag()).init(this)).setTranslate("gui.blueprint.test"));
+        bottom.addRight(new GuiButton(this, "save", x -> {
             if (runTest().success())
                 SAVE.send(LittleGroup.save(reconstructBlueprint()));
         }).setTranslate("gui.save"));

@@ -159,8 +159,8 @@ public enum SignalMode {
         
         @Override
         public void createControls(GuiParent parent, GuiSignalModeConfiguration configuration) {
-            parent.add(new GuiLabel("length:").setTitle(Component.translatable("gui.signal.length").append(":")));
-            parent.add(new GuiTextfield("length", "" + (configuration instanceof GuiSignalModeConfigurationPulse ? ((GuiSignalModeConfigurationPulse) configuration).length : 10))
+            parent.add(new GuiLabel(parent, "length:").setTitle(Component.translatable("gui.signal.length").append(":")));
+            parent.add(new GuiTextfield(parent, "length", "" + (configuration instanceof GuiSignalModeConfigurationPulse ? ((GuiSignalModeConfigurationPulse) configuration).length : 10))
                     .setNumbersOnly());
         }
         
@@ -311,9 +311,9 @@ public enum SignalMode {
         
         @Override
         public void createControls(GuiParent parent, GuiSignalModeConfiguration configuration) {
-            parent.add(new GuiLabel("length:").setTitle(Component.translatable("gui.signal.length").append(":")));
+            parent.add(new GuiLabel(parent, "length:").setTitle(Component.translatable("gui.signal.length").append(":")));
             parent.add(
-                new GuiTextfield("length", "" + (configuration instanceof GuiSignalModeConfigurationExtender ? ((GuiSignalModeConfigurationExtender) configuration).length : 10))
+                new GuiTextfield(parent, "length", "" + (configuration instanceof GuiSignalModeConfigurationExtender ? ((GuiSignalModeConfigurationExtender) configuration).length : 10))
                         .setNumbersOnly());
         }
         

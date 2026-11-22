@@ -23,40 +23,40 @@ public abstract class GuiElementFilter extends GuiParent {
         if (filter instanceof BiFilterNot || filter instanceof BiFilterAnd || filter instanceof BiFilterOr<IParentCollection, LittleTile>)
             return of(player, filter);
         if (filter == null)
-            return new GuiElementFilterGroup(player, GuiElementFilterOperator.OR);
-        return new GuiElementFilterGroup(player, GuiElementFilterOperator.OR, filter);
+            return new GuiElementFilterGroup(this, player, GuiElementFilterOperator.OR);
+        return new GuiElementFilterGroup(this, player, GuiElementFilterOperator.OR, filter);
     }
     
     public static GuiElementFilter of(Player player, BiFilter<IParentCollection, LittleTile> filter) {
         if (filter instanceof BiFilterNot<IParentCollection, LittleTile> not) {
             if (not.filter() instanceof BiFilterAnd<IParentCollection, LittleTile> and)
-                return new GuiElementFilterGroup(player, GuiElementFilterOperator.NOT_AND, and.filters());
+                return new GuiElementFilterGroup(this, player, GuiElementFilterOperator.NOT_AND, and.filters());
             if (not.filter() instanceof BiFilterOr<IParentCollection, LittleTile> or)
-                return new GuiElementFilterGroup(player, GuiElementFilterOperator.NOT_OR, or.filters());
+                return new GuiElementFilterGroup(this, player, GuiElementFilterOperator.NOT_OR, or.filters());
             if (not.filter() instanceof BiFilterNot<IParentCollection, LittleTile> not2)
                 return of(player, not2.filter());
-            return new GuiElementFilterGroup(player, GuiElementFilterOperator.NOT_OR, not.filter());
+            return new GuiElementFilterGroup(this, player, GuiElementFilterOperator.NOT_OR, not.filter());
         }
         if (filter instanceof BiFilterAnd<IParentCollection, LittleTile> and)
-            return new GuiElementFilterGroup(player, GuiElementFilterOperator.AND, and.filters());
+            return new GuiElementFilterGroup(this, player, GuiElementFilterOperator.AND, and.filters());
         if (filter instanceof BiFilterOr<IParentCollection, LittleTile> or)
-            return new GuiElementFilterGroup(player, GuiElementFilterOperator.OR, or.filters());
+            return new GuiElementFilterGroup(this, player, GuiElementFilterOperator.OR, or.filters());
         if (filter instanceof TileBlockFilter block)
-            return new GuiElementFilterBlock(player, block.block);
+            return new GuiElementFilterBlock(this, player, block.block);
         if (filter instanceof TileColorFilter color)
-            return new GuiElementFilterColor(color.color);
+            return new GuiElementFilterColor(this, color.color);
         if (filter instanceof TileTagFilter tag)
-            return new GuiElementFilterTag(tag.tag);
+            return new GuiElementFilterTag(this, tag.tag);
         if (filter instanceof TileTagFilter tag)
-            return new GuiElementFilterTag(tag.tag);
+            return new GuiElementFilterTag(this, tag.tag);
         if (filter instanceof TileNameFilter tag)
-            return new GuiElementFilterName(tag.name);
+            return new GuiElementFilterName(this, tag.name);
         if (filter instanceof TileMissingFilter)
-            return new GuiElementFilterMissing();
-        return new GuiElementFilterGroup(player, GuiElementFilterOperator.OR);
+            return new GuiElementFilterMissing(this);
+        return new GuiElementFilterGroup(this, player, GuiElementFilterOperator.OR);
     }
     
-    public GuiElementFilter() {
+    public GuiElementFilter(IGuiParent parent) {
         flow = GuiFlow.STACK_Y;
         align = Align.STRETCH;
     }

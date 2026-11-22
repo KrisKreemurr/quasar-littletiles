@@ -55,7 +55,7 @@ public class Gui3dPrinter extends GuiLayer {
         
         errorScroll.clear();
         for (List<Component> error : printer.errors())
-            errorScroll.add(new GuiLabel("").setTitle(error));
+            errorScroll.add(new GuiLabel(this, "").setTitle(error));
         indexLabel.setTitle(Component.translatable("gui.3dprinter.index", printer.printIndex()));
         
         skipField.setText("" + printer.ticksToSkip);
@@ -88,8 +88,8 @@ public class Gui3dPrinter extends GuiLayer {
         
     });
     
-    public Gui3dPrinter(Little3dPrinter printer) {
-        super("3dprinter", 300, 200);
+    public Gui3dPrinter(boolean client, Little3dPrinter printer) {
+        super(client, "3dprinter", 300, 200);
         this.printer = printer;
         registerEventChanged(x -> {
             if (x.control.is("skip", "amount"))
@@ -124,22 +124,22 @@ public class Gui3dPrinter extends GuiLayer {
         flow = GuiFlow.STACK_Y;
         align = Align.CENTER;
         
-        GuiPanel savable = new GuiPanel(GuiFlow.STACK_Y);
+        GuiPanel savable = new GuiPanel(this, GuiFlow.STACK_Y);
         add(savable);
         
-        GuiParent speed = new GuiParent().setVAlign(VAlign.CENTER);
+        GuiParent speed = new GuiParent(this).setVAlign(VAlign.CENTER);
         savable.add(speed);
-        speed.add(new GuiLabel("skipLabel").setTranslate("gui.3dprinter.skip"));
-        speed.add(skipField = new GuiTextfield("skip", "" + printer.ticksToSkip).setDim(25, 7).setNumbersOnly());
-        speed.add(new GuiLabel("amountLabel").setTranslate("gui.3dprinter.amount"));
-        speed.add(amountField = new GuiTextfield("amount", "" + printer.amountPerTick).setDim(25, 7).setNumbersOnly());
-        speed.add(speedLabel = new GuiLabel("speed"));
+        speed.add(new GuiLabel(this, "skipLabel").setTranslate("gui.3dprinter.skip"));
+        speed.add(skipField = new GuiTextfield(this, "skip", "" + printer.ticksToSkip).setDim(25, 7).setNumbersOnly());
+        speed.add(new GuiLabel(this, "amountLabel").setTranslate("gui.3dprinter.amount"));
+        speed.add(amountField = new GuiTextfield(this, "amount", "" + printer.amountPerTick).setDim(25, 7).setNumbersOnly());
+        speed.add(speedLabel = new GuiLabel(this, "speed"));
         
-        GuiParent config = new GuiParent().setVAlign(VAlign.CENTER);
+        GuiParent config = new GuiParent(this).setVAlign(VAlign.CENTER);
         savable.add(config);
-        config.add(continueBox = new GuiCheckBox("continue", printer.continueOnError).setTranslate("gui.3dprinter.continue"));
-        config.add(rememberBox = new GuiCheckBox("remember", printer.rememberStructures).setTranslate("gui.3dprinter.remember"));
-        config.add(new GuiButton("save", x -> {
+        config.add(continueBox = new GuiCheckBox(this, "continue", printer.continueOnError).setTranslate("gui.3dprinter.continue"));
+        config.add(rememberBox = new GuiCheckBox(this, "remember", printer.rememberStructures).setTranslate("gui.3dprinter.remember"));
+        config.add(new GuiButton(this, "save", x -> {
             CompoundTag nbt = new CompoundTag();
             nbt.putInt("skip", skipField.parseInteger());
             nbt.putInt("amount", amountField.parseInteger());
@@ -149,44 +149,44 @@ public class Gui3dPrinter extends GuiLayer {
             SAVE.send(nbt);
         }).setTranslate("gui.save"));
         
-        GuiParent content = new GuiParent(GuiFlow.STACK_X).setVAlign(VAlign.CENTER);
+        GuiParent content = new GuiParent(this, GuiFlow.STACK_X).setVAlign(VAlign.CENTER);
         content.spacing = 5;
         add(content);
-        content.add(new GuiInventoryGrid("blueprint", blueprint));
-        content.add(new GuiButton("set", x -> SET.send(EndTag.INSTANCE)).setTranslate("gui.3dprinter.set"));
-        content.add(blueprintLabel = new GuiLabel("blueprint_info"));
+        content.add(new GuiInventoryGrid(this, "blueprint", blueprint));
+        content.add(new GuiButton(this, "set", x -> SET.send(EndTag.INSTANCE)).setTranslate("gui.3dprinter.set"));
+        content.add(blueprintLabel = new GuiLabel(this, "blueprint_info"));
         
-        GuiPanel state = new GuiPanel(GuiFlow.STACK_Y);
+        GuiPanel state = new GuiPanel(this, GuiFlow.STACK_Y);
         add(state);
-        GuiParent active = new GuiParent().setVAlign(VAlign.CENTER);
+        GuiParent active = new GuiParent(this).setVAlign(VAlign.CENTER);
         active.spacing = 5;
         state.add(active);
-        active.add(activeLabel = new GuiLabel("active"));
-        active.add(new GuiButton("toggle", x -> TOGGLE.send(EndTag.INSTANCE)).setTranslate("gui.3dprinter.toggle"));
-        active.add(indexLabel = new GuiLabel("index"));
-        active.add(new GuiButton("reset", x -> RESET.send(EndTag.INSTANCE)).setTranslate("gui.3dprinter.reset"));
+        active.add(activeLabel = new GuiLabel(this, "active"));
+        active.add(new GuiButton(this, "toggle", x -> TOGGLE.send(EndTag.INSTANCE)).setTranslate("gui.3dprinter.toggle"));
+        active.add(indexLabel = new GuiLabel(this, "index"));
+        active.add(new GuiButton(this, "reset", x -> RESET.send(EndTag.INSTANCE)).setTranslate("gui.3dprinter.reset"));
         
-        GuiLeftRightBox errors = new GuiLeftRightBox();
+        GuiLeftRightBox errors = new GuiLeftRightBox(this);
         errors.spacing = 5;
         state.add(errors);
         errors.getLeft().flow = GuiFlow.STACK_Y;
         errors.getLeft().setUnexpandableX();
-        errors.addLeft(new GuiLabel("errors").setTranslate("gui.3dprinter.errors"));
-        errors.addLeft(new GuiButton("clear", x -> CLEAR_ERRORS.send(EndTag.INSTANCE)).setTranslate("gui.3dprinter.clear"));
-        errorScroll = new GuiScrollY();
+        errors.addLeft(new GuiLabel(this, "errors").setTranslate("gui.3dprinter.errors"));
+        errors.addLeft(new GuiButton(this, "clear", x -> CLEAR_ERRORS.send(EndTag.INSTANCE)).setTranslate("gui.3dprinter.clear"));
+        errorScroll = new GuiScrollY(this);
         errors.addRight(errorScroll.setDim(40, 40).setExpandableX());
         
-        GuiParent inventories = new GuiParent();
+        GuiParent inventories = new GuiParent(this);
         add(inventories);
-        GuiParent printerInventory = new GuiParent(GuiFlow.STACK_Y);
+        GuiParent printerInventory = new GuiParent(this, GuiFlow.STACK_Y);
         inventories.add(printerInventory);
-        printerInventory.add(new GuiLabel("inventory_label").setTranslate("gui.3dprinter.inventory"));
-        printerInventory.add(new GuiInventoryGrid("printer_inventory", printer.inventory, 5));
+        printerInventory.add(new GuiLabel(this, "inventory_label").setTranslate("gui.3dprinter.inventory"));
+        printerInventory.add(new GuiInventoryGrid(this, "printer_inventory", printer.inventory, 5));
         
-        GuiParent playerInventory = new GuiParent(GuiFlow.STACK_Y).setAlign(Align.CENTER);
+        GuiParent playerInventory = new GuiParent(this, GuiFlow.STACK_Y).setAlign(Align.CENTER);
         inventories.add(playerInventory.setExpandable());
-        playerInventory.add(new GuiLabel("inventory_label").setTranslate("gui.player.inventory"));
-        playerInventory.add(new GuiPlayerInventoryGrid(getPlayer()).setUnexpandable());
+        playerInventory.add(new GuiLabel(this, "inventory_label").setTranslate("gui.player.inventory"));
+        playerInventory.add(new GuiPlayerInventoryGrid(this, getPlayer()).setUnexpandable());
         
         updateSpeedLabel();
     }

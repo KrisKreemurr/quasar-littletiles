@@ -13,7 +13,7 @@ public class BuildingModeTopBar extends BuildingModeFeature {
     
     @Override
     public void create(OverlayGuiLayer gui, LittleTool tool, List<BuildingModeFeature> allFeatures) {
-        GuiPanel panel = new GuiPanel("top_bar");
+        GuiPanel panel = new GuiPanel(gui, "top_bar");
         panel.flow = GuiFlow.FIT_X;
         panel.spacing = 10;
         gui.addOverlayControl(panel, OverlayPosition.TOP_STRETCH);

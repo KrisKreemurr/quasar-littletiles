@@ -48,12 +48,12 @@ public class GuiSignalNodeInput extends GuiSignalNodeComponent {
     private GuiSignalInputConfig testConfig;
     private SignalInputCondition testCondition;
     
-    public GuiSignalNodeInput(GuiSignalComponent component, @Nullable SignalPosition position) {
-        super(component, position);
+    public GuiSignalNodeInput(IGuiParent parent, GuiSignalComponent component, @Nullable SignalPosition position) {
+        super(parent, component, position);
     }
     
-    public GuiSignalNodeInput(SignalInputVariable variable, GuiSignalComponent com, @Nullable SignalPosition position) throws ParseException {
-        super(com, position);
+    public GuiSignalNodeInput(IGuiParent parent, SignalInputVariable variable, GuiSignalComponent com, @Nullable SignalPosition position) throws ParseException {
+        super(parent, com, position);
         SignalTarget target = variable.target.getNestedTarget();
         if (target instanceof SignalTargetChildCustomIndex c)
             indexes = c.indexes;
@@ -197,9 +197,9 @@ public class GuiSignalNodeInput extends GuiSignalNodeComponent {
         
         if (testContext != null) {
             if (controller().testingDisplayNumber())
-                testConfig = new GuiSignalInputNumber(component.bandwidth());
+                testConfig = new GuiSignalInputNumber(this, component.bandwidth());
             else
-                testConfig = new GuiSignalInputBitToggle(component.bandwidth());
+                testConfig = new GuiSignalInputBitToggle(this, component.bandwidth());
             testConfig.set(controller().getInputState(component.totalName(), component.bandwidth()));
             insertControlBefore(button, testConfig);
             testCondition = condition;
@@ -238,14 +238,14 @@ public class GuiSignalNodeInput extends GuiSignalNodeComponent {
         protected final GuiStateButton<Integer>[] buttons;
         private boolean preventUpdate;
         
-        public GuiSignalInputBitToggle(int bandwidth) {
+        public GuiSignalInputBitToggle(IGuiParent parent, int bandwidth) {
             this.bandwidth = bandwidth;
             spacing = 0;
             setScale(0.5);
             
             buttons = new GuiStateButton[bandwidth];
             for (int i = 0; i < buttons.length; i++)
-                add(buttons[i] = new GuiStateButton<Integer>("" + i, new TextMapBuilder<Integer>().addComponent(0, Component.literal("" + 0)).addComponent(1, Component.literal(
+                add(buttons[i] = new GuiStateButton<Integer>(this, "" + i, new TextMapBuilder<Integer>().addComponent(0, Component.literal("" + 0)).addComponent(1, Component.literal(
                     "" + 1))));
             
             registerEventChanged(x -> {
@@ -280,9 +280,9 @@ public class GuiSignalNodeInput extends GuiSignalNodeComponent {
         protected final GuiTextfield textfield;
         private boolean preventUpdate;
         
-        public GuiSignalInputNumber(int bandwidth) {
+        public GuiSignalInputNumber(IGuiParent parent, int bandwidth) {
             this.bandwidth = bandwidth;
-            add(textfield = new GuiTextfield("").setDim(50).setNumbersIncludingNegativeOnly());
+            add(textfield = new GuiTextfield(this, "").setDim(50).setNumbersIncludingNegativeOnly());
             setScale(0.5);
             registerEventChanged(x -> {
                 if (preventUpdate)

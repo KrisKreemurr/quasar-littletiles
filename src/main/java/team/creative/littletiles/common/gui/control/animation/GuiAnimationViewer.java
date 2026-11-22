@@ -49,8 +49,8 @@ public class GuiAnimationViewer extends GuiControl {
     private boolean up;
     private boolean down;
     
-    public GuiAnimationViewer(String name, GuiAnimationViewerStorage storage) {
-        super(name);
+    public GuiAnimationViewer(IGuiParent parent, String name, GuiAnimationViewerStorage storage) {
+        super(parent, name);
         this.storage = storage;
     }
     

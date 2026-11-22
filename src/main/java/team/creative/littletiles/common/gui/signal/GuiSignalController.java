@@ -106,8 +106,8 @@ public class GuiSignalController extends GuiParent implements SignalContext {
     private boolean testing;
     private boolean displayNumbers;
     
-    public GuiSignalController(String name, GuiSignalComponent output, List<GuiSignalComponent> inputs) {
-        super(name);
+    public GuiSignalController(IGuiParent parent, String name, GuiSignalComponent output, List<GuiSignalComponent> inputs) {
+        super(parent, name);
         this.inputs = inputs;
         setOutput(4, output, null);
     }
@@ -398,7 +398,7 @@ public class GuiSignalController extends GuiParent implements SignalContext {
     public void setOutput(int cell, GuiSignalComponent output, @Nullable SignalPosition position) {
         if (this.output != null)
             this.output.remove();
-        this.output = new GuiSignalNodeOutput(output, position);
+        this.output = new GuiSignalNodeOutput(this, output, position);
         if (position == null)
             setToFreeCell(cell, this.output);
         else
@@ -438,7 +438,7 @@ public class GuiSignalController extends GuiParent implements SignalContext {
         GuiSignalNode node;
         if (condition instanceof SignalInputConditionNot || condition instanceof SignalInputConditionNotBitwise) {
             boolean bitwise = condition instanceof SignalInputConditionNotBitwise;
-            node = new GuiSignalNodeNotOperator(bitwise, condition.position);
+            node = new GuiSignalNodeNotOperator(this, bitwise, condition.position);
             GuiSignalNode child = fill(bitwise ? ((SignalInputConditionNotBitwise) condition).condition : ((SignalInputConditionNot) condition).condition, signal, parsed,
                 level + 1);
             GuiSignalConnection connection = new GuiSignalConnection(child, node);
@@ -446,7 +446,7 @@ public class GuiSignalController extends GuiParent implements SignalContext {
             child.connect(connection);
             
         } else if (condition instanceof SignalInputConditionOperatorStackable stack) {
-            node = new GuiSignalNodeOperator(stack.operator(), stack.position);
+            node = new GuiSignalNodeOperator(this, stack.operator(), stack.position);
             for (SignalInputCondition subCondition : stack.conditions) {
                 GuiSignalNode child = fill(subCondition, signal, parsed, level + 1);
                 GuiSignalConnection connection = new GuiSignalConnection(child, node);
@@ -454,13 +454,13 @@ public class GuiSignalController extends GuiParent implements SignalContext {
                 child.connect(connection);
             }
         } else if (condition instanceof SignalInputVariable in)
-            node = new GuiSignalNodeInput(in, signal.getInput(in.target), in.position);
+            node = new GuiSignalNodeInput(this, in, signal.getInput(in.target), in.position);
         else if (condition instanceof SignalInputVirtualVariable variable)
-            node = new GuiSignalNodeVirtualInput(variable, variable.position);
+            node = new GuiSignalNodeVirtualInput(this, variable, variable.position);
         else if (condition instanceof SignalInputVirtualNumber number)
-            node = new GuiSignalNodeVirtualNumberInput(number, number.position);
+            node = new GuiSignalNodeVirtualNumberInput(this, number, number.position);
         else if (condition instanceof SignalInputConditionComparator com) {
-            node = new GuiSignalNodeComparator(com.comparator, com.position);
+            node = new GuiSignalNodeComparator(this, com.comparator, com.position);
             
             GuiSignalNode child = fill(com.conditions[0], signal, parsed, level + 1);
             GuiSignalConnection.connect(child, null, node, GuiSignalNodeComparator.UPPER_BUTTON);
@@ -468,7 +468,7 @@ public class GuiSignalController extends GuiParent implements SignalContext {
             child = fill(com.conditions[1], signal, parsed, level + 1);
             GuiSignalConnection.connect(child, null, node, GuiSignalNodeComparator.LOWER_BUTTON);
         } else if (condition instanceof SignalInputConditionGate gate) {
-            node = new GuiSignalNodeGate(gate.invert, gate.position);
+            node = new GuiSignalNodeGate(this, gate.invert, gate.position);
             
             GuiSignalNode child = fill(gate.gate, signal, parsed, level + 1);
             GuiSignalConnection.connect(child, null, node, GuiSignalNodeGate.UPPER_BUTTON);
@@ -484,31 +484,31 @@ public class GuiSignalController extends GuiParent implements SignalContext {
     }
     
     public GuiSignalNodeVirtualInput addVirtualInput() {
-        return setToFreeCell(0, new GuiSignalNodeVirtualInput(null));
+        return setToFreeCell(0, new GuiSignalNodeVirtualInput(this, null));
     }
     
     public GuiSignalNodeVirtualNumberInput addVirtualNumberInput() {
-        return setToFreeCell(0, new GuiSignalNodeVirtualNumberInput(null));
+        return setToFreeCell(0, new GuiSignalNodeVirtualNumberInput(this, null));
     }
     
     public GuiSignalNodeInput addInput(GuiSignalComponent input) {
-        return setToFreeCell(0, new GuiSignalNodeInput(input, null));
+        return setToFreeCell(0, new GuiSignalNodeInput(this, input, null));
     }
     
     public GuiSignalNodeNotOperator addNotOperator(boolean bitwise) {
-        return setToFreeCell(1, new GuiSignalNodeNotOperator(bitwise, null));
+        return setToFreeCell(1, new GuiSignalNodeNotOperator(this, bitwise, null));
     }
     
     public GuiSignalNodeOperator addOperator(SignalLogicOperator operator) {
-        return setToFreeCell(1, new GuiSignalNodeOperator(operator, null));
+        return setToFreeCell(1, new GuiSignalNodeOperator(this, operator, null));
     }
     
     public GuiSignalNodeComparator addComparator(SignalLogicComparator comparator) {
-        return setToFreeCell(1, new GuiSignalNodeComparator(comparator, null));
+        return setToFreeCell(1, new GuiSignalNodeComparator(this, comparator, null));
     }
     
     public GuiSignalNodeGate addGate(boolean invert) {
-        return setToFreeCell(1, new GuiSignalNodeGate(invert, null));
+        return setToFreeCell(1, new GuiSignalNodeGate(this, invert, null));
     }
     
     public GuiSignalNode selected() {

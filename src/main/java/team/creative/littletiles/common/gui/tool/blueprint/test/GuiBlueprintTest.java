@@ -17,8 +17,8 @@ public class GuiBlueprintTest extends GuiLayer {
     public BlueprintTestResults results;
     public GuiBlueprint blueprint;
     
-    public GuiBlueprintTest() {
-        super("gui.blueprint.test", 300, 200);
+    public GuiBlueprintTest(boolean client) {
+        super(client, "gui.blueprint.test", 300, 200);
         flow = GuiFlow.STACK_Y;
     }
     
@@ -40,23 +40,23 @@ public class GuiBlueprintTest extends GuiLayer {
         if (results == null)
             return;
         
-        GuiScrollY box = new GuiScrollY();
+        GuiScrollY box = new GuiScrollY(this);
         add(box.setExpandable());
         
         for (BlueprintTestError error : results) {
-            GuiPanel content = new GuiPanel(GuiFlow.STACK_Y);
+            GuiPanel content = new GuiPanel(this, GuiFlow.STACK_Y);
             box.add(content);
-            content.add(new GuiLabel("header").setTitle(error.header()));
-            content.add(new GuiLabel("desc").setTitle(error.description()));
-            GuiParent bottomLine = new GuiParent(GuiFlow.STACK_X).setAlign(Align.CENTER).setVAlign(VAlign.CENTER);
+            content.add(new GuiLabel(this, "header").setTitle(error.header()));
+            content.add(new GuiLabel(this, "desc").setTitle(error.description()));
+            GuiParent bottomLine = new GuiParent(this, GuiFlow.STACK_X).setAlign(Align.CENTER).setVAlign(VAlign.CENTER);
             content.add(bottomLine.setExpandableX());
             error.create(blueprint, bottomLine, () -> init(blueprint));
         }
         
-        GuiLeftRightBox bottom = new GuiLeftRightBox();
+        GuiLeftRightBox bottom = new GuiLeftRightBox(this);
         add(bottom);
-        bottom.addLeft(new GuiButton("refresh", x -> init(blueprint)).setTranslate("gui.blueprint.test.recheck"));
-        bottom.addRight(new GuiButton("okay", x -> closeThisLayer()).setTranslate("gui.okay"));
+        bottom.addLeft(new GuiButton(this, "refresh", x -> init(blueprint)).setTranslate("gui.blueprint.test.recheck"));
+        bottom.addRight(new GuiButton(this, "okay", x -> closeThisLayer()).setTranslate("gui.okay"));
     }
     
 }

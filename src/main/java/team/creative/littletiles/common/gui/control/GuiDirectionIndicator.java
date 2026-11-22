@@ -9,8 +9,8 @@ public class GuiDirectionIndicator extends GuiButtonIcon {
     
     private Facing facing;
     
-    public GuiDirectionIndicator(String name, Facing facing) {
-        super(name, Icon.EMPTY, x -> {});
+    public GuiDirectionIndicator(IGuiParent parent, String name, Facing facing) {
+        super(parent, name, Icon.EMPTY, x -> {});
         setFacing(facing);
     }
     

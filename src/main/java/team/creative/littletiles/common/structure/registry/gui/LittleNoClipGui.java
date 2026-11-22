@@ -12,8 +12,8 @@ import team.creative.littletiles.common.structure.type.LittleNoClipStructure;
 @OnlyIn(Dist.CLIENT)
 public class LittleNoClipGui extends LittleStructureGuiControl {
     
-    public LittleNoClipGui(LittleStructureGui gui, GuiTreeItemStructure item) {
-        super(gui, item);
+    public LittleNoClipGui(IGuiParent parent, LittleStructureGui gui, GuiTreeItemStructure item) {
+        super(parent, gui, item);
     }
     
     @Override
@@ -21,7 +21,7 @@ public class LittleNoClipGui extends LittleStructureGuiControl {
         boolean slowness = true;
         if (structure instanceof LittleNoClipStructure)
             slowness = ((LittleNoClipStructure) structure).web;
-        add(new GuiCheckBox("web", slowness).setTranslate("gui.noclip.slowness"));
+        add(new GuiCheckBox(this, "web", slowness).setTranslate("gui.noclip.slowness"));
     }
     
     @Override

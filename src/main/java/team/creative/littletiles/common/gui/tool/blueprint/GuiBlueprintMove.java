@@ -29,8 +29,8 @@ public class GuiBlueprintMove extends GuiLayer {
     public GuiBlueprint blueprint;
     public GuiTree tree;
     
-    public GuiBlueprintMove() {
-        super("gui.blueprint.move", 400, 200);
+    public GuiBlueprintMove(boolean client) {
+        super(client, "gui.blueprint.move", 400, 200);
         flow = GuiFlow.STACK_Y;
         registerEventChanged(x -> {
             if (x.control.is("modes"))
@@ -58,52 +58,52 @@ public class GuiBlueprintMove extends GuiLayer {
         if (blueprint == null)
             return;
         
-        GuiParent upper = new GuiParent(GuiFlow.STACK_X);
+        GuiParent upper = new GuiParent(this, GuiFlow.STACK_X);
         add(upper);
         
-        GuiParent sidebar = new GuiParent(GuiFlow.STACK_Y);
+        GuiParent sidebar = new GuiParent(this, GuiFlow.STACK_Y);
         upper.add(sidebar.setDim(new GuiSizeRatioRules().widthRatio(0.3F).maxWidth(100)).setExpandableY());
         
-        tree = new GuiTree("tree").setKeepOrder(true).setRootVisibility(false);
+        tree = new GuiTree(this, "tree").setKeepOrder(true).setRootVisibility(false);
         sidebar.add(tree.setExpandable());
         
         for (GuiTreeItem item : blueprint.tree.root().items()) {
-            GuiBlueprintMoveItem child = new GuiBlueprintMoveItem(tree, (GuiTreeItemStructure) item);
+            GuiBlueprintMoveItem child = new GuiBlueprintMoveItem(this, tree, (GuiTreeItemStructure) item);
             tree.root().addItem(child);
             child.addChildren();
         }
         
-        GuiStateButton<GuiBlueprintMoveMode> modes = new GuiStateButton<>("modes", new TextMapBuilder<GuiBlueprintMoveMode>().addComponent(GuiBlueprintMoveMode.values(), x -> x
+        GuiStateButton<GuiBlueprintMoveMode> modes = new GuiStateButton<>(this, "modes", new TextMapBuilder<GuiBlueprintMoveMode>().addComponent(GuiBlueprintMoveMode.values(), x -> x
                 .title()));
         sidebar.add(modes.setExpandableX());
         
-        GuiParent config = new GuiParent(GuiFlow.STACK_Y).setAlign(Align.CENTER);
+        GuiParent config = new GuiParent(this, GuiFlow.STACK_Y).setAlign(Align.CENTER);
         upper.add(config.setDim(new GuiSizeRatioRules().widthRatio(0.3F)));
         
-        config.add(new GuiDistanceControl("distance", LittleGrid.overallDefault(), 1));
+        config.add(new GuiDistanceControl(this, "distance", LittleGrid.overallDefault(), 1));
         
-        GuiParent row1 = new GuiParent();
+        GuiParent row1 = new GuiParent(this);
         config.add(row1);
-        row1.add(new GuiBlueprintMoveButton(Facing.EAST));
-        row1.add(new GuiBlueprintMoveButton(Facing.UP));
-        row1.add(new GuiBlueprintMoveButton(Facing.SOUTH));
+        row1.add(new GuiBlueprintMoveButton(this, Facing.EAST));
+        row1.add(new GuiBlueprintMoveButton(this, Facing.UP));
+        row1.add(new GuiBlueprintMoveButton(this, Facing.SOUTH));
         
-        GuiParent row2 = new GuiParent();
+        GuiParent row2 = new GuiParent(this);
         config.add(row2);
-        row2.add(new GuiBlueprintMoveButton(Facing.WEST));
-        row2.add(new GuiBlueprintMoveButton(Facing.DOWN));
-        row2.add(new GuiBlueprintMoveButton(Facing.NORTH));
+        row2.add(new GuiBlueprintMoveButton(this, Facing.WEST));
+        row2.add(new GuiBlueprintMoveButton(this, Facing.DOWN));
+        row2.add(new GuiBlueprintMoveButton(this, Facing.NORTH));
         
-        upper.add(new GuiAnimationPanel(blueprint.tree, blueprint.storage, true, null));
+        upper.add(new GuiAnimationPanel(this, blueprint.tree, blueprint.storage, true, null));
         
-        GuiLeftRightBox bottom = new GuiLeftRightBox();
+        GuiLeftRightBox bottom = new GuiLeftRightBox(this);
         add(bottom);
-        bottom.addLeft(new GuiButton("cancel", x -> closeThisLayer()).setTranslate("gui.cancel"));
-        bottom.addRight(new GuiButton("test", x -> {
+        bottom.addLeft(new GuiButton(this, "cancel", x -> closeThisLayer()).setTranslate("gui.cancel"));
+        bottom.addRight(new GuiButton(this, "test", x -> {
             blueprint.storage.resetOverlap();
             BlueprintTest.testModule(blueprint, BlueprintTest.OVERLAP_TEST);
         }).setTranslate("gui.blueprint.test.overlap"));
-        bottom.addRight(new GuiButton("save", x -> {
+        bottom.addRight(new GuiButton(this, "save", x -> {
             for (GuiTreeItem item : tree.allItems())
                 if (item instanceof GuiBlueprintMoveItem move)
                     move.structure.applyOffset();
@@ -126,8 +126,8 @@ public class GuiBlueprintMove extends GuiLayer {
     
     public class GuiBlueprintMoveButton extends GuiButton {
         
-        public GuiBlueprintMoveButton(Facing facing) {
-            super(facing.name, x -> move(facing));
+        public GuiBlueprintMoveButton(IGuiParent parent, Facing facing) {
+            super(parent, facing.name, x -> move(facing));
             setTitle(facing.translate());
         }
         
@@ -173,8 +173,8 @@ public class GuiBlueprintMove extends GuiLayer {
         
         public final GuiTreeItemStructure structure;
         
-        public GuiBlueprintMoveItem(GuiTree tree, GuiTreeItemStructure structure) {
-            super("item", tree);
+        public GuiBlueprintMoveItem(IGuiParent parent, GuiTree tree, GuiTreeItemStructure structure) {
+            super(parent, "item", tree);
             this.structure = structure;
             setTitle(Component.literal(structure.getTitle()));
         }
@@ -189,7 +189,7 @@ public class GuiBlueprintMove extends GuiLayer {
         
         public void addChildren() {
             for (GuiTreeItem item : structure.items()) {
-                GuiBlueprintMoveItem child = new GuiBlueprintMoveItem(tree, (GuiTreeItemStructure) item);
+                GuiBlueprintMoveItem child = new GuiBlueprintMoveItem(this, tree, (GuiTreeItemStructure) item);
                 addItem(child);
                 child.addChildren();
             }

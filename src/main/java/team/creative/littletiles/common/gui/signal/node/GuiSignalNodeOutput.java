@@ -23,8 +23,8 @@ public class GuiSignalNodeOutput extends GuiSignalNodeComponent {
     private SignalInputCondition testCondition;
     private SignalContext testContext;
     
-    public GuiSignalNodeOutput(GuiSignalComponent component, @Nullable SignalPosition position) {
-        super(component, position);
+    public GuiSignalNodeOutput(IGuiParent parent, GuiSignalComponent component, @Nullable SignalPosition position) {
+        super(parent, component, position);
         button.setTitle(Component.translatable("gui.signal.out").append(": " + component.name()));
     }
     
@@ -86,7 +86,7 @@ public class GuiSignalNodeOutput extends GuiSignalNodeComponent {
         
         if (testContext != null) {
             if (testLabel == null)
-                testLabel = new GuiLabel("");
+                testLabel = new GuiLabel(this, "");
             insertControlBefore(button, testLabel);
             testCondition = condition;
             this.testContext = testContext;

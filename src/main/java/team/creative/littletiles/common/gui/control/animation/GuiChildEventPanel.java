@@ -24,8 +24,8 @@ public class GuiChildEventPanel extends GuiTimelinePanel {
     public final GuiTreeItemStructure item;
     public final List<GuiChildTimelineChannel> children = new ArrayList<>();
     
-    public GuiChildEventPanel(GuiTreeItemStructure item, GuiBlueprintAnimationHandler handler, AnimationTimeline timeline, int duration) {
-        super(handler, duration);
+    public GuiChildEventPanel(IGuiParent parent, GuiTreeItemStructure item, GuiBlueprintAnimationHandler handler, AnimationTimeline timeline, int duration) {
+        super(parent, handler, duration);
         this.item = item;
         List<AnimationEventEntry> events = extract(timeline, ChildDoorEvent.class);
         for (AnimationEventEntry entry : events) {
@@ -35,18 +35,18 @@ public class GuiChildEventPanel extends GuiTimelinePanel {
                 channel.addKey(entry.start, event);
         }
         
-        GuiParent channelControl = new GuiParent();
+        GuiParent channelControl = new GuiParent(this);
         add(channelControl);
         
-        channelControl.add(new GuiComboBox<>("childBox", new TextMapBuilder<>()));
-        channelControl.add(new GuiButton("childAdd", x -> {
+        channelControl.add(new GuiComboBox<>(this, "childBox", new TextMapBuilder<>()));
+        channelControl.add(new GuiButton(this, "childAdd", x -> {
             GuiComboBox<Integer> childBox = get("childBox");
             Integer selected = childBox.selected();
             if (selected != null)
                 getOrCreate(selected);
             updateAddBox();
         }).setTranslate("gui.add"));
-        channelControl.add(new GuiButton("removed_unused", x -> {
+        channelControl.add(new GuiButton(this, "removed_unused", x -> {
             clearUnusedChannel(children);
             updateAddBox();
         }).setTranslate("gui.door.clean.channel"));
@@ -78,7 +78,7 @@ public class GuiChildEventPanel extends GuiTimelinePanel {
         
         GuiChildTimelineChannel channel = children.get(id);
         if (channel == null) {
-            children.set(id, channel = new GuiChildTimelineChannel(time, id));
+            children.set(id, channel = new GuiChildTimelineChannel(this, time, id));
             time.addGuiTimelineChannel(Component.literal("" + id), channel);
         }
         return channel;
@@ -97,7 +97,7 @@ public class GuiChildEventPanel extends GuiTimelinePanel {
     
     @Override
     protected void addBefore() {
-        add(new GuiLabel("childLabel").setTitle(translatable("gui.door.child").append(":")));
+        add(new GuiLabel(this, "childLabel").setTitle(translatable("gui.door.child").append(":")));
     }
     
     public void collectEvents(int duration, List<AnimationEventEntry> events, boolean opening) {
@@ -111,8 +111,8 @@ public class GuiChildEventPanel extends GuiTimelinePanel {
         
         public final int childId;
         
-        public GuiChildTimelineChannel(GuiTimeline timeline, int childId) {
-            super(timeline);
+        public GuiChildTimelineChannel(IGuiParent parent, GuiTimeline timeline, int childId) {
+            super(parent, timeline);
             this.childId = childId;
         }
         

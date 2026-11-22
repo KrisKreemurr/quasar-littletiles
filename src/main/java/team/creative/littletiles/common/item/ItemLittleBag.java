@@ -34,7 +34,7 @@ public class ItemLittleBag extends Item implements ILittleIngredientInventory, I
     
     @Override
     public GuiLayer create(CompoundTag nbt, Player player) {
-        return new GuiBag(ContainerSlotView.mainHand(player));
+        return new GuiBag(player.level().isClientSide(), ContainerSlotView.mainHand(player));
     }
     
     @Override

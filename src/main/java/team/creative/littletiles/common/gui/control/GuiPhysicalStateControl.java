@@ -10,31 +10,31 @@ import team.creative.littletiles.common.structure.animation.PhysicalState;
 
 public class GuiPhysicalStateControl extends GuiTable {
     
-    public GuiPhysicalStateControl(String name, PhysicalState state) {
-        super(name);
-        GuiRow offset = new GuiRow();
+    public GuiPhysicalStateControl(IGuiParent parent, String name, PhysicalState state) {
+        super(parent, name);
+        GuiRow offset = new GuiRow(this);
         addRow(offset);
-        GuiColumn offX = new GuiColumn();
+        GuiColumn offX = new GuiColumn(this);
         offset.addColumn(offX);
-        offX.add(new GuiLabeledControl("gui.door.offx", new GuiTextfield("offX", "" + state.offX()).setFloatOnly()));
-        GuiColumn offY = new GuiColumn();
+        offX.add(new GuiLabeledControl(this, "gui.door.offx", new GuiTextfield(this, "offX", "" + state.offX()).setFloatOnly()));
+        GuiColumn offY = new GuiColumn(this);
         offset.addColumn(offY);
-        offY.add(new GuiLabeledControl("gui.door.offy", new GuiTextfield("offY", "" + state.offY()).setFloatOnly()));
-        GuiColumn offZ = new GuiColumn();
+        offY.add(new GuiLabeledControl(this, "gui.door.offy", new GuiTextfield(this, "offY", "" + state.offY()).setFloatOnly()));
+        GuiColumn offZ = new GuiColumn(this);
         offset.addColumn(offZ);
-        offZ.add(new GuiLabeledControl("gui.door.offz", new GuiTextfield("offZ", "" + state.offZ()).setFloatOnly()));
+        offZ.add(new GuiLabeledControl(this, "gui.door.offz", new GuiTextfield(this, "offZ", "" + state.offZ()).setFloatOnly()));
         
-        GuiRow rotation = new GuiRow();
+        GuiRow rotation = new GuiRow(this);
         addRow(rotation);
-        GuiColumn rotX = new GuiColumn();
+        GuiColumn rotX = new GuiColumn(this);
         rotation.addColumn(rotX);
-        rotX.add(new GuiLabeledControl("gui.door.rotx", new GuiTextfield("rotX", "" + state.rotX()).setFloatOnly()));
-        GuiColumn rotY = new GuiColumn();
+        rotX.add(new GuiLabeledControl(this, "gui.door.rotx", new GuiTextfield(this, "rotX", "" + state.rotX()).setFloatOnly()));
+        GuiColumn rotY = new GuiColumn(this);
         rotation.addColumn(rotY);
-        rotY.add(new GuiLabeledControl("gui.door.roty", new GuiTextfield("rotY", "" + state.rotY()).setFloatOnly()));
-        GuiColumn rotZ = new GuiColumn();
+        rotY.add(new GuiLabeledControl(this, "gui.door.roty", new GuiTextfield(this, "rotY", "" + state.rotY()).setFloatOnly()));
+        GuiColumn rotZ = new GuiColumn(this);
         rotation.addColumn(rotZ);
-        rotZ.add(new GuiLabeledControl("gui.door.rotz", new GuiTextfield("rotZ", "" + state.rotZ()).setFloatOnly()));
+        rotZ.add(new GuiLabeledControl(this, "gui.door.rotz", new GuiTextfield(this, "rotZ", "" + state.rotZ()).setFloatOnly()));
         
         registerEventChanged(x -> {
             if (x.control instanceof GuiTextfield)

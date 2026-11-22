@@ -80,8 +80,8 @@ public class GuiImport extends GuiLayer {
         }
     });
     
-    public GuiImport() {
-        super("import");
+    public GuiImport(boolean client) {
+        super(client, "import");
         flow = GuiFlow.STACK_Y;
         align = Align.STRETCH;
     }
@@ -94,18 +94,18 @@ public class GuiImport extends GuiLayer {
     
     @Override
     public void create() {
-        add(textfield = new GuiTextfield("import_textfield"));
+        add(textfield = new GuiTextfield(this, "import_textfield"));
         textfield.setMaxStringLength(Integer.MAX_VALUE);
-        GuiParent secondRow = new GuiParent();
+        GuiParent secondRow = new GuiParent(this);
         add(secondRow);
-        secondRow.add(new GuiButton("paste_button", x -> {
+        secondRow.add(new GuiButton(this, "paste_button", x -> {
             String text = Minecraft.getInstance().keyboardHandler.getClipboard();
             if (text == null)
                 text = "";
             textfield.setText(text);
         }).setTranslate("gui.paste"));
         
-        secondRow.add(new GuiButton("import_button", x -> {
+        secondRow.add(new GuiButton(this, "import_button", x -> {
             try {
                 CompoundTag nbt = TagParser.parseTag(textfield.getText());
                 
@@ -135,9 +135,9 @@ public class GuiImport extends GuiLayer {
             }
         }).setTranslate("gui.import"));
         
-        add(new GuiInventoryGrid("import", importSlot));
+        add(new GuiInventoryGrid(this, "import", importSlot));
         
-        add(new GuiPlayerInventoryGrid(getPlayer()).setUnexpandableX());
+        add(new GuiPlayerInventoryGrid(this, getPlayer()).setUnexpandableX());
     }
     
 }

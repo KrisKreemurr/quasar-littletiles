@@ -25,8 +25,8 @@ public class GuiSignalNodeNotOperator extends GuiSignalNode {
     private SignalInputCondition testCondition;
     private SignalContext testContext;
     
-    public GuiSignalNodeNotOperator(boolean bitwise, @Nullable SignalPosition position) {
-        super(bitwise ? "b-not" : "not", position);
+    public GuiSignalNodeNotOperator(IGuiParent parent, boolean bitwise, @Nullable SignalPosition position) {
+        super(parent, bitwise ? "b-not" : "not", position);
         this.bitwise = bitwise;
     }
     
@@ -93,7 +93,7 @@ public class GuiSignalNodeNotOperator extends GuiSignalNode {
         
         if (testContext != null) {
             if (testLabel == null)
-                testLabel = new GuiLabel("");
+                testLabel = new GuiLabel(this, "");
             insertControlBefore(button, testLabel);
             testCondition = condition;
             this.testContext = testContext;

@@ -69,8 +69,8 @@ public class GuiBlueprintAdd extends GuiLayer implements GuiAnimationViewerStora
     private volatile int executedPreview = 0;
     private AtomicReference<GuiBlueprintAddAnimationRequest> scheduled = new AtomicReference<>();
     
-    public GuiBlueprintAdd() {
-        super("blueprint.add", 400, 200);
+    public GuiBlueprintAdd(boolean client) {
+        super(client, "blueprint.add", 400, 200);
         flow = GuiFlow.STACK_Y;
     }
     
@@ -96,7 +96,7 @@ public class GuiBlueprintAdd extends GuiLayer implements GuiAnimationViewerStora
     }
     
     private void addGroup(GuiTreeItem parent, LittleGroup group) {
-        GuiBlueprintAddTreeItem item = new GuiBlueprintAddTreeItem(parent.tree, group);
+        GuiBlueprintAddTreeItem item = new GuiBlueprintAddTreeItem(this, parent.tree, group);
         parent.addItem(item);
         
         for (LittleGroup child : group.children.children())
@@ -160,31 +160,31 @@ public class GuiBlueprintAdd extends GuiLayer implements GuiAnimationViewerStora
     
     @Override
     public void create() {
-        GuiParent upper = new GuiParent();
+        GuiParent upper = new GuiParent(this);
         add(upper.setExpandable());
         
-        GuiScrollY items = new GuiScrollY();
+        GuiScrollY items = new GuiScrollY(this);
         upper.add(items.setDim(new GuiSizeRatioRules().widthRatio(0.3F).maxWidth(150)));
         
         List<ItemStack> stacks = collectTiles();
         for (ItemStack stack : stacks)
-            items.add(new GuiBlueprintAddEntry(stack, getPlayer()));
+            items.add(new GuiBlueprintAddEntry(this, stack, getPlayer()));
         
-        GuiTree tree = new GuiTree("tree").setRootVisibility(false).setCheckboxes(true, true);
+        GuiTree tree = new GuiTree(this, "tree").setRootVisibility(false).setCheckboxes(true, true);
         upper.add(tree.setDim(new GuiSizeRatioRules().widthRatio(0.3F).maxWidth(100)).setExpandableY());
         
-        upper.add(new GuiAnimationPanel(tree, this, false, null).setExpandable());
+        upper.add(new GuiAnimationPanel(this, tree, this, false, null).setExpandable());
         
-        GuiLeftRightBox bottom = new GuiLeftRightBox();
+        GuiLeftRightBox bottom = new GuiLeftRightBox(this);
         add(bottom);
         
-        bottom.addLeft(new GuiButton("cancel", x -> closeThisLayer()).setTranslate("gui.cancel"));
-        bottom.addLeft(new GuiButton("reload", x -> {
+        bottom.addLeft(new GuiButton(this, "cancel", x -> closeThisLayer()).setTranslate("gui.cancel"));
+        bottom.addLeft(new GuiButton(this, "reload", x -> {
             this.selected = null;
             clear();
             init();
         }).setTranslate("gui.reload"));
-        bottom.addRight(new GuiButton("save", x -> {
+        bottom.addRight(new GuiButton(this, "save", x -> {
             if (selected == null)
                 return;
             
@@ -248,16 +248,16 @@ public class GuiBlueprintAdd extends GuiLayer implements GuiAnimationViewerStora
         
         public final ItemStack stack;
         
-        public GuiBlueprintAddEntry(ItemStack stack, Player player) {
+        public GuiBlueprintAddEntry(IGuiParent parent, ItemStack stack, Player player) {
             this.stack = stack;
             flow = GuiFlow.STACK_X;
             
-            add(new GuiShowItem("show", stack).setDim(40, 40));
-            GuiParent right = new GuiParent(GuiFlow.STACK_Y);
+            add(new GuiShowItem(this, "show", stack).setDim(40, 40));
+            GuiParent right = new GuiParent(this, GuiFlow.STACK_Y);
             add(right.setVAlign(VAlign.CENTER).setExpandable());
             
             for (Component line : stack.getTooltipLines(TooltipContext.EMPTY, player, TooltipFlag.NORMAL))
-                right.add(new GuiLabel("label").setTitle(line));
+                right.add(new GuiLabel(this, "label").setTitle(line));
         }
         
         @Override
@@ -313,8 +313,8 @@ public class GuiBlueprintAdd extends GuiLayer implements GuiAnimationViewerStora
         
         public final LittleGroup group;
         
-        public GuiBlueprintAddTreeItem(GuiTree tree, LittleGroup group) {
-            super("item", tree);
+        public GuiBlueprintAddTreeItem(IGuiParent parent, GuiTree tree, LittleGroup group) {
+            super(parent, "item", tree);
             this.group = group;
             this.setTitle(Component.literal(generateGroupName(group)));
         }

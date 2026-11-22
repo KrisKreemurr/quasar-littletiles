@@ -7,12 +7,12 @@ import team.creative.littletiles.common.grid.LittleGrid;
 
 public abstract class GuiConfigureTool extends GuiConfigure {
     
-    public GuiConfigureTool(String name, int width, int height, ContainerSlotView tool) {
-        super(name, width, height, tool);
+    public GuiConfigureTool(boolean client, String name, int width, int height, ContainerSlotView tool) {
+        super(client, name, width, height, tool);
     }
     
-    public GuiConfigureTool(String name, ContainerSlotView tool) {
-        super(name, tool);
+    public GuiConfigureTool(boolean client, String name, ContainerSlotView tool) {
+        super(client, name, tool);
     }
     
     public LittleGrid getGrid() {

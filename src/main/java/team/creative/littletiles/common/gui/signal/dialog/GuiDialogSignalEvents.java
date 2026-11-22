@@ -34,8 +34,8 @@ public class GuiDialogSignalEvents extends GuiLayer {
     public List<GuiSignalComponent> inputs;
     public List<GuiSignalEvent> events;
     
-    public GuiDialogSignalEvents() {
-        super("gui.dialog.signal.overview", 340, 200);
+    public GuiDialogSignalEvents(boolean client) {
+        super(client, "gui.dialog.signal.overview", 340, 200);
         flow = GuiFlow.STACK_Y;
     }
     
@@ -52,15 +52,15 @@ public class GuiDialogSignalEvents extends GuiLayer {
     
     public void addEntry(GuiSignalEvent event) {
         GuiScrollY box = get("content");
-        GuiPanel panel = new GuiPanel("event", GuiFlow.STACK_Y);
+        GuiPanel panel = new GuiPanel(this, "event", GuiFlow.STACK_Y);
         box.add(panel.setExpandableX());
-        panel.add(new GuiLabel("label"));
-        panel.add(new GuiLabel("mode"));
+        panel.add(new GuiLabel(this, "label"));
+        panel.add(new GuiLabel(this, "mode"));
         
-        GuiParent buttons = new GuiParent();
+        GuiParent buttons = new GuiParent(this);
         panel.add(buttons.setExpandableX());
-        buttons.add(new GuiButton("edit", x -> LittleTilesGuiRegistry.SIGNAL_DIALOG.open(getIntegratedParent(), new CompoundTag()).init(inputs, event)).setTranslate("gui.edit"));
-        buttons.add(new GuiButton("reset", x -> event.reset()).setTranslate("gui.clear"));
+        buttons.add(new GuiButton(this, "edit", x -> LittleTilesGuiRegistry.SIGNAL_DIALOG.open(getIntegratedParent(), new CompoundTag()).init(inputs, event)).setTranslate("gui.edit"));
+        buttons.add(new GuiButton(this, "reset", x -> event.reset()).setTranslate("gui.clear"));
         
         event.panel = panel;
         event.update();
@@ -71,31 +71,31 @@ public class GuiDialogSignalEvents extends GuiLayer {
         if (item == null)
             return;
         
-        GuiParent upper = new GuiParent(GuiFlow.STACK_X);
+        GuiParent upper = new GuiParent(this, GuiFlow.STACK_X);
         add(upper.setExpandable());
         
-        GuiScrollY left = new GuiScrollY("content");
+        GuiScrollY left = new GuiScrollY(this, "content");
         left.flow = GuiFlow.STACK_Y;
         upper.add(left.setExpandable());
         
-        GuiScrollY right = new GuiScrollY("components");
+        GuiScrollY right = new GuiScrollY(this, "components");
         right.flow = GuiFlow.STACK_Y;
         upper.add(right.setDim(new GuiFixedDimension(140)).setExpandableY());
         
-        right.add(new GuiLabel("title").setTranslate("gui.signal.components"));
+        right.add(new GuiLabel(this, "title").setTranslate("gui.signal.components"));
         
         for (GuiSignalComponent component : inputs)
-            right.add(new GuiLabel(component.name()).setTitle(Component.literal(component.display())));
+            right.add(new GuiLabel(this, component.name()).setTitle(Component.literal(component.display())));
         
         for (GuiSignalEvent event : events)
             addEntry(event);
         
-        GuiLeftRightBox bottom = new GuiLeftRightBox();
+        GuiLeftRightBox bottom = new GuiLeftRightBox(this);
         add(bottom);
         
-        bottom.addLeft(new GuiButton("cancel", x -> closeThisLayer()).setTranslate("gui.cancel"));
+        bottom.addLeft(new GuiButton(this, "cancel", x -> closeThisLayer()).setTranslate("gui.cancel"));
         
-        bottom.addRight(new GuiButton("save", x -> {
+        bottom.addRight(new GuiButton(this, "save", x -> {
             GuiDialogSignalEvents.this.item.setSignalOutputs(events);
             closeThisLayer();
         }).setTranslate("gui.save"));

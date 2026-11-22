@@ -23,19 +23,19 @@ public class GuiShapeConfiguration extends GuiParent {
     protected final Player player;
     protected final ContainerSlotView tool;
     
-    public GuiShapeConfiguration(Player player, String name, ContainerSlotView tool) {
-        super(name);
+    public GuiShapeConfiguration(IGuiParent parent, Player player, String name, ContainerSlotView tool) {
+        super(parent, name);
         this.flow = GuiFlow.STACK_Y;
         this.player = player;
         this.tool = tool;
-        GuiComboBoxTree<LittleShape> box = new GuiComboBoxTree<>("shape", ShapeRegistry.SHAPE_TREE, x -> Component.translatable("shape." + x)).setDirection(
+        GuiComboBoxTree<LittleShape> box = new GuiComboBoxTree<>(this, "shape", ShapeRegistry.SHAPE_TREE, x -> Component.translatable("shape." + x)).setDirection(
             ExtensionDirection.BELOW_OR_ABOVE_ANY_SIZE);
         box.setExpandableX();
         var shapeInstance = ((ILittleShaper) tool.get().getItem()).getShape(tool.get());
         box.select(shapeInstance.shape);
         add(box);
         
-        add(new GuiScrollY("settings").setHovered().setDim(20, 60).setExpandable());
+        add(new GuiScrollY(this, "settings").setHovered().setDim(20, 60).setExpandable());
         
         changed();
         

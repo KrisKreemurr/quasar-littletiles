@@ -31,8 +31,8 @@ import team.creative.littletiles.common.structure.type.animation.LittleDoor;
 @OnlyIn(Dist.CLIENT)
 public class LittleDoorActivatorGui extends LittleStructureGuiControl {
     
-    public LittleDoorActivatorGui(LittleStructureGui gui, GuiTreeItemStructure item) {
-        super(gui, item);
+    public LittleDoorActivatorGui(IGuiParent parent, LittleStructureGui gui, GuiTreeItemStructure item) {
+        super(parent, gui, item);
         flow = GuiFlow.STACK_Y;
         registerEventChanged(x -> updateTimeline());
     }
@@ -55,10 +55,10 @@ public class LittleDoorActivatorGui extends LittleStructureGuiControl {
             }
         }
         
-        add(new GuiCheckBox("rightClick", rightClick).setTranslate("gui.rightclick").setTooltip("gui.door.rightclick.tooltip"));
+        add(new GuiCheckBox(this, "rightClick", rightClick).setTranslate("gui.rightclick").setTooltip("gui.door.rightclick.tooltip"));
         for (int i = 0; i < item.itemsCount(); i++)
             if (item.getChildStructure(i) instanceof LittleDoor)
-                add(new GuiCheckBox("c" + i, ArrayUtils.contains(activated, i)).setTitle(Component.literal(((GuiTreeItemStructure) item.getItem(i)).getTitle())));
+                add(new GuiCheckBox(this, "c" + i, ArrayUtils.contains(activated, i)).setTitle(Component.literal(((GuiTreeItemStructure) item.getItem(i)).getTitle())));
             
         updateTimeline();
     }

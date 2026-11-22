@@ -54,29 +54,29 @@ public class GuiParticle extends GuiLayer {
             
             @Override
             public void load(GuiParent parent, ParticleSpread spread) {
-                GuiTable table = new GuiTable();
+                GuiTable table = new GuiTable(this);
                 parent.add(table);
-                GuiRow row = new GuiRow();
+                GuiRow row = new GuiRow(this);
                 table.addRow(row);
-                GuiColumn col = new GuiColumn();
+                GuiColumn col = new GuiColumn(this);
                 row.addColumn(col);
-                col.add(new GuiLabeledControl("gui.particle.spread.speedy", new GuiCounterDecimal("speedy", spread.speedY).setStep(0.05)));
+                col.add(new GuiLabeledControl(this, "gui.particle.spread.speedy", new GuiCounterDecimal(this, "speedy", spread.speedY).setStep(0.05)));
                 
-                col = new GuiColumn();
+                col = new GuiColumn(this);
                 row.addColumn(col);
-                col.add(new GuiLabeledControl("gui.particle.spread.spread", new GuiCounterDecimal("deviation", spread.spread).setStep(0.05)));
+                col.add(new GuiLabeledControl(this, "gui.particle.spread.spread", new GuiCounterDecimal(this, "deviation", spread.spread).setStep(0.05)));
                 
-                row = new GuiRow();
+                row = new GuiRow(this);
                 table.addRow(row);
                 
-                col = new GuiColumn();
+                col = new GuiColumn(this);
                 row.addColumn(col);
-                col.add(new GuiLabeledControl("gui.particle.spread.speedx", new GuiCounterDecimal("speedx", spread instanceof ParticleSpreadRandom r ? r.speedX : 0.05).setStep(
+                col.add(new GuiLabeledControl(this, "gui.particle.spread.speedx", new GuiCounterDecimal(this, "speedx", spread instanceof ParticleSpreadRandom r ? r.speedX : 0.05).setStep(
                     0.1)));
                 
-                col = new GuiColumn();
+                col = new GuiColumn(this);
                 row.addColumn(col);
-                col.add(new GuiLabeledControl("gui.particle.spread.speedz", new GuiCounterDecimal("speedz", spread instanceof ParticleSpreadRandom r ? r.speedZ : 0.05).setStep(
+                col.add(new GuiLabeledControl(this, "gui.particle.spread.speedz", new GuiCounterDecimal(this, "speedz", spread instanceof ParticleSpreadRandom r ? r.speedZ : 0.05).setStep(
                     0.1)));
             }
         });
@@ -94,29 +94,29 @@ public class GuiParticle extends GuiLayer {
             
             @Override
             public void load(GuiParent parent, ParticleSpread spread) {
-                GuiTable table = new GuiTable();
+                GuiTable table = new GuiTable(this);
                 parent.add(table);
-                GuiRow row = new GuiRow();
+                GuiRow row = new GuiRow(this);
                 table.addRow(row);
-                GuiColumn col = new GuiColumn();
+                GuiColumn col = new GuiColumn(this);
                 row.addColumn(col);
-                col.add(new GuiLabeledControl("gui.particle.spread.speedy", new GuiCounterDecimal("speedy", spread.speedY).setStep(0.05)));
+                col.add(new GuiLabeledControl(this, "gui.particle.spread.speedy", new GuiCounterDecimal(this, "speedy", spread.speedY).setStep(0.05)));
                 
-                col = new GuiColumn();
+                col = new GuiColumn(this);
                 row.addColumn(col);
-                col.add(new GuiLabeledControl("gui.particle.spread.spread", new GuiCounterDecimal("deviation", spread.spread).setStep(0.05)));
+                col.add(new GuiLabeledControl(this, "gui.particle.spread.spread", new GuiCounterDecimal(this, "deviation", spread.spread).setStep(0.05)));
                 
-                row = new GuiRow();
+                row = new GuiRow(this);
                 table.addRow(row);
                 
-                col = new GuiColumn();
+                col = new GuiColumn(this);
                 row.addColumn(col);
-                col.add(new GuiLabeledControl("gui.particle.spread.radius", new GuiCounterDecimal("radius", spread instanceof ParticleSpreadCircular c ? c.radius : 0.05).setStep(
+                col.add(new GuiLabeledControl(this, "gui.particle.spread.radius", new GuiCounterDecimal(this, "radius", spread instanceof ParticleSpreadCircular c ? c.radius : 0.05).setStep(
                     0.1)));
                 
-                col = new GuiColumn();
+                col = new GuiColumn(this);
                 row.addColumn(col);
-                col.add(new GuiLabeledControl("gui.particle.spread.steps", new GuiCounter("steps", spread instanceof ParticleSpreadCircular c ? c.steps : 30)));
+                col.add(new GuiLabeledControl(this, "gui.particle.spread.steps", new GuiCounter(this, "steps", spread instanceof ParticleSpreadCircular c ? c.steps : 30)));
             }
         });
     }
@@ -139,15 +139,15 @@ public class GuiParticle extends GuiLayer {
         closeThisLayer();
     });
     
-    public GuiParticle(LittleParticleEmitter particle) {
-        super("particle", 200, 230);
+    public GuiParticle(boolean client, LittleParticleEmitter particle) {
+        super(client, "particle", 200, 230);
         this.particle = particle;
     }
     
     @Override
     public void create() {
-        add(control = new GuiParticleControl(particle.spread, particle.settings, particle.count, particle.delay, particle.locked));
-        control.bottom.addRight(new GuiButton("save", x -> {
+        add(control = new GuiParticleControl(this, particle.spread, particle.settings, particle.count, particle.delay, particle.locked));
+        control.bottom.addRight(new GuiButton(this, "save", x -> {
             CompoundTag nbt = new CompoundTag();
             
             nbt.putInt("tickCount", control.count.getValue());
@@ -200,7 +200,7 @@ public class GuiParticle extends GuiLayer {
         
         public ParticleSpread particleSpread;
         
-        public GuiParticleControl(ParticleSpread particleSpread, ParticleSettings settings, int particleCount, int particleDelay, boolean particleLocked) {
+        public GuiParticleControl(IGuiParent parent, ParticleSpread particleSpread, ParticleSettings settings, int particleCount, int particleDelay, boolean particleLocked) {
             this.particleSpread = particleSpread;
             this.flow = GuiFlow.STACK_Y;
             this.setAlign(Align.STRETCH);
@@ -208,57 +208,57 @@ public class GuiParticle extends GuiLayer {
                 if (x.control.is("spread"))
                     loadSpread(particleSpread);
             });
-            GuiParent presets = new GuiParent();
+            GuiParent presets = new GuiParent(this);
             add(presets);
-            presets.add(presetBox = new GuiComboBox<>("presets", new TextMapBuilder<LittleParticlePresets>().addComponent(null, Component.literal("")).addComponent(
+            presets.add(presetBox = new GuiComboBox<>(this, "presets", new TextMapBuilder<LittleParticlePresets>().addComponent(null, Component.literal("")).addComponent(
                 LittleParticlePresets.values(), x -> Component.translatable("gui.particle.preset." + x.name().toLowerCase()))));
             presetBox.setExpandableX();
-            presets.add(new GuiButton("save_preset", x -> {
+            presets.add(new GuiButton(this, "save_preset", x -> {
                 if (presetBox.selected() != null)
                     loadPreset(presetBox.selected());
             }).setTranslate("gui.particle.load"));
             
-            add(new GuiLabeledControl("gui.particle.texture", textureBox = new GuiComboBox<LittleParticleTexture>("texture", new TextMapBuilder<LittleParticleTexture>()
+            add(new GuiLabeledControl(this, "gui.particle.texture", textureBox = new GuiComboBox<LittleParticleTexture>(this, "texture", new TextMapBuilder<LittleParticleTexture>()
                     .addComponent(LittleParticleTexture.values(), x -> x.title()))));
             
-            GuiParent size = new GuiParent();
+            GuiParent size = new GuiParent(this);
             add(size.setVAlign(VAlign.CENTER));
             
-            size.add(new GuiLabel("sizeLabel").setTranslate("gui.particle.size"));
-            size.add(sizeStart = new GuiCounterDecimal("size", 0.4).setStep(0.05));
-            size.add(new GuiLabel("sizeLabel").setTitle(Component.literal("->")));
-            size.add(sizeEnd = new GuiCounterDecimal("sizeend", 0.6).setStep(0.05));
-            size.add(new GuiLabel("sizeDeviationLabel").setTranslate("gui.particle.sizedeviation"));
-            size.add(sizeDiv = new GuiCounterDecimal("sizeDiv", 0.02).setStep(0.02));
+            size.add(new GuiLabel(this, "sizeLabel").setTranslate("gui.particle.size"));
+            size.add(sizeStart = new GuiCounterDecimal(this, "size", 0.4).setStep(0.05));
+            size.add(new GuiLabel(this, "sizeLabel").setTitle(Component.literal("->")));
+            size.add(sizeEnd = new GuiCounterDecimal(this, "sizeend", 0.6).setStep(0.05));
+            size.add(new GuiLabel(this, "sizeDeviationLabel").setTranslate("gui.particle.sizedeviation"));
+            size.add(sizeDiv = new GuiCounterDecimal(this, "sizeDiv", 0.02).setStep(0.02));
             
-            add(color = new GuiColorPicker("color", new Color(255, 255, 255), true, 1));
-            add(randomColor = new GuiCheckBox("randomColor", settings.randomColor).setTranslate("gui.particle.randomcolor"));
+            add(color = new GuiColorPicker(this, "color", new Color(255, 255, 255), true, 1));
+            add(randomColor = new GuiCheckBox(this, "randomColor", settings.randomColor).setTranslate("gui.particle.randomcolor"));
             
-            GuiParent physic = new GuiParent();
+            GuiParent physic = new GuiParent(this);
             add(physic.setVAlign(VAlign.CENTER));
-            physic.add(new GuiLabeledControl("gui.particle.gravity", gravity = new GuiSlider("gravity", 0, -1, 1)));
-            physic.add(collision = new GuiCheckBox("collision", settings.collision).setTranslate("gui.particle.collision"));
+            physic.add(new GuiLabeledControl(this, "gui.particle.gravity", gravity = new GuiSlider(this, "gravity", 0, -1, 1)));
+            physic.add(collision = new GuiCheckBox(this, "collision", settings.collision).setTranslate("gui.particle.collision"));
             
-            GuiParent ageParent = new GuiParent();
+            GuiParent ageParent = new GuiParent(this);
             add(ageParent.setVAlign(VAlign.CENTER));
-            ageParent.add(new GuiLabeledControl("gui.particle.age", age = new GuiSteppedSlider("age", 20, 1, 100)));
-            ageParent.add(new GuiLabeledControl("gui.particle.agedeviation", ageDiv = new GuiCounter("ageDiv", 20, 1, 100)));
+            ageParent.add(new GuiLabeledControl(this, "gui.particle.age", age = new GuiSteppedSlider(this, "age", 20, 1, 100)));
+            ageParent.add(new GuiLabeledControl(this, "gui.particle.agedeviation", ageDiv = new GuiCounter(this, "ageDiv", 20, 1, 100)));
             
-            GuiParent amount = new GuiParent();
+            GuiParent amount = new GuiParent(this);
             add(amount.setVAlign(VAlign.CENTER));
-            amount.add(new GuiLabeledControl("gui.particle.count", count = new GuiCounter("counter", particleCount)));
-            amount.add(new GuiLabeledControl("gui.particle.per", delay = new GuiCounter("delay", particleDelay)));
-            amount.add(new GuiLabel("tickLabel").setTranslate("gui.particle.tick"));
+            amount.add(new GuiLabeledControl(this, "gui.particle.count", count = new GuiCounter(this, "counter", particleCount)));
+            amount.add(new GuiLabeledControl(this, "gui.particle.per", delay = new GuiCounter(this, "delay", particleDelay)));
+            amount.add(new GuiLabel(this, "tickLabel").setTranslate("gui.particle.tick"));
             
-            add(spread = new GuiTabButton<>("spread", new TextMapBuilder<ParticleSpreadGuiHandler>().addEntrySet(REGISTRY.entrySet(), (x) -> Component.translatable(
+            add(spread = new GuiTabButton<>(this, "spread", new TextMapBuilder<ParticleSpreadGuiHandler>().addEntrySet(REGISTRY.entrySet(), (x) -> Component.translatable(
                 "gui.particle.spread." + x.getKey()))));
             
-            add(spreadPanel = new GuiPanel());
+            add(spreadPanel = new GuiPanel(this));
             spread.select(REGISTRY.get(particleSpread.getClass()));
             
-            bottom = new GuiLeftRightBox();
+            bottom = new GuiLeftRightBox(this);
             add(bottom);
-            bottom.addLeft(locked = new GuiCheckBox("locked", particleLocked).setTranslate("gui.structure.locked"));
+            bottom.addLeft(locked = new GuiCheckBox(this, "locked", particleLocked).setTranslate("gui.structure.locked"));
             
             loadParticleSettings(settings);
             loadSpread(particleSpread);

@@ -28,13 +28,13 @@ public class GuiSignalNodeVirtualInput extends GuiSignalNode {
     private SignalInputCondition testCondition;
     private SignalContext testContext;
     
-    public GuiSignalNodeVirtualInput(@Nullable SignalPosition position) {
-        super("v[]", null);
+    public GuiSignalNodeVirtualInput(IGuiParent parent, @Nullable SignalPosition position) {
+        super(parent, "v[]", null);
         this.conditions = new SignalInputCondition[0];
     }
     
-    public GuiSignalNodeVirtualInput(SignalInputVirtualVariable variable, @Nullable SignalPosition position) throws ParseException {
-        super("v[]", null);
+    public GuiSignalNodeVirtualInput(IGuiParent parent, SignalInputVirtualVariable variable, @Nullable SignalPosition position) throws ParseException {
+        super(parent, "v[]", null);
         this.conditions = variable.conditions;
         updateLabel();
     }
@@ -107,7 +107,7 @@ public class GuiSignalNodeVirtualInput extends GuiSignalNode {
         
         if (testContext != null) {
             if (testLabel == null)
-                testLabel = new GuiLabel("");
+                testLabel = new GuiLabel(this, "");
             insertControlBefore(button, testLabel);
             testCondition = condition;
             this.testContext = testContext;

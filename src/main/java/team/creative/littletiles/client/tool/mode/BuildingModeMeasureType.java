@@ -63,7 +63,7 @@ public class BuildingModeMeasureType extends BuildingModeFeature implements Buil
     
     @Override
     public void createInfo(GuiParent parent) {
-        parent.add(label = new GuiLabel(title));
+        parent.add(label = new GuiLabel(parent, title));
         var stack = MC.player.getMainHandItem();
         if (stack.has(LittleTilesRegistry.MEASUREMENT_TYPE))
             changedLabel(stack.get(LittleTilesRegistry.MEASUREMENT_TYPE).type);

@@ -19,8 +19,8 @@ public class GuiBlueprintMerge extends GuiLayer {
     public GuiBlueprint blueprint;
     public GuiTreeItemStructure structure;
     
-    public GuiBlueprintMerge() {
-        super("gui.blueprint.merge");
+    public GuiBlueprintMerge(boolean client) {
+        super(client, "gui.blueprint.merge");
         setDim(new GuiFixedDimension(150));
         flow = GuiFlow.STACK_Y;
     }
@@ -47,7 +47,7 @@ public class GuiBlueprintMerge extends GuiLayer {
         if (structure == null)
             return;
         
-        add(new GuiLabel("title").setTranslate("gui.blueprint.merge.title", structure.getTitle()));
+        add(new GuiLabel(this, "title").setTranslate("gui.blueprint.merge.title", structure.getTitle()));
         
         TextMapBuilder<GuiTreeItemStructure> map = new TextMapBuilder<GuiTreeItemStructure>();
         blueprint.actionOnAllItems(x -> {
@@ -61,14 +61,14 @@ public class GuiBlueprintMerge extends GuiLayer {
         boolean isEmpty = map.size() == 0;
         if (isEmpty)
             map.addComponent(null, Component.translatable("gui.blueprint.merge.not_found"));
-        GuiComboBox<GuiTreeItemStructure> box = new GuiComboBox<>("box", map);
+        GuiComboBox<GuiTreeItemStructure> box = new GuiComboBox<>(this, "box", map);
         add(box.setExpandableX().setEnabled(!isEmpty));
         
-        GuiLeftRightBox bottom = new GuiLeftRightBox();
+        GuiLeftRightBox bottom = new GuiLeftRightBox(this);
         add(bottom);
         
-        bottom.addLeft(new GuiButton("cancel", x -> closeThisLayer()).setTranslate("gui.cancel"));
-        bottom.addRight(new GuiButton("save", x -> {
+        bottom.addLeft(new GuiButton(this, "cancel", x -> closeThisLayer()).setTranslate("gui.cancel"));
+        bottom.addRight(new GuiButton(this, "save", x -> {
             GuiTreeItemStructure selected = box.selected();
             if (selected == null)
                 return;

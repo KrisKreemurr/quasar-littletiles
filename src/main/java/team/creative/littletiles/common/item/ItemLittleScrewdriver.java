@@ -27,7 +27,7 @@ public class ItemLittleScrewdriver extends Item implements ILittleSelector, IIte
     
     @Override
     public GuiConfigure getConfigure(Player player, ContainerSlotView view, boolean secondary) {
-        return new GuiScrewdriver(view);
+        return new GuiScrewdriver(player.level().isClientSide(), view);
     }
     
     @Override

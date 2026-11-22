@@ -32,8 +32,8 @@ import team.creative.littletiles.common.structure.type.animation.LittleDoor;
 @OnlyIn(Dist.CLIENT)
 public class LittleDoorAxisGui extends LittleDoorBaseGui {
     
-    public LittleDoorAxisGui(LittleStructureGui gui, GuiTreeItemStructure item) {
-        super(gui, item);
+    public LittleDoorAxisGui(IGuiParent parent, LittleStructureGui gui, GuiTreeItemStructure item) {
+        super(parent, gui, item);
         registerEventChanged(x -> {
             if (x.control.is("even"))
                 get("viewer", GuiIsoAnimationViewer.class).setEven(((GuiCheckBox) x.control).value);
@@ -57,13 +57,13 @@ public class LittleDoorAxisGui extends LittleDoorBaseGui {
             rotation = new LittleAxisDoorRotationDirection(viewer.axis(), true);
         Axis axis = rotation.axis;
         viewer.setView(Facing.get(axis, true));
-        GuiTabsMapped<Function<GuiParent, LittleAxisDoorRotation>> tabs = new GuiTabsMapped<>("tabs");
+        GuiTabsMapped<Function<GuiParent, LittleAxisDoorRotation>> tabs = new GuiTabsMapped<>(this, "tabs");
         tabs.createTab(x -> new LittleAxisDoorRotationDirection(viewer.axis(), (Boolean) x.get("direction", GuiStateButton.class).selected()), Component.translatable(
             "gui.door.rotation.direction")).add(
-                new GuiStateButton<Boolean>("direction", rotation instanceof LittleAxisDoorRotationDirection d && d.clockwise, new TextMapBuilder<Boolean>().addComponent(false,
+                new GuiStateButton<Boolean>(this, "direction", rotation instanceof LittleAxisDoorRotationDirection d && d.clockwise, new TextMapBuilder<Boolean>().addComponent(false,
                     Component.translatable("gui.clockwise")).addComponent(true, Component.translatable("gui.counterclockwise"))));
         
-        GuiTextfield angle = new GuiTextfield("angle").setFloatOnly();
+        GuiTextfield angle = new GuiTextfield(this, "angle").setFloatOnly();
         angle.setText(rotation instanceof LittleAxisDoorRotationFixed d ? "" + d.degree : "90");
         tabs.createTab(x -> new LittleAxisDoorRotationFixed(viewer.axis(), x.get("angle", GuiTextfield.class).parseDouble()), Component.translatable("gui.door.rotation.angle"))
                 .add(angle);
@@ -74,9 +74,9 @@ public class LittleDoorAxisGui extends LittleDoorBaseGui {
         else
             tabs.select(1);
         
-        add(new GuiCheckBox("even", viewer.isEven()).setTranslate("gui.door.axis.even"));
+        add(new GuiCheckBox(this, "even", viewer.isEven()).setTranslate("gui.door.axis.even"));
         
-        add(new GuiGridConfig("grid", getPlayer(), viewer.getGrid(), x -> {
+        add(new GuiGridConfig(this, "grid", getPlayer(), viewer.getGrid(), x -> {
             LittleBox box = viewer.getBox();
             box.convertTo(viewer.getGrid(), x);
             

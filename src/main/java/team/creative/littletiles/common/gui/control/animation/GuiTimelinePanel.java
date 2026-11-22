@@ -47,14 +47,14 @@ public class GuiTimelinePanel extends GuiParent {
     public final GuiTimeline time;
     public final GuiBlueprintAnimationHandler handler;
     
-    public GuiTimelinePanel(GuiBlueprintAnimationHandler handler, int duration) {
+    public GuiTimelinePanel(IGuiParent parent, GuiBlueprintAnimationHandler handler, int duration) {
         setDim(200, -1);
         flow = GuiFlow.STACK_Y;
         this.handler = handler;
         setExpandableX();
         addBefore();
         
-        time = new GuiTimeline(handler);
+        time = new GuiTimeline(this, handler);
         time.setDim(new GuiSizeRules().minHeight(10));
         time.setDuration(duration);
         add(time.setExpandableX());

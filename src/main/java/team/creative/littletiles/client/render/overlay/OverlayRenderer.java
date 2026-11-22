@@ -49,7 +49,7 @@ public class OverlayRenderer implements IGuiIntegratedParent, LevelAwareHandler 
     private static final Minecraft MC = Minecraft.getInstance();
     
     private boolean doneInit = false;
-    private final OverlayGuiLayer transparentLayer = new OverlayGuiLayer("overlay");
+    private final OverlayGuiLayer transparentLayer = new OverlayGuiLayer(isClient(), "overlay");
     
     private final SingletonList<GuiLayer> layers = new SingletonList<>(transparentLayer);
     private final Screen screen = new Screen(Component.literal("overlay")) {};
@@ -202,10 +202,10 @@ public class OverlayRenderer implements IGuiIntegratedParent, LevelAwareHandler 
     
     public static class OverlayGuiLayer extends GuiLayer {
         
-        private final GuiActionDisplay actionDisplay = new GuiActionDisplay("action").setMessageCount(1);
+        private final GuiActionDisplay actionDisplay = new GuiActionDisplay(this, "action").setMessageCount(1);
         
-        public OverlayGuiLayer(String name) {
-            super(name);
+        public OverlayGuiLayer(boolean client, String name) {
+            super(client, name);
         }
         
         private TupleList<GuiControl, OverlayPosition> positions = new TupleList<>();

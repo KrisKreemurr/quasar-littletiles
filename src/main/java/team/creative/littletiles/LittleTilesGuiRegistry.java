@@ -32,23 +32,21 @@ import team.creative.littletiles.common.structure.type.premade.LittleStructureBu
 
 public class LittleTilesGuiRegistry {
     
-    public static final GuiSyncGlobalLayer<GuiDialogSignalEvents> SIGNAL_EVENTS_DIALOG = GuiSyncHolder.GLOBAL.layer("signal_events_dialog", (x, y) -> new GuiDialogSignalEvents());
-    public static final GuiSyncGlobalLayer<GuiDialogSignal> SIGNAL_DIALOG = GuiSyncHolder.GLOBAL.layer("signal_dialog", (x, y) -> new GuiDialogSignal());
-    public static final GuiSyncGlobalLayer<GuiDialogSignalInput> INPUT_DIALOG = GuiSyncHolder.GLOBAL.layer("signal_input_dialog", (x, y) -> new GuiDialogSignalInput());
-    public static final GuiSyncGlobalLayer<GuiDialogSignalMode> MODE_DIALOG = GuiSyncHolder.GLOBAL.layer("signal_mode_dialog", (x, y) -> new GuiDialogSignalMode());
-    public static final GuiSyncGlobalLayer<GuiDialogSignalVirtualInput> VIRTUAL_INPUT_DIALOG = GuiSyncHolder.GLOBAL.layer("signal_virtual_input_dialog", (x,
-            y) -> new GuiDialogSignalVirtualInput());
-    public static final GuiSyncGlobalLayer<GuiDialogSignalVirtualNumberInput> VIRTUAL_NUMBER_DIALOG = GuiSyncHolder.GLOBAL.layer("signal_virtual_number_dialog", (x,
-            y) -> new GuiDialogSignalVirtualNumberInput());
+    public static final GuiSyncGlobalLayer<GuiDialogSignalEvents> SIGNAL_EVENTS_DIALOG = GuiSyncHolder.GLOBAL.layer("signal_events_dialog", (client, provider, y) -> new GuiDialogSignalEvents(client));
+    public static final GuiSyncGlobalLayer<GuiDialogSignal> SIGNAL_DIALOG = GuiSyncHolder.GLOBAL.layer("signal_dialog", (client, provider, y) -> new GuiDialogSignal(client));
+    public static final GuiSyncGlobalLayer<GuiDialogSignalInput> INPUT_DIALOG = GuiSyncHolder.GLOBAL.layer("signal_input_dialog", (client, provider, y) -> new GuiDialogSignalInput(client));
+    public static final GuiSyncGlobalLayer<GuiDialogSignalMode> MODE_DIALOG = GuiSyncHolder.GLOBAL.layer("signal_mode_dialog", (client, provider, y) -> new GuiDialogSignalMode(client));
+    public static final GuiSyncGlobalLayer<GuiDialogSignalVirtualInput> VIRTUAL_INPUT_DIALOG = GuiSyncHolder.GLOBAL.layer("signal_virtual_input_dialog", (client, provider, y) -> new GuiDialogSignalVirtualInput(client));
+    public static final GuiSyncGlobalLayer<GuiDialogSignalVirtualNumberInput> VIRTUAL_NUMBER_DIALOG = GuiSyncHolder.GLOBAL.layer("signal_virtual_number_dialog", (client, provider, y) -> new GuiDialogSignalVirtualNumberInput(client));
     
     public static final LittleStructureGuiCreator STRUCTURE_SIGNAL = GuiCreator.register("structure_signal", new LittleStructureGuiCreator((nbt, player, structure) -> {
-        if (player.level().isClientSide) {
-            var events = new GuiDialogSignalEvents();
+        if (player.level().isClientSide()) {
+            var events = new GuiDialogSignalEvents(nbt);
             events.init(new GuiSignalStructurePlaced(structure, true, true));
             events.clear();
             return events;
         }
-        return new GuiDialogSignalEvents();
+        return new GuiDialogSignalEvents(player.level().isClientSide());
     }, x -> x.wrenchEditSignal));
     
     public static final GuiCreatorBasic OPEN_CONFIG = GuiCreator.register("configure", new GuiCreatorBasic((nbt, player) -> {
@@ -58,25 +56,25 @@ public class LittleTilesGuiRegistry {
     }));
     
     public static final LittleStructureGuiCreator STORAGE = GuiCreator.register("storage", new LittleStructureGuiCreator((nbt, player,
-            structure) -> new GuiStorage((LittleStorage) structure, player), x -> x.storageGui));
+            structure) -> new GuiStorage(nbt, (LittleStorage) structure, player), x -> x.storageGui));
     public static final LittleStructureGuiCreator BLANKOMATIC = GuiCreator.register("blankomatic", new LittleStructureGuiCreator((nbt, player,
-            structure) -> new GuiBlankOMatic((LittleBlankOMatic) structure), x -> x.blankomaticGui));
+            structure) -> new GuiBlankOMatic(nbt, (LittleBlankOMatic) structure), x -> x.blankomaticGui));
     
-    public static final GuiCreatorBasic EXPORTER = GuiCreator.register("exporter", new GuiCreatorBasic((nbt, player) -> new GuiExport()));
-    public static final GuiCreatorBasic IMPORTER = GuiCreator.register("importer", new GuiCreatorBasic((nbt, player) -> new GuiImport()));
+    public static final GuiCreatorBasic EXPORTER = GuiCreator.register("exporter", new GuiCreatorBasic((nbt, player) -> new GuiExport(player.level().isClientSide())));
+    public static final GuiCreatorBasic IMPORTER = GuiCreator.register("importer", new GuiCreatorBasic((nbt, player) -> new GuiImport(player.level().isClientSide())));
     
     public static final LittleStructureGuiCreator PARTICLE = GuiCreator.register("particle", new LittleStructureGuiCreator((nbt, player,
-            structure) -> new GuiParticle((LittleParticleEmitter) structure), x -> x.particleGui));
+            structure) -> new GuiParticle(nbt, (LittleParticleEmitter) structure), x -> x.particleGui));
     public static final LittleStructureGuiCreator ITEM_HOLDER = GuiCreator.register("item_holder", new LittleStructureGuiCreator((nbt, player,
-            structure) -> new GuiItemHolder((LittleItemHolder) structure), x -> x.itemHolderGui));
+            structure) -> new GuiItemHolder(nbt, (LittleItemHolder) structure), x -> x.itemHolderGui));
     
     public static final LittleStructureGuiCreator STRUCTURE_BUILDER = GuiCreator.register("structure_builder", new LittleStructureGuiCreator((nbt, player,
-            structure) -> new GuiBuilder((LittleStructureBuilder) structure), x -> x.structureBuilderGui));
+            structure) -> new GuiBuilder(nbt, (LittleStructureBuilder) structure), x -> x.structureBuilderGui));
     public static final LittleStructureGuiCreator WORKBENCH = GuiCreator.register("workbench", new LittleStructureGuiCreator((nbt, player,
-            structure) -> new GuiWorkbench(), x -> x.workbenchGui));
+            structure) -> new GuiWorkbench(nbt), x -> x.workbenchGui));
     
     public static final LittleStructureGuiCreator PRINTER3D = GuiCreator.register("3d_printer", new LittleStructureGuiCreator((nbt, player,
-            structure) -> new Gui3dPrinter((Little3dPrinter) structure), x -> x.printer3dGui));
+            structure) -> new Gui3dPrinter(nbt, (Little3dPrinter) structure), x -> x.printer3dGui));
     
     public static void init() {}
     

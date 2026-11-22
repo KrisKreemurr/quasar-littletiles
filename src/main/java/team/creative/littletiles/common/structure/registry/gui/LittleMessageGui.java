@@ -22,17 +22,17 @@ import team.creative.littletiles.common.structure.type.LittleStructureMessage;
 @OnlyIn(Dist.CLIENT)
 public class LittleMessageGui extends LittleStructureGuiControl {
     
-    public LittleMessageGui(LittleStructureGui gui, GuiTreeItemStructure item) {
-        super(gui, item);
+    public LittleMessageGui(IGuiParent parent, LittleStructureGui gui, GuiTreeItemStructure item) {
+        super(parent, gui, item);
     }
     
     @Override
     public void create(@Nullable LittleStructure structure) {
         flow = GuiFlow.STACK_Y;
-        add(new GuiCheckBox("rightclick", structure instanceof LittleStructureMessage m ? m.allowRightClick : true).setTranslate("gui.message.rightclick"));
-        add(new GuiCheckBox("status", structure instanceof LittleStructureMessage m ? m.status : false).setTranslate("gui.message.status"));
+        add(new GuiCheckBox(this, "rightclick", structure instanceof LittleStructureMessage m ? m.allowRightClick : true).setTranslate("gui.message.rightclick"));
+        add(new GuiCheckBox(this, "status", structure instanceof LittleStructureMessage m ? m.status : false).setTranslate("gui.message.status"));
         
-        GuiListBoxBase<GuiTextfield> list = new GuiListBoxBase<>("lines", true, new ArrayList<>());
+        GuiListBoxBase<GuiTextfield> list = new GuiListBoxBase<>(this, "lines", true, new ArrayList<>());
         add(list.setDim(new GuiSizeRule.GuiSizeRules().prefHeight(100)));
         List<String> lines;
         if (structure instanceof LittleStructureMessage m && m.text != null && m.text.size() > 0)
@@ -41,10 +41,10 @@ public class LittleMessageGui extends LittleStructureGuiControl {
             lines = Arrays.asList("Hello World!");
         
         for (int i = 0; i < lines.size(); i++)
-            list.addItem((GuiTextfield) new GuiTextfield("" + i, lines.get(i), LittleTiles.CONFIG.general.messageStructureLength).setExpandableX());
+            list.addItem((GuiTextfield) new GuiTextfield(this, "" + i, lines.get(i), LittleTiles.CONFIG.general.messageStructureLength).setExpandableX());
         
-        add(new GuiButton("add", x -> {
-            list.addItem((GuiTextfield) new GuiTextfield("added", "", LittleTiles.CONFIG.general.messageStructureLength).setExpandableX());
+        add(new GuiButton(this, "add", x -> {
+            list.addItem((GuiTextfield) new GuiTextfield(this, "added", "", LittleTiles.CONFIG.general.messageStructureLength).setExpandableX());
         }).setTranslate("gui.add"));
     }
     

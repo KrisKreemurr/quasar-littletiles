@@ -22,13 +22,13 @@ public abstract class GuiConfigure extends GuiLayer {
         tool.changed();
     });
     
-    public GuiConfigure(String name, int width, int height, ContainerSlotView tool) {
-        super(name, width, height);
+    public GuiConfigure(boolean client, String name, int width, int height, ContainerSlotView tool) {
+        super(client, name, width, height);
         this.tool = tool;
     }
     
-    public GuiConfigure(String name, ContainerSlotView tool) {
-        super(name);
+    public GuiConfigure(boolean client, String name, ContainerSlotView tool) {
+        super(client, name);
         this.tool = tool;
     }
     

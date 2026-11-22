@@ -60,14 +60,14 @@ public class GuiSignalNodeComparator extends GuiSignalNode {
     private SignalInputCondition testCondition;
     private SignalContext testContext;
     
-    public GuiSignalNodeComparator(SignalLogicComparator comparater, SignalPosition position) {
-        super(comparater.operator, position);
+    public GuiSignalNodeComparator(IGuiParent parent, SignalLogicComparator comparater, SignalPosition position) {
+        super(parent, comparater.operator, position);
         this.comparater = comparater;
         
         // After button
-        lower = new GuiParent();
+        lower = new GuiParent(this);
         add(lower.setScale(0.5));
-        lower.add(new GuiButton("", x -> {
+        lower.add(new GuiButton(this, "", x -> {
             if (x == 1) {
                 if (second != null)
                     second.disconnect(controller());
@@ -79,9 +79,9 @@ public class GuiSignalNodeComparator extends GuiSignalNode {
     @Override
     protected void beforeAddingButton() {
         super.beforeAddingButton();
-        upper = new GuiParent();
+        upper = new GuiParent(this);
         add(upper.setScale(0.5));
-        upper.add(new GuiButton("", x -> {
+        upper.add(new GuiButton(this, "", x -> {
             if (x == 1) {
                 if (first != null)
                     first.disconnect(controller());
@@ -191,7 +191,7 @@ public class GuiSignalNodeComparator extends GuiSignalNode {
         
         if (testContext != null) {
             if (testLabel == null)
-                testLabel = new GuiLabel("");
+                testLabel = new GuiLabel(this, "");
             upper.add(testLabel);
             testCondition = condition;
             this.testContext = testContext;

@@ -17,16 +17,16 @@ public class GuiFilterConfiguration extends GuiParent {
     protected final ContainerSlotView view;
     protected final GuiElementFilter filterElement;
     
-    public GuiFilterConfiguration(Player player, String name, ContainerSlotView view) {
-        super(name);
+    public GuiFilterConfiguration(IGuiParent parent, Player player, String name, ContainerSlotView view) {
+        super(parent, name);
         this.flow = GuiFlow.STACK_Y;
         this.view = view;
         
         var filter = TileFilterComponent.getOrCreate(view.get());
         BiFilter<IParentCollection, LittleTile> selector = filter.getFilter();
         boolean activeFilter = filter.hasFilter();
-        add(new GuiLabel("filter_label").setTranslate("gui.filter"));
-        add(new GuiCheckBox("any", selector == null || !activeFilter).setTranslate("gui.any"));
+        add(new GuiLabel(this, "filter_label").setTranslate("gui.filter"));
+        add(new GuiCheckBox(this, "any", selector == null || !activeFilter).setTranslate("gui.any"));
         add(filterElement = (GuiElementFilter) GuiElementFilter.ofGroup(player, selector).setExpandableX().setDim(new GuiSizeRules().prefHeight(100)));
     }
     

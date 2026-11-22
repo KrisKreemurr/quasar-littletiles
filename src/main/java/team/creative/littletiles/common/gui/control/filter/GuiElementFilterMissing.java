@@ -11,8 +11,8 @@ public class GuiElementFilterMissing extends GuiElementFilter {
     
     protected GuiStackSelector selector;
     
-    public GuiElementFilterMissing() {
-        add(new GuiLabel("missing").setTranslate("gui.filter.missing"));
+    public GuiElementFilterMissing(IGuiParent parent) {
+        add(new GuiLabel(this, "missing").setTranslate("gui.filter.missing"));
     }
     
     @Override

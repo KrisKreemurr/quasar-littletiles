@@ -13,8 +13,8 @@ public class GuiDialogSignalVirtualNumberInput extends GuiLayer {
     public GuiSignalNodeVirtualNumberInput input;
     public int number;
     
-    public GuiDialogSignalVirtualNumberInput() {
-        super("gui.dialog.signal.virtual_number");
+    public GuiDialogSignalVirtualNumberInput(boolean client) {
+        super(client, "gui.dialog.signal.virtual_number");
         setDim(new GuiFixedDimension(100));
         flow = GuiFlow.STACK_Y;
     }
@@ -29,14 +29,14 @@ public class GuiDialogSignalVirtualNumberInput extends GuiLayer {
     public void create() {
         if (input == null)
             return;
-        GuiCounter counter = new GuiCounter("number", number, 0, 256);
+        GuiCounter counter = new GuiCounter(this, "number", number, 0, 256);
         add(counter.setExpandableX());
         
-        GuiLeftRightBox bottom = new GuiLeftRightBox();
+        GuiLeftRightBox bottom = new GuiLeftRightBox(this);
         add(bottom);
         
-        bottom.addLeft(new GuiButton("cancel", x -> closeThisLayer()).setTranslate("gui.cancel"));
-        bottom.addRight(new GuiButton("save", x -> {
+        bottom.addLeft(new GuiButton(this, "cancel", x -> closeThisLayer()).setTranslate("gui.cancel"));
+        bottom.addRight(new GuiButton(this, "save", x -> {
             input.number = counter.getValue();
             input.updateLabel();
             closeThisLayer();

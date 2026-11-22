@@ -34,14 +34,14 @@ public class LittleStorageGui extends LittleStructureGuiControl {
     public GuiCheckBox locked;
     public GuiConfigSubControlNested sortingControl;
     
-    public LittleStorageGui(LittleStructureGui type, GuiTreeItemStructure item) {
-        super(type, item);
+    public LittleStorageGui(IGuiParent parent, LittleStructureGui type, GuiTreeItemStructure item) {
+        super(parent, type, item);
         flow = GuiFlow.STACK_Y;
     }
     
     @Override
     public void create(@Nullable LittleStructure structure) {
-        add(new GuiLabel("space").setTitle(new TextBuilder().text("space: " + LittleStorage.getSizeOfInventory(item.group)).build()));
+        add(new GuiLabel(this, "space").setTitle(new TextBuilder().text("space: " + LittleStorage.getSizeOfInventory(item.group)).build()));
         boolean invisible = false;
         boolean whitelist = false;
         List<CreativeIngredient> filter = null;
@@ -50,14 +50,14 @@ public class LittleStorageGui extends LittleStructureGuiControl {
             whitelist = s.whitelist;
             filter = s.filter;
         }
-        add(new GuiCheckBox("invisible", invisible).setTranslate("gui.blueprint.storage.invisible"));
+        add(new GuiCheckBox(this, "invisible", invisible).setTranslate("gui.blueprint.storage.invisible"));
         
         SortingList sortingList = new SortingList(whitelist);
         if (filter != null)
             sortingList.entries.addAll(filter);
         
         ICreativeConfigHolder holder = ConfigHolderObject.createUnrelated(CreativeConfigRegistry.ROOT, Side.SERVER, sortingList, new SortingList());
-        add(sortingControl = new GuiConfigSubControlNested("filter", ConfigTypeConveration.FAKE_PARENT, null, Side.SERVER, null, true));
+        add(sortingControl = new GuiConfigSubControlNested(this, "filter", ConfigTypeConveration.FAKE_PARENT, null, Side.SERVER, null, true));
         sortingControl.setDim(new GuiSizeRules().maxWidth(200).maxHeight(200));
         sortingControl.load(holder, sortingList);
         sortingControl.createControls();

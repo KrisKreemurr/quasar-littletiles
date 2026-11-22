@@ -57,8 +57,8 @@ public class GuiScrewdriver extends GuiConfigure {
     
     protected GuiElementFilter filter;
     
-    public GuiScrewdriver(ContainerSlotView view) {
-        super("screwdriver", 200, 205, view);
+    public GuiScrewdriver(boolean client, ContainerSlotView view) {
+        super(client, "screwdriver", 200, 205, view);
         flow = GuiFlow.STACK_Y;
     }
     
@@ -70,40 +70,40 @@ public class GuiScrewdriver extends GuiConfigure {
         var stack = tool.get();
         SelectionComponent component = SelectionComponent.getOrDefault(stack);
         
-        GuiComboBox<SelectionMode> box = new GuiComboBox<>("selection_mode", new TextMapBuilder<SelectionMode>().addEntrySet(SelectionMode.REGISTRY.entrySet(), x -> x.getValue()
+        GuiComboBox<SelectionMode> box = new GuiComboBox<>(this, "selection_mode", new TextMapBuilder<SelectionMode>().addEntrySet(SelectionMode.REGISTRY.entrySet(), x -> x.getValue()
                 .getTranslation()));
         box.select(component.mode);
         add(box.setExpandableX());
         
-        add(new GuiLabel("filter_label").setTranslate("gui.filter"));
+        add(new GuiLabel(this, "filter_label").setTranslate("gui.filter"));
         add(filter = (GuiElementFilter) GuiElementFilter.ofGroup(getPlayer(), lastSelectedFilter).setExpandableX().setDim(new GuiSizeRules().prefHeight(100)));
-        add(new GuiCheckBox("remove", false).setTranslate("gui.remove"));
+        add(new GuiCheckBox(this, "remove", false).setTranslate("gui.remove"));
         
-        add(new GuiCheckBox("replace", false).setTranslate("gui.replace_with"));
+        add(new GuiCheckBox(this, "replace", false).setTranslate("gui.replace_with"));
         
-        GuiStackSelector selector = new GuiStackSelector("replacement", getPlayer(), LittleGuiUtils.getCollector(getPlayer()), true);
+        GuiStackSelector selector = new GuiStackSelector(this, "replacement", getPlayer(), LittleGuiUtils.getCollector(getPlayer()), true);
         if (lastSelectedReplaceStack != null)
             selector.setSelectedForce(lastSelectedReplaceStack);
         add(selector.setExpandableX());
         
         Color color = new Color(255, 255, 255, 255);
-        add(new GuiCheckBox("colorize", false).setTranslate("gui.colorize"));
+        add(new GuiCheckBox(this, "colorize", false).setTranslate("gui.colorize"));
         
-        add(new GuiColorPicker("picker", color, LittleTiles.CONFIG.isTransparencyEnabled(getPlayer()), LittleTiles.CONFIG.getMinimumTransparency(getPlayer())).setExpandableX());
+        add(new GuiColorPicker(this, "picker", color, LittleTiles.CONFIG.isTransparencyEnabled(getPlayer()), LittleTiles.CONFIG.getMinimumTransparency(getPlayer())).setExpandableX());
         
-        GuiLeftRightBox actions = new GuiLeftRightBox().addLeft(new GuiButton("undo", x -> {
+        GuiLeftRightBox actions = new GuiLeftRightBox(this).addLeft(new GuiButton(this, "undo", x -> {
             try {
                 LittleTilesClient.ACTION_HANDLER.undo();
             } catch (LittleActionException e) {
                 getPlayer().sendSystemMessage(Component.literal(e.getLocalizedMessage()));
             }
-        }).setTranslate("gui.undo")).addLeft(new GuiButton("redo", x -> {
+        }).setTranslate("gui.undo")).addLeft(new GuiButton(this, "redo", x -> {
             try {
                 LittleTilesClient.ACTION_HANDLER.redo();
             } catch (LittleActionException e) {
                 getPlayer().sendSystemMessage(Component.literal(e.getLocalizedMessage()));
             }
-        }).setTranslate("gui.redo")).addRight(new GuiButton("run", x -> {
+        }).setTranslate("gui.redo")).addRight(new GuiButton(this, "run", x -> {
             try {
                 LittleAction action = getDesiredAction();
                 if (action != null)

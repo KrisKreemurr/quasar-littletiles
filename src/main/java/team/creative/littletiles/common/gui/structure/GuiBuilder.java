@@ -64,48 +64,48 @@ public class GuiBuilder extends GuiLayer {
         }
     });
     
-    public GuiBuilder(LittleStructureBuilder builder) {
-        super("structure_builder", 200, 200);
+    public GuiBuilder(boolean client, LittleStructureBuilder builder) {
+        super(client, "structure_builder", 200, 200);
         this.builder = builder;
     }
     
     @Override
     public void create() {
         flow = GuiFlow.STACK_Y;
-        GuiTable table = new GuiTable();
+        GuiTable table = new GuiTable(this);
         add(table.setExpandableX());
-        GuiRow row = new GuiRow();
+        GuiRow row = new GuiRow(this);
         table.addRow(row);
-        GuiColumn col = new GuiColumn();
+        GuiColumn col = new GuiColumn(this);
         row.addColumn(col);
-        col.add(new GuiLabeledControl("gui.structure_builder.width", new GuiCounter("width", builder.lastSizeX, 1, Integer.MAX_VALUE)));
+        col.add(new GuiLabeledControl(this, "gui.structure_builder.width", new GuiCounter(this, "width", builder.lastSizeX, 1, Integer.MAX_VALUE)));
         
-        col = new GuiColumn();
+        col = new GuiColumn(this);
         row.addColumn(col);
-        col.add(new GuiLabeledControl("gui.structure_builder.height", new GuiCounter("height", builder.lastSizeX, 1, Integer.MAX_VALUE)));
+        col.add(new GuiLabeledControl(this, "gui.structure_builder.height", new GuiCounter(this, "height", builder.lastSizeX, 1, Integer.MAX_VALUE)));
         
-        row = new GuiRow();
+        row = new GuiRow(this);
         table.addRow(row);
-        col = new GuiColumn();
+        col = new GuiColumn(this);
         row.addColumn(col);
-        col.add(new GuiLabeledControl("gui.structure_builder.thickness", new GuiCounter("thickness", builder.lastThickness, 1, Integer.MAX_VALUE)));
+        col.add(new GuiLabeledControl(this, "gui.structure_builder.thickness", new GuiCounter(this, "thickness", builder.lastThickness, 1, Integer.MAX_VALUE)));
         
-        var gridSelect = new GuiStateButton<LittleGrid>("grid", LittleGrid.mapBuilder());
+        var gridSelect = new GuiStateButton<LittleGrid>(this, "grid", LittleGrid.mapBuilder());
         gridSelect.select(LittleTiles.CONFIG.build.get(getPlayer()).defaultGrid());
-        col = new GuiColumn();
+        col = new GuiColumn(this);
         row.addColumn(col);
-        col.add(new GuiLabeledControl("gui.grid", gridSelect));
+        col.add(new GuiLabeledControl(this, "gui.grid", gridSelect));
         
-        GuiComboBox<LittleStructureBuilderType> box = new GuiComboBox<>("type", new TextMapBuilder<LittleStructureBuilderType>().addEntrySet(LittleStructureBuilder.REGISTRY
+        GuiComboBox<LittleStructureBuilderType> box = new GuiComboBox<>(this, "type", new TextMapBuilder<LittleStructureBuilderType>().addEntrySet(LittleStructureBuilder.REGISTRY
                 .entrySet(), x -> Component.translatable("structure." + x.getKey())));
         box.select(LittleStructureBuilder.REGISTRY.get(builder.lastStructureType));
         add(box.setExpandableX());
         
-        GuiStackSelector selector = new GuiStackSelector("preview", getPlayer(), LittleGuiUtils.getCollector(getPlayer()), true);
+        GuiStackSelector selector = new GuiStackSelector(this, "preview", getPlayer(), LittleGuiUtils.getCollector(getPlayer()), true);
         selector.setSelectedForce(new ItemStack(builder.lastBlockState.getBlock()));
         add(selector.setExpandableX());
         
-        add(new GuiLeftRightBox().addLeft(new GuiLabel("failed").setTranslate("gui.structure_builder.failed").setVisible(false)).addRight(new GuiButton("craft", x -> {
+        add(new GuiLeftRightBox(this).addLeft(new GuiLabel(this, "failed").setTranslate("gui.structure_builder.failed").setVisible(false)).addRight(new GuiButton(this, "craft", x -> {
             if ((getPlayer().isCreative() && builder.inventory.getItem(0).isEmpty()) || builder.inventory.getItem(0).getItem() instanceof ItemLittleBlueprint) {
                 get("failed").visible = false;
                 CompoundTag nbt = new CompoundTag();
@@ -129,8 +129,8 @@ public class GuiBuilder extends GuiLayer {
             
         }).setTranslate("gui.structure_builder.craft")));
         
-        add(new GuiInventoryGrid("builder", builder.inventory));
-        add(new GuiPlayerInventoryGrid(getPlayer()));
+        add(new GuiInventoryGrid(this, "builder", builder.inventory));
+        add(new GuiPlayerInventoryGrid(this, getPlayer()));
     }
     
 }

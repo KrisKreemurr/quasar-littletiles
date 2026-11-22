@@ -8,8 +8,8 @@ import team.creative.littletiles.common.structure.LittleStructure;
 @OnlyIn(Dist.CLIENT)
 public class LittleStructurePremadeGui extends LittleStructureGuiControl {
     
-    public LittleStructurePremadeGui(LittleStructureGui gui, GuiTreeItemStructure item) {
-        super(gui, item);
+    public LittleStructurePremadeGui(IGuiParent parent, LittleStructureGui gui, GuiTreeItemStructure item) {
+        super(parent, gui, item);
     }
     
     @Override

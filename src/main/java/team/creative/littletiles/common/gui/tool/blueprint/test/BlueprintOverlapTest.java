@@ -211,7 +211,7 @@ public class BlueprintOverlapTest extends BlueprintTestModule {
         
         @Override
         public void create(GuiBlueprint blueprint, GuiParent parent, Runnable refresh) {
-            parent.add(new GuiButton("fix", x -> {
+            parent.add(new GuiButton(parent, "fix", x -> {
                 LittleGroup group = structure.group;
                 LittleGrid grid = group.getGrid();
                 HashMap<BlockPos, LittleCollection> blocks = new HashMap<>();
@@ -281,16 +281,16 @@ public class BlueprintOverlapTest extends BlueprintTestModule {
         
         @Override
         public void create(GuiBlueprint blueprint, GuiParent parent, Runnable refresh) {
-            parent.add(new GuiLabel("remove").setTranslate("gui.blueprint.test.overlap.remove"));;
-            parent.add(new GuiButton("remove", x -> {
+            parent.add(new GuiLabel(parent, "remove").setTranslate("gui.blueprint.test.overlap.remove"));;
+            parent.add(new GuiButton(parent, "remove", x -> {
                 removeOverlap(structure, boxes);
                 refresh.run();
             }).setTitle(Component.literal(this.structure.getTitle())));
-            parent.add(new GuiButton("remove2", x -> {
+            parent.add(new GuiButton(parent, "remove2", x -> {
                 removeOverlap(structure2, boxes);
                 refresh.run();
             }).setTitle(Component.literal(this.structure2.getTitle())));
-            parent.add(new GuiButton("move", x -> blueprint.OPEN_MOVE.open(new CompoundTag()).init(blueprint)).setTranslate("gui.blueprint.test.overlap.move"));
+            parent.add(new GuiButton(parent, "move", x -> blueprint.OPEN_MOVE.open(new CompoundTag()).init(blueprint)).setTranslate("gui.blueprint.test.overlap.move"));
         }
         
     }

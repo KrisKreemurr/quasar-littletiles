@@ -26,8 +26,8 @@ import team.creative.littletiles.common.structure.type.animation.LittleSlidingDo
 @OnlyIn(Dist.CLIENT)
 public class LittleDoorSlidingGui extends LittleDoorBaseGui {
     
-    public LittleDoorSlidingGui(LittleStructureGui gui, GuiTreeItemStructure item) {
-        super(gui, item);
+    public LittleDoorSlidingGui(IGuiParent parent, LittleStructureGui gui, GuiTreeItemStructure item) {
+        super(parent, gui, item);
         
         registerEventChanged(x -> {
             if (x instanceof GuiAnimationViewChangedEvent || x.control.is("facing")) {
@@ -67,15 +67,15 @@ public class LittleDoorSlidingGui extends LittleDoorBaseGui {
             facing = Facing.UP;
         }
         
-        GuiParent settings = new GuiParent(GuiFlow.FIT_X);
+        GuiParent settings = new GuiParent(this, GuiFlow.FIT_X);
         settings.spacing = 12;
         add(settings.setVAlign(VAlign.CENTER));
         
-        settings.add(new GuiLabeledControl(Component.translatable("gui.door.distance").append(":"), new GuiDistanceControl("distance", grid, distance)));
-        GuiParent direction = new GuiParent();
-        settings.add(new GuiLabeledControl(Component.translatable("gui.door.direction").append(":"), direction.setVAlign(VAlign.STRETCH)));
-        direction.add(new GuiComboBox<Facing>("facing", facing, new TextMapBuilder<Facing>().addComponent(Facing.VALUES, x -> x.translate())));
-        direction.add(new GuiDirectionIndicator("relative", Facing.UP));
+        settings.add(new GuiLabeledControl(this, Component.translatable("gui.door.distance").append(":"), new GuiDistanceControl(this, "distance", grid, distance)));
+        GuiParent direction = new GuiParent(this);
+        settings.add(new GuiLabeledControl(this, Component.translatable("gui.door.direction").append(":"), direction.setVAlign(VAlign.STRETCH)));
+        direction.add(new GuiComboBox<Facing>(this, "facing", facing, new TextMapBuilder<Facing>().addComponent(Facing.VALUES, x -> x.translate())));
+        direction.add(new GuiDirectionIndicator(this, "relative", Facing.UP));
         
     }
     

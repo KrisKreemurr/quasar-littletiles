@@ -29,8 +29,8 @@ import team.creative.littletiles.common.placement.setting.PlacementPlayerSetting
 
 public class GuiGlove extends GuiConfigureTool {
     
-    public GuiGlove(ContainerSlotView view) {
-        super("glove", 230, 200, view);
+    public GuiGlove(boolean client, ContainerSlotView view) {
+        super(client, "glove", 230, 200, view);
         registerEventChanged(x -> {
             if (x.control.is("picker", "preview"))
                 updateLabel();
@@ -56,32 +56,32 @@ public class GuiGlove extends GuiConfigureTool {
         if (!isClient())
             return;
         
-        GuiParent upper = new GuiParent();
+        GuiParent upper = new GuiParent(this);
         add(upper);
         
-        GuiParent left = new GuiParent(GuiFlow.STACK_Y).setAlign(Align.STRETCH);
+        GuiParent left = new GuiParent(this, GuiFlow.STACK_Y).setAlign(Align.STRETCH);
         upper.add(left);
         
         LittleElement element = LittleElement.getOrDefault(tool.get());
         Color color = new Color(element.color);
-        left.add(new GuiColorPicker("picker", color, LittleTiles.CONFIG.isTransparencyEnabled(getPlayer()), LittleTiles.CONFIG.getMinimumTransparency(getPlayer())));
+        left.add(new GuiColorPicker(this, "picker", color, LittleTiles.CONFIG.isTransparencyEnabled(getPlayer()), LittleTiles.CONFIG.getMinimumTransparency(getPlayer())));
         
-        GuiParent parent = new GuiParent(GuiFlow.STACK_X).setVAlign(VAlign.CENTER);
+        GuiParent parent = new GuiParent(this, GuiFlow.STACK_X).setVAlign(VAlign.CENTER);
         left.add(parent);
-        parent.add(new GuiShowItem("item").setDim(60, 60));
-        parent.add(new GuiGridConfig("grid", getPlayer(), PlacementPlayerSetting.grid(getPlayer()), LittleTilesClient::grid));
+        parent.add(new GuiShowItem(this, "item").setDim(60, 60));
+        parent.add(new GuiGridConfig(this, "grid", getPlayer(), PlacementPlayerSetting.grid(getPlayer()), LittleTilesClient::grid));
         
-        GuiStackSelector selector = new GuiStackSelector("preview", getPlayer(), LittleGuiUtils.getCollector(getPlayer()), true);
+        GuiStackSelector selector = new GuiStackSelector(this, "preview", getPlayer(), LittleGuiUtils.getCollector(getPlayer()), true);
         selector.setSelectedForce(element.getBlock().getStack());
         left.add(selector);
         
-        GuiParent right = new GuiParent(GuiFlow.STACK_Y).setAlign(Align.STRETCH);
+        GuiParent right = new GuiParent(this, GuiFlow.STACK_Y).setAlign(Align.STRETCH);
         upper.add(right);
         
-        GuiComboBox<PlacementMode> modeBox = new GuiComboBox<>("mode", PlacementMode.map());
+        GuiComboBox<PlacementMode> modeBox = new GuiComboBox<>(this, "mode", PlacementMode.map());
         modeBox.select(PlacementPlayerSetting.placementMode(getPlayer()));
         right.add(modeBox);
-        right.add(new GuiLabel("text"));
+        right.add(new GuiLabel(this, "text"));
         raiseEvent(new GuiControlChangedEvent(modeBox));
         
         updateLabel();

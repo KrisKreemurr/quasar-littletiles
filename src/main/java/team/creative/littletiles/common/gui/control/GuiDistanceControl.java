@@ -14,11 +14,11 @@ public class GuiDistanceControl extends GuiParent {
     
     public static final double EPSILON = 0.00001;
     
-    public GuiDistanceControl(String name, LittleGrid context, int distance) {
-        super(name);
-        add(new GuiCounter("blocks", 0).setTooltip(new TextBuilder().translate("gui.distance.blocks").build()));
-        add(new GuiStateButton<LittleGrid>("grid", LittleGrid.mapBuilder()).setDim(20, 10));
-        add(new GuiCounter("ltdistance", 0).setTooltip(new TextBuilder().translate("gui.distance.pixels").build()));
+    public GuiDistanceControl(IGuiParent parent, String name, LittleGrid context, int distance) {
+        super(parent, name);
+        add(new GuiCounter(this, "blocks", 0).setTooltip(new TextBuilder().translate("gui.distance.blocks").build()));
+        add(new GuiStateButton<LittleGrid>(this, "grid", LittleGrid.mapBuilder()).setDim(20, 10));
+        add(new GuiCounter(this, "ltdistance", 0).setTooltip(new TextBuilder().translate("gui.distance.pixels").build()));
         setDistance(context, distance);
     }
     

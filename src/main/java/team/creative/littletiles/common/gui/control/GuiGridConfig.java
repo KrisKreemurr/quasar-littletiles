@@ -16,11 +16,11 @@ public class GuiGridConfig extends GuiParent {
     public final GuiComboBox<LittleGrid> comboBox;
     public Consumer<LittleGrid> consumer;
     
-    public GuiGridConfig(String name, Player player, LittleGrid grid, Consumer<LittleGrid> consumer) {
-        super(name);
+    public GuiGridConfig(IGuiParent parent, String name, Player player, LittleGrid grid, Consumer<LittleGrid> consumer) {
+        super(parent, name);
         flow = GuiFlow.STACK_X;
         valign = VAlign.CENTER;
-        comboBox = new GuiComboBox<LittleGrid>("grid", LittleTiles.CONFIG.build.get(player).gridBuilder());
+        comboBox = new GuiComboBox<LittleGrid>(this, "grid", LittleTiles.CONFIG.build.get(player).gridBuilder());
         comboBox.select(grid);
         add(new GuiButtonHoldSlim("left", x -> comboBox.previous()).setTranslate("gui.previous"));
         add(comboBox);

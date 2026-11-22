@@ -26,8 +26,8 @@ public class GuiElementFilterGroup extends GuiElementFilter {
     protected final GuiListBoxBase<GuiElementFilter> list;
     protected GuiStateButton<GuiElementFilterOperator> operator;
     
-    public GuiElementFilterGroup(Player player, GuiElementFilterOperator operator, BiFilter<IParentCollection, LittleTile>... filters) {
-        add(list = new GuiListBoxBase<>("list", true, new ArrayList<>(Stream.of(filters).map(x -> GuiElementFilter.of(player, x)).toList())));
+    public GuiElementFilterGroup(IGuiParent parent, Player player, GuiElementFilterOperator operator, BiFilter<IParentCollection, LittleTile>... filters) {
+        add(list = new GuiListBoxBase<>(this, "list", true, new ArrayList<>(Stream.of(filters).map(x -> GuiElementFilter.of(player, x)).toList())));
         list.setExpandable();
         list.setDim(new GuiSizeRules().minHeight(40));
         var map = new TextMapBuilder<Consumer<Integer>>();
@@ -37,12 +37,12 @@ public class GuiElementFilterGroup extends GuiElementFilter {
         map.addComponent(x -> list.addItem(GuiElementFilter.of(getPlayer(), TileFilters.or())), Component.translatable("gui.filter.group"));
         map.addComponent(x -> list.addItem(GuiElementFilter.of(getPlayer(), TileFilters.name("stone"))), Component.translatable("gui.filter.name"));
         map.addComponent(x -> list.addItem(GuiElementFilter.of(getPlayer(), TileFilters.missing())), Component.translatable("gui.filter.missing"));
-        GuiParent lower = new GuiParent();
+        GuiParent lower = new GuiParent(this);
         add(lower);
-        lower.add(this.operator = new GuiStateButton<>("operator", new TextMapBuilder<GuiElementFilterOperator>().addComponent(GuiElementFilterOperator.values(), x -> Component
+        lower.add(this.operator = new GuiStateButton<>(this, "operator", new TextMapBuilder<GuiElementFilterOperator>().addComponent(GuiElementFilterOperator.values(), x -> Component
                 .translatable("gui.filter." + x.name().toLowerCase()))));
         this.operator.select(operator);
-        lower.add(new GuiButtonContext("add", map).setTranslate("gui.plus").setDim(new GuiSizeRules().maxWidth(6).maxHeight(8)));
+        lower.add(new GuiButtonContext(this, "add", map).setTranslate("gui.plus").setDim(new GuiSizeRules().maxWidth(6).maxHeight(8)));
     }
     
     protected BiFilter<IParentCollection, LittleTile>[] getSubFilters() {
