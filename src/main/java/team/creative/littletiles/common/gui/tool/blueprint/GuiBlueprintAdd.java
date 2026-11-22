@@ -9,11 +9,8 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.joml.Matrix4f;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -299,12 +296,6 @@ public class GuiBlueprintAdd extends GuiLayer implements GuiAnimationViewerStora
     @OnlyIn(Dist.CLIENT)
     public Iterable<AnimationPreview> previewsToRender() {
         return Collections.EMPTY_LIST;
-    }
-    
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void renderAll(PoseStack pose, Matrix4f projection, Minecraft mc) {
-        renderPreview(pose, projection, current, mc);
     }
     
     public static class GuiBlueprintAddTreeItem extends GuiTreeItem {

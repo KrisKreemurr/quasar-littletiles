@@ -7,19 +7,15 @@ import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.joml.Matrix4f;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import team.creative.creativecore.common.gui.control.tree.GuiTree;
-import team.creative.creativecore.common.gui.control.tree.GuiTreeItem;
 import team.creative.creativecore.common.util.math.vec.SmoothValue;
 import team.creative.creativecore.common.util.math.vec.Vec3d;
 import team.creative.littletiles.common.grid.LittleGrid;
@@ -140,22 +136,6 @@ public class GuiBlueprintAnimationStorage implements Iterable<Entry<GuiTreeItemS
     
     public boolean isReady(GuiTreeItemStructure structure) {
         return availablePreviews.containsKey(structure);
-    }
-    
-    @OnlyIn(Dist.CLIENT)
-    public void renderItemAndChildren(PoseStack pose, Matrix4f projection, Minecraft mc, GuiTreeItemStructure structure) {
-        int[][] pixels = GuiAnimationViewerStorage.makeLightBright();
-        renderItemAndChildrenInternal(pose, projection, mc, structure);
-        GuiAnimationViewerStorage.resetLight(pixels);
-    }
-    
-    @OnlyIn(Dist.CLIENT)
-    protected void renderItemAndChildrenInternal(PoseStack pose, Matrix4f projection, Minecraft mc, GuiTreeItemStructure structure) {
-        AnimationPreview preview = availablePreviews.get(structure);
-        if (preview != null)
-            renderPreview(pose, projection, preview, mc);
-        for (GuiTreeItem item : structure.items())
-            renderItemAndChildrenInternal(pose, projection, mc, (GuiTreeItemStructure) item);
     }
     
     public AnimationPreview get(GuiTreeItemStructure structure) {

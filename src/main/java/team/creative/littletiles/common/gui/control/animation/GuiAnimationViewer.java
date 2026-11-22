@@ -1,5 +1,6 @@
 package team.creative.littletiles.common.gui.control.animation;
 
+import org.joml.Matrix4f;
 import team.creative.creativecore.common.gui.IGuiParent;
 
 import org.joml.Vector3f;
@@ -133,9 +134,9 @@ public class GuiAnimationViewer extends GuiControl {
                 
                 pose.translate(viewer.offX.current(), viewer.offY.current(), viewer.offZ.current() - viewer.distance.current());
                 
-                pose.mulPose(Axis.XP.rotationDegrees((float) viewer.rotX.current()));
-                pose.mulPose(Axis.YP.rotationDegrees((float) viewer.rotY.current()));
-                pose.mulPose(Axis.ZP.rotationDegrees((float) viewer.rotZ.current()));
+                pose.mulPose(new Matrix4f().rotation(Axis.XP.rotationDegrees((float) viewer.rotX.current())));
+                pose.mulPose(new Matrix4f().rotation(Axis.YP.rotationDegrees((float) viewer.rotY.current())));
+                pose.mulPose(new Matrix4f().rotation(Axis.ZP.rotationDegrees((float) viewer.rotZ.current())));
                 
                 pose.translate(-center.x, -center.y, -center.z);
             }
@@ -179,9 +180,9 @@ public class GuiAnimationViewer extends GuiControl {
             
             @Override
             public void prepareRendering(PoseStack pose, Vec3d center, GuiAnimationViewer viewer) {
-                pose.mulPose(Axis.XP.rotationDegrees((float) viewer.rotX.current()));
-                pose.mulPose(Axis.YP.rotationDegrees((float) viewer.rotY.current()));
-                pose.mulPose(Axis.ZP.rotationDegrees((float) viewer.rotZ.current()));
+                pose.mulPose(new Matrix4f().rotation(Axis.XP.rotationDegrees((float) viewer.rotX.current())));
+                pose.mulPose(new Matrix4f().rotation(Axis.YP.rotationDegrees((float) viewer.rotY.current())));
+                pose.mulPose(new Matrix4f().rotation(Axis.ZP.rotationDegrees((float) viewer.rotZ.current())));
                 
                 pose.translate(viewer.offX.current(), viewer.offY.current(), viewer.offZ.current());
                 pose.translate(-center.x, -center.y, -center.z);

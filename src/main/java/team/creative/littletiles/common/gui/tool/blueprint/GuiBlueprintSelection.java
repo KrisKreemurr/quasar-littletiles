@@ -44,8 +44,7 @@ public class GuiBlueprintSelection extends GuiConfigure {
         
         try {
             SelectionMode mode = SelectionMode.REGISTRY.get(nbt.getStringOr("mode", ""));
-            SelectionParameters selection = new SelectionParameters(nbt.getBooleanOr("includeVanilla", false), nbt.getBooleanOr("includeCB", false), nbt.getBooleanOr("includeLT", false), nbt.getBoolean(
-                "remember_structure"));
+            SelectionParameters selection = new SelectionParameters(nbt.getBooleanOr("includeVanilla", false), nbt.getBooleanOr("includeCB", false), nbt.getBooleanOr("includeLT", false), nbt.getBooleanOr("remember_structure", false));
             SelectionComponent component = SelectionComponent.of(mode, nbt.getCompoundOrEmpty("sel_config"));
             tool.get().set(LittleTilesRegistry.SELECTION, component);
             LittleGroup previews = mode.select(getPlayer().level(), (LittleActionSource) getPlayer(), selection, tool.get(), component);
