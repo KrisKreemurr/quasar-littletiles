@@ -50,7 +50,7 @@ public class BuildingModeZoom extends BuildingModeFeature {
     }
     
     private boolean active() {
-        return active && MC.player != null && MC.screen == null;
+        return active && MC.player != null && MC.gui.screen() == null;
     }
     
     private double zoomLevel() {
@@ -104,7 +104,7 @@ public class BuildingModeZoom extends BuildingModeFeature {
         
         if (levelBefore != level) {
             this.zoom.set(zoomLevel());
-            MC.player.displayClientMessage(Component.translatable("building.zoom.message", zoomLevel()), true);
+            MC.player.sendOverlayMessage(Component.translatable("building.zoom.message", zoomLevel()));
         }
         event.setCanceled(true);
     }

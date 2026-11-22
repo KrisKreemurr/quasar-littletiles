@@ -109,7 +109,7 @@ public interface ILittleMCBlock extends LittleBlock {
     
     @Override
     public default String blockName() {
-        return asVanillaBlock().builtInRegistryHolder().key().location().toString();
+        return asVanillaBlock().builtInRegistryHolder().key().identifier().toString();
     }
     
     @Override

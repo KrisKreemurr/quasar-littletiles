@@ -124,7 +124,7 @@ public class LittleToolWrench extends LittleTool {
         
         boolean focus = false;
         LittleStructure focusedStructure = null;
-        if (Screen.hasShiftDown()) {
+        if (net.minecraft.client.Minecraft.getInstance().hasShiftDown()) {
             focus = true;
             if (mc.hitResult.getType() == Type.BLOCK && mc.hitResult instanceof BlockHitResult b && renderer.level().getBlockState(b.getBlockPos())
                     .getBlock() instanceof BlockTile) {

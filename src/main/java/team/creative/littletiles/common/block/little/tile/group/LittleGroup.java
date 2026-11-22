@@ -111,7 +111,7 @@ public class LittleGroup implements Bunch<LittleTile>, IGridBased {
         LittleCollection.load(group.content, nbt.getCompoundOrEmpty(TILES_KEY));
         
         CompoundTag extensions = nbt.getCompoundOrEmpty(EXTENSION_KEY);
-        for (String id : extensions.getAllKeys())
+        for (String id : extensions.keySet())
             group.children.addExtension(id, load(extensions.getCompoundOrEmpty(id)));
         return group;
     }

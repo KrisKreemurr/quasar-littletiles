@@ -189,7 +189,7 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
         level.getBlockEntity(blockpos, packet.getType()).ifPresent((x) -> {
             x.onDataPacket(vanilla().getConnection(), packet, level.registryAccess());
             
-            if (x instanceof CommandBlockEntity && mc.screen instanceof CommandBlockEditScreen screen)
+            if (x instanceof CommandBlockEntity && mc.gui.screen() instanceof CommandBlockEditScreen screen)
                 screen.updateGui();
         });
     }
@@ -456,17 +456,17 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
         ensureRunningOnSameThread(packet);
         LittleClientLevel level = requiresClientLevel();
         for (ClientboundChunksBiomesPacket.ChunkBiomeData clientboundchunksbiomespacket$chunkbiomedata : packet.chunkBiomeData())
-            level.getChunkSource().replaceBiomes(clientboundchunksbiomespacket$chunkbiomedata.pos().x, clientboundchunksbiomespacket$chunkbiomedata.pos().z,
+            level.getChunkSource().replaceBiomes(clientboundchunksbiomespacket$chunkbiomedata.pos().x(), clientboundchunksbiomespacket$chunkbiomedata.pos().z(),
                 clientboundchunksbiomespacket$chunkbiomedata.getReadBuffer());
         
         for (ClientboundChunksBiomesPacket.ChunkBiomeData clientboundchunksbiomespacket$chunkbiomedata1 : packet.chunkBiomeData())
-            level.onChunkLoaded(new ChunkPos(clientboundchunksbiomespacket$chunkbiomedata1.pos().x, clientboundchunksbiomespacket$chunkbiomedata1.pos().z));
+            level.onChunkLoaded(new ChunkPos(clientboundchunksbiomespacket$chunkbiomedata1.pos().x(), clientboundchunksbiomespacket$chunkbiomedata1.pos().z()));
         
         for (ClientboundChunksBiomesPacket.ChunkBiomeData clientboundchunksbiomespacket$chunkbiomedata2 : packet.chunkBiomeData())
             for (int i = -1; i <= 1; ++i)
                 for (int j = -1; j <= 1; ++j)
                     for (int k = this.level.getMinSection(); k < this.level.getMaxSection(); ++k)
-                        level.setSectionDirty(clientboundchunksbiomespacket$chunkbiomedata2.pos().x + i, k, clientboundchunksbiomespacket$chunkbiomedata2.pos().z + j);
+                        level.setSectionDirty(clientboundchunksbiomespacket$chunkbiomedata2.pos().x() + i, k, clientboundchunksbiomespacket$chunkbiomedata2.pos().z() + j);
     }
     
     private void updateLevelChunk(ClientLevel level, int x, int z, ClientboundLevelChunkPacketData data) {

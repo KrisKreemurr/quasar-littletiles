@@ -144,7 +144,7 @@ public class LittleAxisDoor extends LittleDoor {
         protected LittlePlaceBoxRelative getPlaceBox(Object value, StructureDirectionalField type, LittleGroup previews) {
             if (type.key.equals("center")) {
                 LittleBox box = previews.getSurroundingBox();
-                Axis axis = Axis.values()[previews.getStructureTag().getCompound("rotation").getInt("a")];
+                Axis axis = Axis.values()[previews.getStructureTag().getCompoundOrEmpty("rotation").getInt("a")];
                 return new LittlePlaceBoxRelativeAxis(((StructureRelative) value).getBox(), (StructureRelative) value, type, axis, box.getMin(axis), box.getMax(axis));
             }
             return super.getPlaceBox(value, type, previews);

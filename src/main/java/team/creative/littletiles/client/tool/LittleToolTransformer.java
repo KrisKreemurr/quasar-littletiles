@@ -231,7 +231,7 @@ public class LittleToolTransformer extends LittleTool {
             if (facing != null) {
                 LittleGrid grid = transformer.getPositionGrid(renderer.player(), stack);
                 LittleVec vec = new LittleVec(facing);
-                vec.scale(Screen.hasControlDown() ? grid.count : 1);
+                vec.scale(net.minecraft.client.Minecraft.getInstance().hasControlDown() ? grid.count : 1);
                 
                 BoxCorner[] corners = transformMode.corners(marked);
                 if (corners == null)

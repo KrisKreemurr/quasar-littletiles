@@ -88,7 +88,7 @@ public class ExactAreaSelectionMode extends SelectionMode {
                 var box = LittleBoxLevel.tryOf(source.getActionLevel(), nbt.get("pos" + marked));
                 if (box != null) {
                     LittleVecGrid vec = new LittleVecGrid(new LittleVec(facing), positionGrid);
-                    vec.getVec().scale(Screen.hasControlDown() ? positionGrid.count : 1);
+                    vec.getVec().scale(net.minecraft.client.Minecraft.getInstance().hasControlDown() ? positionGrid.count : 1);
                     box.sameGrid(vec, () -> box.box.add(vec.getVec()));
                     nbt.put("pos" + marked, box.write());
                     return config.withConfig(nbt);

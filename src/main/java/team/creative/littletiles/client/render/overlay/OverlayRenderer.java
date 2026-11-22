@@ -124,7 +124,7 @@ public class OverlayRenderer implements IGuiIntegratedParent, LevelAwareHandler 
             
             if (tooltip == null && LittleTiles.CONFIG.rendering.showTooltip && player.getMainHandItem().getItem() instanceof IItemTooltip item) {
                 ItemStack stack = player.getMainHandItem();
-                String tooltipKey = stack.getItem().builtInRegistryHolder().key().location().getNamespace() + "." + stack.getItem().builtInRegistryHolder().key().location()
+                String tooltipKey = stack.getItem().builtInRegistryHolder().key().identifier().getNamespace() + "." + stack.getItem().builtInRegistryHolder().key().identifier()
                         .getPath() + ".tooltip";
                 tooltipKey = item.tooltipTranslateKey(stack, tooltipKey);
                 if (LanguageUtils.can(tooltipKey))

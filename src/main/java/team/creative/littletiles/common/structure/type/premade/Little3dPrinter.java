@@ -418,7 +418,7 @@ public class Little3dPrinter extends LittleStructurePremade {
             }
             if (nbt.contains("extensions")) {
                 CompoundTag ex = nbt.getCompoundOrEmpty("ex");
-                for (String key : ex.getAllKeys())
+                for (String key : ex.keySet())
                     extensions.put(key, new PlacementTracker(ex.getCompoundOrEmpty(key)));
             }
         }

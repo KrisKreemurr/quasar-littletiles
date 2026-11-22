@@ -143,7 +143,7 @@ public class LittleBed extends LittleStructure {
             CriteriaTriggers.SLEPT_IN_BED.trigger(sPlayer);
             
             if (!sPlayer.serverLevel().canSleepThroughNights())
-                player.displayClientMessage(Component.translatable("sleep.not_possible"), true);
+                player.sendOverlayMessage(Component.translatable("sleep.not_possible"));
             
             sPlayer.serverLevel().updateSleepingPlayerList();
         }

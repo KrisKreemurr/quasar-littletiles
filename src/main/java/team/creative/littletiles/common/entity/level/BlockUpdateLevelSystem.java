@@ -345,8 +345,8 @@ public class BlockUpdateLevelSystem {
         Axis one = facing.one();
         Axis two = facing.two();
         for (ChunkAccess chunk : edgeChunks) {
-            int sectionOffsetX = SectionPos.sectionToBlockCoord(chunk.getPos().x);
-            int sectionOffsetZ = SectionPos.sectionToBlockCoord(chunk.getPos().z);
+            int sectionOffsetX = SectionPos.sectionToBlockCoord(chunk.getPos().x());
+            int sectionOffsetZ = SectionPos.sectionToBlockCoord(chunk.getPos().z());
             
             for (int axisValue = axisValueStart; facing.positive ? axisValue >= axisValueEnd : axisValue <= axisValueEnd; axisValue += facing.positive ? -1 : 1) {
                 boolean found = false;

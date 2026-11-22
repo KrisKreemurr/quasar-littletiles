@@ -331,23 +331,23 @@ public class LittleServerPlayerHandler implements ServerPlayerConnection, Tickab
                     String s = structure.getStructureName();
                     if (packet.getUpdateType() == StructureBlockEntity.UpdateType.SAVE_AREA)
                         if (structure.saveStructure())
-                            this.player.displayClientMessage(Component.translatable("structure_block.save_success", s), false);
+                            this.player.sendSystemMessage(Component.translatable("structure_block.save_success", s));
                         else
-                            this.player.displayClientMessage(Component.translatable("structure_block.save_failure", s), false);
+                            this.player.sendSystemMessage(Component.translatable("structure_block.save_failure", s));
                     else if (packet.getUpdateType() == StructureBlockEntity.UpdateType.LOAD_AREA)
                         if (!structure.isStructureLoadable())
-                            this.player.displayClientMessage(Component.translatable("structure_block.load_not_found", s), false);
+                            this.player.sendSystemMessage(Component.translatable("structure_block.load_not_found", s));
                         else if (structure.placeStructureIfSameSize(level))
-                            this.player.displayClientMessage(Component.translatable("structure_block.load_success", s), false);
+                            this.player.sendSystemMessage(Component.translatable("structure_block.load_success", s));
                         else
-                            this.player.displayClientMessage(Component.translatable("structure_block.load_prepare", s), false);
+                            this.player.sendSystemMessage(Component.translatable("structure_block.load_prepare", s));
                     else if (packet.getUpdateType() == StructureBlockEntity.UpdateType.SCAN_AREA)
                         if (structure.detectSize())
-                            this.player.displayClientMessage(Component.translatable("structure_block.size_success", s), false);
+                            this.player.sendSystemMessage(Component.translatable("structure_block.size_success", s));
                         else
-                            this.player.displayClientMessage(Component.translatable("structure_block.size_failure"), false);
+                            this.player.sendSystemMessage(Component.translatable("structure_block.size_failure"));
                 } else
-                    this.player.displayClientMessage(Component.translatable("structure_block.invalid_structure_name", packet.getName()), false);
+                    this.player.sendSystemMessage(Component.translatable("structure_block.invalid_structure_name", packet.getName()));
                 
                 structure.setChanged();
                 level.sendBlockUpdated(blockpos, blockstate, blockstate, 3);

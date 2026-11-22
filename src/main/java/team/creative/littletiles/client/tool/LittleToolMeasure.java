@@ -135,7 +135,7 @@ public class LittleToolMeasure extends LittleTool {
         if (facing != null && markedPosition != null) {
             var grid = measure.getPositionGrid(renderer.player(), stack);
             LittleVec vec = new LittleVec(facing);
-            vec.scale(Screen.hasControlDown() ? grid.count : 1);
+            vec.scale(net.minecraft.client.Minecraft.getInstance().hasControlDown() ? grid.count : 1);
             var vecGrid = new LittleVecGrid(vec, grid);
             
             markedPosition.sameGrid(vecGrid, () -> markedPosition.box.add(vecGrid.getVec()));
@@ -162,7 +162,7 @@ public class LittleToolMeasure extends LittleTool {
     
     @Override
     public void mouseInput(Pre event) {
-        if (event.getAction() != InputConstants.PRESS || MC.player == null || MC.screen != null)
+        if (event.getAction() != InputConstants.PRESS || MC.player == null || MC.gui.screen() != null)
             return;
         
         var renderer = LittleTilesClient.PREVIEW_RENDERER.renderer;
@@ -249,7 +249,7 @@ public class LittleToolMeasure extends LittleTool {
             if (measurements.isEmpty())
                 return null;
             
-            var cam = MC.gameRenderer.getMainCamera().getPosition();
+            var cam = MC.gameRenderer.mainCamera().getPosition();
             
             var buffer = renderer.createBuffer();
             

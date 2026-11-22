@@ -157,7 +157,7 @@ public class GuiIsoAnimationViewer extends GuiControl {
     
     @Override
     public boolean mouseScrolled(double x, double y, double delta) {
-        scale.add(0.05 * delta * (Screen.hasControlDown() ? 5 : 1));
+        scale.add(0.05 * delta * (net.minecraft.client.Minecraft.getInstance().hasControlDown() ? 5 : 1));
         if (Math.pow(scale.aimed(), 2) > MAXIMUM_ZOOM)
             scale.set(Math.sqrt(MAXIMUM_ZOOM));
         if (scale.aimed() < 0)

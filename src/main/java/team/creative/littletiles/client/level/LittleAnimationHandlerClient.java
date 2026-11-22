@@ -303,11 +303,11 @@ public class LittleAnimationHandlerClient extends LittleAnimationHandler impleme
     }
     
     public void setupRender(Camera camera, Frustum frustum, boolean capturedFrustum, boolean spectator) {
-        mc.getProfiler().push("setup_animation_render");
+        net.minecraft.util.profiling.Profiler.get().push("setup_animation_render");
         for (LittleEntity animation : entities)
             if (animation.hasLoaded())
                 animation.getRenderManager().setupRender(camera, frustum, capturedFrustum, spectator);
-        mc.getProfiler().pop();
+        net.minecraft.util.profiling.Profiler.get().pop();
     }
     
     protected void longTick() {
@@ -334,7 +334,7 @@ public class LittleAnimationHandlerClient extends LittleAnimationHandler impleme
     }
     
     public void compileSections(Camera camera) {
-        mc.getProfiler().push("compile_animation_chunks");
+        net.minecraft.util.profiling.Profiler.get().push("compile_animation_chunks");
         
         Runnable run;
         while ((run = this.toUpload.poll()) != null)
@@ -344,7 +344,7 @@ public class LittleAnimationHandlerClient extends LittleAnimationHandler impleme
             if (animation.hasLoaded())
                 animation.getRenderManager().compileSections(camera);
             
-        mc.getProfiler().pop();
+        net.minecraft.util.profiling.Profiler.get().pop();
     }
     
     public void resortTransparency(RenderType layer, double x, double y, double z) {
@@ -364,7 +364,7 @@ public class LittleAnimationHandlerClient extends LittleAnimationHandler impleme
     public void renderBlockEntitiesAndDestruction(PoseStack pose, Frustum frustum, float frameTime) {
         MultiBufferSource bufferSource = mc.renderBuffers().bufferSource();
         
-        Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
+        Vec3 cam = mc.gameRenderer.mainCamera().getPosition();
         for (LittleEntity animation : this)
             animation.getRenderManager().renderBlockEntitiesAndDestruction(pose, frustum, cam, frameTime, bufferSource);
         
@@ -393,7 +393,7 @@ public class LittleAnimationHandlerClient extends LittleAnimationHandler impleme
         
         if (layer == null)
             return;
-        Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
+        Vec3 cam = mc.gameRenderer.mainCamera().getPosition();
         
         PoseStack pose = event.getPoseStack();
         Matrix4f projectionMatrix = event.getProjectionMatrix();
@@ -496,7 +496,7 @@ public class LittleAnimationHandlerClient extends LittleAnimationHandler impleme
         BlockState state = result.level.getBlockState(pos);
         VertexConsumer vertexconsumer2 = mc.renderBuffers().bufferSource().getBuffer(RenderType.lines());
         LittleEntity entity = result.getHolder();
-        var cam = entity.getOrigin().pose(event.getPartialTick().getGameTimeDeltaPartialTick(false)).setup(pose, mc.gameRenderer.getMainCamera().getPosition());
+        var cam = entity.getOrigin().pose(event.getPartialTick().getGameTimeDeltaPartialTick(false)).setup(pose, mc.gameRenderer.mainCamera().getPosition());
         RenderSystem.enableDepthTest();
         
         double x = pos.getX() - cam.x();

@@ -21,7 +21,7 @@ public class PlacementModeAll extends PlacementModeNormal {
     
     @Override
     public PlacementMode place() {
-        if (Screen.hasControlDown())
+        if (net.minecraft.client.Minecraft.getInstance().hasControlDown())
             return PlacementMode.OVERWRITE;
         return super.place();
     }

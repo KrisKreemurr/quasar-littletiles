@@ -122,7 +122,7 @@ public class GuiBuilder extends GuiLayer {
                 nbt.putInt("grid", grid.count);
                 ItemStack stack = selector.getSelected();
                 Block block = Block.byItem(stack.getItem());
-                nbt.putString("block", block.builtInRegistryHolder().key().location().toString());
+                nbt.putString("block", block.builtInRegistryHolder().key().identifier().toString());
                 CRAFT.send(nbt);
             } else
                 get("failed").visible = true;

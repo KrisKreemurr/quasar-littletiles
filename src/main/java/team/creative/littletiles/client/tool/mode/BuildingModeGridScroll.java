@@ -56,7 +56,7 @@ public class BuildingModeGridScroll extends BuildingModeFeature implements ICrea
     }
     
     private boolean active() {
-        return active && MC.player != null && MC.screen == null && keyDown;
+        return active && MC.player != null && MC.gui.screen() == null && keyDown;
     }
     
     @Override
@@ -87,7 +87,7 @@ public class BuildingModeGridScroll extends BuildingModeFeature implements ICrea
         if (gridBefore != gridIndex) {
             var grid = LittleGrid.gridByIndex(gridIndex);
             LittleTilesClient.grid(grid);
-            MC.player.displayClientMessage(Component.translatable("building.grid.message", grid.count), true);
+            MC.player.sendOverlayMessage(Component.translatable("building.grid.message", grid.count));
             updateTitle();
         }
         event.setCanceled(true);

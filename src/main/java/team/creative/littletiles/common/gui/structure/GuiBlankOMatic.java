@@ -169,7 +169,7 @@ public class GuiBlankOMatic extends GuiLayer {
         
         right.add(new GuiButton(this, "craft", x -> {
             CompoundTag nbt = new CompoundTag();
-            nbt.putInt("amount", Screen.hasShiftDown() ? 2 : Screen.hasControlDown() ? 1 : 0);
+            nbt.putInt("amount", net.minecraft.client.Minecraft.getInstance().hasShiftDown() ? 2 : net.minecraft.client.Minecraft.getInstance().hasControlDown() ? 1 : 0);
             nbt.putInt("variant", get("variant", GuiVariantSelector.class).selected);
             CRAFT.send(nbt);
         }).setTranslate("gui.blancomatic.craft"));

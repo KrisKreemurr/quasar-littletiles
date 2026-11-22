@@ -98,7 +98,7 @@ public class NeighborUpdateOrganizer {
     }
     
     private static int checkerboardDistance(ChunkPos pos, int x, int z) {
-        return Math.max(Math.abs(pos.x - x), Math.abs(pos.z - z));
+        return Math.max(Math.abs(pos.x() - x), Math.abs(pos.z() - z));
     }
     
     @SubscribeEvent

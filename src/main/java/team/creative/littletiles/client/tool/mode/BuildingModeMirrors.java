@@ -124,7 +124,7 @@ public class BuildingModeMirrors extends BuildingModeFeature implements Building
     public void endFocus() {
         super.endFocus();
         if (active)
-            MC.player.displayClientMessage(Component.literal(""), true);
+            MC.player.sendOverlayMessage(Component.literal(""));
         active = false;
     }
     
@@ -148,7 +148,7 @@ public class BuildingModeMirrors extends BuildingModeFeature implements Building
     public void tick(PreviewRenderer renderer) {
         if (!active)
             return;
-        renderer.player().displayClientMessage(Component.translatable("building.mirror.tooltip"), true);
+        renderer.player().sendOverlayMessage(Component.translatable("building.mirror.tooltip"));
         super.tick(renderer);
     }
     
@@ -263,7 +263,7 @@ public class BuildingModeMirrors extends BuildingModeFeature implements Building
     
     @SubscribeEvent
     public void mouseClicked(InputEvent.MouseButton.Pre event) {
-        if (event.getAction() != InputConstants.PRESS || MC.player == null || MC.screen != null || !active)
+        if (event.getAction() != InputConstants.PRESS || MC.player == null || MC.gui.screen() != null || !active)
             return;
         
         boolean doubleClick = lastMouseKey == event.getButton() && Blaze3D.getTime() - lastMouseClicked < ScreenEventListener.DOUBLE_CLICK_TIME;

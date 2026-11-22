@@ -37,9 +37,9 @@ public class LittleActionHandlerClient extends LevelHandler {
         if (mc.player == null)
             return false;
         if (LittleTiles.CONFIG.building.useALTForEverything)
-            return Screen.hasAltDown();
+            return net.minecraft.client.Minecraft.getInstance().hasAltDown();
         if (LittleTiles.CONFIG.building.useAltWhenFlying)
-            return mc.player.getAbilities().flying ? Screen.hasAltDown() : mc.player.isCrouching();
+            return mc.player.getAbilities().flying ? net.minecraft.client.Minecraft.getInstance().hasAltDown() : mc.player.isCrouching();
         return mc.player.isCrouching();
     }
     

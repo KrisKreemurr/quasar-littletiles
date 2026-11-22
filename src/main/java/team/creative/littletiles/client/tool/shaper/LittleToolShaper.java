@@ -218,7 +218,7 @@ public class LittleToolShaper extends LittleTool {
             if (builtShape == null)
                 return false;
             
-            boolean addPoint = (builtShape.pointsBeforePlacing > positions.size() + 1 || Screen.hasControlDown()) && (builtShape.maxAllowed() == -1 || builtShape
+            boolean addPoint = (builtShape.pointsBeforePlacing > positions.size() + 1 || net.minecraft.client.Minecraft.getInstance().hasControlDown()) && (builtShape.maxAllowed() == -1 || builtShape
                     .maxAllowed() > positions.size() + 1);
             if (marked || !addPoint) {
                 LittleBoxes boxes;

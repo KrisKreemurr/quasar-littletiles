@@ -141,15 +141,15 @@ public class LittleChunkSerializer {
     }
     
     private static void logErrors(ChunkPos pos, int y, String error) {
-        LOGGER.error("Recoverable errors when loading section [" + pos.x + ", " + y + ", " + pos.z + "]: " + error);
+        LOGGER.error("Recoverable errors when loading section [" + pos.x() + ", " + y + ", " + pos.z() + "]: " + error);
     }
     
     public static CompoundTag write(LittleServerLevel level, ChunkAccess chunk) {
         ChunkPos chunkpos = chunk.getPos();
         CompoundTag nbt = NbtUtils.addCurrentDataVersion(new CompoundTag());
-        nbt.putInt("xPos", chunkpos.x);
+        nbt.putInt("xPos", chunkpos.x());
         nbt.putInt("yPos", chunk.getMinSection());
-        nbt.putInt("zPos", chunkpos.z);
+        nbt.putInt("zPos", chunkpos.z());
         nbt.putLong("LastUpdate", level.getGameTime());
         nbt.putLong("InhabitedTime", chunk.getInhabitedTime());
         

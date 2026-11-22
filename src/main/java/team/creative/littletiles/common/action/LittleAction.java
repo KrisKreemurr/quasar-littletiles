@@ -488,7 +488,7 @@ public abstract class LittleAction<T> extends CreativePacket {
         if (block.builtInRegistryHolder().is(LittleTilesRegistry.INCOMPATIBLE_TAG))
             return true;
         
-        if (block.builtInRegistryHolder().unwrapKey().get().location().getNamespace().equals("framedblocks"))
+        if (block.builtInRegistryHolder().unwrapKey().get().identifier().getNamespace().equals("framedblocks"))
             return true;
         
         return false;

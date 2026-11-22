@@ -51,9 +51,9 @@ public class LittleClientChunkCache extends ClientChunkCache {
     @Override
     @Nullable
     public LevelChunk getChunk(int x, int z, ChunkStatus status, boolean create) {
-        LevelChunk chunk = chunks.get(ChunkPos.asLong(x, z));
+        LevelChunk chunk = chunks.get(ChunkPos.pack(x, z));
         if (chunk == null && create)
-            chunks.put(ChunkPos.asLong(x, z), chunk = new LevelChunk(getLevel(), new ChunkPos(x, z)));
+            chunks.put(ChunkPos.pack(x, z), chunk = new LevelChunk(getLevel(), new ChunkPos(x, z)));
         return chunk;
     }
     

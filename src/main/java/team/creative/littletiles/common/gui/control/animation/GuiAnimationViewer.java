@@ -98,7 +98,7 @@ public class GuiAnimationViewer extends GuiControl {
     
     @Override
     public boolean mouseScrolled(double x, double y, double delta) {
-        distance.set(Math.max(distance.aimed() + delta * -(Screen.hasControlDown() ? 5 : 1), 0));
+        distance.set(Math.max(distance.aimed() + delta * -(net.minecraft.client.Minecraft.getInstance().hasControlDown() ? 5 : 1), 0));
         return true;
     }
     
@@ -184,7 +184,7 @@ public class GuiAnimationViewer extends GuiControl {
         offZ.tick();
         
         float amount = mc.getTimer().getGameTimeDeltaTicks() * 2;
-        if (Screen.hasControlDown())
+        if (net.minecraft.client.Minecraft.getInstance().hasControlDown())
             amount *= 4;
         if (forward)
             projection.forward(amount, this);

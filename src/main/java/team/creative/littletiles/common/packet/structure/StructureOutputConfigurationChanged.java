@@ -41,7 +41,7 @@ public class StructureOutputConfigurationChanged extends CreativePacket {
             
             CompoundTag external = nbt.getCompoundOrEmpty("external");
             Int2ObjectMap<SignalExternalOutputHandler> map = new Int2ObjectArrayMap<>();
-            for (String key : external.getAllKeys())
+            for (String key : external.keySet())
                 try {
                     map.put(Integer.parseInt(key), new SignalExternalOutputHandler(structure, external.getCompoundOrEmpty(key)));
                 } catch (NumberFormatException | ParseException e) {}

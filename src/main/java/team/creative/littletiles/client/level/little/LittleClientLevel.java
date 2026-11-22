@@ -135,7 +135,7 @@ public abstract class LittleClientLevel extends ClientLevel implements LittleLev
         LevelChunkSection[] section = chunk.getSections();
         for (int i = 0; i < section.length; i++)
             if (!section[i].hasOnlyAir())
-                this.renderManager.setSectionDirty(chunk.getPos().x, chunk.getSectionYFromSectionIndex(i), chunk.getPos().z);
+                this.renderManager.setSectionDirty(chunk.getPos().x(), chunk.getSectionYFromSectionIndex(i), chunk.getPos().z());
     }
     
     @Override

@@ -111,7 +111,7 @@ public class LittleMCBlock implements LittleBlock {
     
     @Override
     public String blockName() {
-        return block.builtInRegistryHolder().key().location().toString();
+        return block.builtInRegistryHolder().key().identifier().toString();
     }
     
     @Override

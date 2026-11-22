@@ -62,9 +62,9 @@ public class LittleServerChunkCache extends ServerChunkCache implements Iterable
     }
     
     private ChunkResult<ChunkAccess> getChunkMainThread(int x, int z, boolean create) {
-        LittleChunkHolder holder = chunks.get(ChunkPos.asLong(x, z));
+        LittleChunkHolder holder = chunks.get(ChunkPos.pack(x, z));
         if (holder == null && create)
-            chunks.put(ChunkPos.asLong(x, z), holder = ((LittleChunkMap) chunkMap).createHolder(new ChunkPos(x, z)));
+            chunks.put(ChunkPos.pack(x, z), holder = ((LittleChunkMap) chunkMap).createHolder(new ChunkPos(x, z)));
         return ChunkResult.of(holder.chunk);
     }
     
@@ -73,9 +73,9 @@ public class LittleServerChunkCache extends ServerChunkCache implements Iterable
     public ChunkAccess getChunk(int x, int z, ChunkStatus status, boolean create) {
         if (Thread.currentThread() != ((ServerChunkCacheAccessor) this).getMainThread())
             return CompletableFuture.supplyAsync(() -> this.getChunk(x, z, status, create), this.mainThreadProcessor).join();
-        LittleChunkHolder holder = chunks.get(ChunkPos.asLong(x, z));
+        LittleChunkHolder holder = chunks.get(ChunkPos.pack(x, z));
         if (holder == null && create)
-            chunks.put(ChunkPos.asLong(x, z), holder = ((LittleChunkMap) chunkMap).createHolder(new ChunkPos(x, z)));
+            chunks.put(ChunkPos.pack(x, z), holder = ((LittleChunkMap) chunkMap).createHolder(new ChunkPos(x, z)));
         return holder == null ? null : holder.chunk;
     }
     
@@ -100,7 +100,7 @@ public class LittleServerChunkCache extends ServerChunkCache implements Iterable
     
     @Override
     public boolean hasChunk(int x, int z) {
-        return chunks.containsKey(ChunkPos.asLong(x, z));
+        return chunks.containsKey(ChunkPos.pack(x, z));
     }
     
     @Override
@@ -128,13 +128,13 @@ public class LittleServerChunkCache extends ServerChunkCache implements Iterable
     
     @Override
     public void tick(BooleanSupplier running, boolean chunks) {
-        this.level.getProfiler().push("purge");
+        net.minecraft.util.profiling.Profiler.get().push("purge");
         ((LittleDistanceManager) this.chunkMap.getDistanceManager()).purgeStaleTickets();
         this.runDistanceManagerUpdates2();
-        this.level.getProfiler().popPush("chunks");
+        net.minecraft.util.profiling.Profiler.get().popPush("chunks");
         if (chunks)
             this.tickChunks();
-        this.level.getProfiler().pop();
+        net.minecraft.util.profiling.Profiler.get().pop();
     }
     
     private void tickChunks() {
@@ -143,7 +143,7 @@ public class LittleServerChunkCache extends ServerChunkCache implements Iterable
             return;
         }
         
-        ProfilerFiller profilerfiller = this.level.getProfiler();
+        ProfilerFiller profilerfiller = net.minecraft.util.profiling.Profiler.get();
         profilerfiller.push("pollingChunks");
         int k = this.level.getGameRules().getInt(GameRules.RULE_RANDOMTICKING);
         
@@ -188,7 +188,7 @@ public class LittleServerChunkCache extends ServerChunkCache implements Iterable
     @Override
     public void onLightUpdate(LightLayer layer, SectionPos pos) {
         this.mainThreadProcessor.execute(() -> {
-            LittleChunkHolder chunkholder = chunks.get(ChunkPos.asLong(pos.x(), pos.z()));
+            LittleChunkHolder chunkholder = chunks.get(ChunkPos.pack(pos.x(), pos.z()));
             if (chunkholder != null)
                 chunkholder.sectionLightChanged(layer, pos.y());
         });
@@ -301,7 +301,7 @@ public class LittleServerChunkCache extends ServerChunkCache implements Iterable
     public final class MainThreadExecutor extends BlockableEventLoop<Runnable> {
         
         public MainThreadExecutor(Level level) {
-            super("Chunk source main thread executor for " + level.dimension().location());
+            super("Chunk source main thread executor for " + level.dimension().identifier());
         }
         
         @Override
@@ -326,7 +326,7 @@ public class LittleServerChunkCache extends ServerChunkCache implements Iterable
         
         @Override
         protected void doRunTask(Runnable run) {
-            LittleServerChunkCache.this.level.getProfiler().incrementCounter("runTask");
+            net.minecraft.util.profiling.Profiler.get().incrementCounter("runTask");
             super.doRunTask(run);
         }
         

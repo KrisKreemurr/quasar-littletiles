@@ -200,7 +200,7 @@ public class LittleCollection implements Iterable<LittleTile> {
     public static void load(LittleCollection collection, CompoundTag nbt) {
         collection.clear();
         
-        for (String name : nbt.getAllKeys()) {
+        for (String name : nbt.keySet()) {
             ListTag boxes = nbt.getListOrEmpty(name);
             BlockState state = LittleBlockRegistry.loadState(name);
             LittleBlock block;
@@ -229,7 +229,7 @@ public class LittleCollection implements Iterable<LittleTile> {
     public static void loadExtended(LittleCollection collection, CompoundTag nbt) {
         collection.clear();
         
-        for (String name : nbt.getAllKeys()) {
+        for (String name : nbt.keySet()) {
             ListTag boxes = nbt.getListOrEmpty(name);
             BlockState state = LittleBlockRegistry.loadState(name);
             LittleBlock block;

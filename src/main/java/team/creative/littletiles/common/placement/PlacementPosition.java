@@ -135,7 +135,7 @@ public class PlacementPosition implements IGridBased {
     @OnlyIn(Dist.CLIENT)
     public void move(LittleGrid grid, Facing facing) {
         LittleVecGrid vec = new LittleVecGrid(new LittleVec(facing), grid);
-        if (Screen.hasControlDown())
+        if (net.minecraft.client.Minecraft.getInstance().hasControlDown())
             vec.getVec().scale(grid.count);
         box.move(vec);
     }

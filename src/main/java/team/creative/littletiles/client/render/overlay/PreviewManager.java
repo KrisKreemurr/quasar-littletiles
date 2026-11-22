@@ -87,7 +87,7 @@ public class PreviewManager implements LevelAwareHandler {
     protected void tick(RenderLevelStageEvent event) {
         if (event.getStage() != Stage.AFTER_WEATHER)
             return;
-        if (MC.player == null || MC.screen instanceof IGuiParent)
+        if (MC.player == null || MC.gui.screen() instanceof IGuiParent)
             return;
         
         Player player = MC.player;
@@ -119,7 +119,7 @@ public class PreviewManager implements LevelAwareHandler {
         processKeys(stack, true);
         
         if (tool != null) {
-            Vec3 cam = MC.gameRenderer.getMainCamera().getPosition();
+            Vec3 cam = MC.gameRenderer.mainCamera().getPosition();
             RenderSystem.enableBlend();
             
             tool.render(renderer, pose, cam, false);
@@ -178,8 +178,8 @@ public class PreviewManager implements LevelAwareHandler {
         if (event.getStage() != Stage.AFTER_BLOCK_ENTITIES)
             return;
         if (MC.getCameraEntity() instanceof Player && !MC.options.hideGui && tool != null && tool.stack.getItem() instanceof ILittleTool) {
-            tool.render(renderer, event.getPoseStack(), MC.gameRenderer.getMainCamera().getPosition(), true);
-            tool.renderGui(renderer, LittleTilesClient.OVERLAY_RENDERER, MC.gameRenderer.getMainCamera().getPosition());
+            tool.render(renderer, event.getPoseStack(), MC.gameRenderer.mainCamera().getPosition(), true);
+            tool.renderGui(renderer, LittleTilesClient.OVERLAY_RENDERER, MC.gameRenderer.mainCamera().getPosition());
         }
     }
     
@@ -191,7 +191,7 @@ public class PreviewManager implements LevelAwareHandler {
         if (!LittleAction.canPlace(player))
             return;
         
-        Vec3 cam = MC.gameRenderer.getMainCamera().getPosition();
+        Vec3 cam = MC.gameRenderer.mainCamera().getPosition();
         PoseStack pose = event.getPoseStack();
         
         if (!event.isCanceled() && level.getBlockState(event.getTarget().getBlockPos()).getBlock() instanceof BlockTile && level.getWorldBorder().isWithinBounds(event.getTarget()

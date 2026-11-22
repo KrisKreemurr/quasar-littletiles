@@ -184,7 +184,7 @@ public class LittleLevelRenderManager extends LittleEntityRenderManager<LittleLe
     
     @Override
     public void compileSections(Camera camera) {
-        mc.getProfiler().push("compile_animation_chunks");
+        net.minecraft.util.profiling.Profiler.get().push("compile_animation_chunks");
         List<LittleRenderChunk> schedule = Lists.newArrayList();
         
         LittleClientLevel level = (LittleClientLevel) getLevel();
@@ -192,7 +192,7 @@ public class LittleLevelRenderManager extends LittleEntityRenderManager<LittleLe
         
         for (LittleRenderChunk chunk : this) {
             ChunkPos chunkpos = new ChunkPos(chunk.pos);
-            if (chunk.isDirty() && (!entity.isReal() || level.getChunk(chunkpos.x, chunkpos.z).isLightCorrect())) {
+            if (chunk.isDirty() && (!entity.isReal() || level.getChunk(chunkpos.x(), chunkpos.z()).isLightCorrect())) {
                 boolean immediate = false;
                 if (mc.options.prioritizeChunkUpdates().get() == PrioritizeChunkUpdates.PLAYER_AFFECTED)
                     immediate = chunk.isDirtyFromPlayer();
@@ -218,7 +218,7 @@ public class LittleLevelRenderManager extends LittleEntityRenderManager<LittleLe
             }
         }
         
-        mc.getProfiler().pop();
+        net.minecraft.util.profiling.Profiler.get().pop();
     }
     
     @Override
