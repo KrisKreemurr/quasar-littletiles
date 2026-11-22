@@ -12,9 +12,6 @@ import net.minecraft.world.level.block.state.properties.Property;
 @Mixin(StateHolder.class)
 public interface StateHolderAccessor {
     
-    @Accessor
-    public static Function<Map.Entry<Property<?>, Comparable<?>>, String> getPROPERTY_ENTRY_TO_STRING_FUNCTION() {
-        throw new UnsupportedOperationException();
-    }
+    // QUASAR: PROPERTY_ENTRY_TO_STRING_FUNCTION is gone in 26.3 (LittleBlockRegistry formats states itself now).
     
 }

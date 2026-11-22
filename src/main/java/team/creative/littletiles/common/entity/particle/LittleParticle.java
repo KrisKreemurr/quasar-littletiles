@@ -11,6 +11,7 @@ import team.creative.creativecore.common.util.math.vec.Vec3d;
 import team.creative.creativecore.common.util.mc.ColorUtils;
 import team.creative.littletiles.common.structure.type.premade.LittleParticleEmitter.ParticleSettings;
 import team.creative.littletiles.mixin.client.render.ParticleEngineAccessor;
+import team.creative.littletiles.mixin.client.render.ParticleResourcesAccessor;
 
 @OnlyIn(Dist.CLIENT)
 public class LittleParticle extends SingleQuadParticle {
@@ -39,7 +40,7 @@ public class LittleParticle extends SingleQuadParticle {
         }
         this.hasPhysics = settings.collision;
         this.settings = settings;
-        this.sprites = ((ParticleEngineAccessor) mc.particleEngine).getSpriteSets().get(settings.texture.particleTexture);
+        this.sprites = ((ParticleResourcesAccessor) ((ParticleEngineAccessor) mc.particleEngine).getResources()).getSpriteSets().get(settings.texture.particleTexture);
         this.scaleDeviation = (float) (Math.random() * settings.sizeDeviation);
         settings.texture.init(this);
         settings.texture.tick(this);
@@ -72,7 +73,7 @@ public class LittleParticle extends SingleQuadParticle {
     }
     
     private static SpriteSet spriteSet(ParticleSettings settings) {
-        return ((ParticleEngineAccessor) mc.particleEngine).getSpriteSets().get(settings.texture.particleTexture);
+        return ((ParticleResourcesAccessor) ((ParticleEngineAccessor) mc.particleEngine).getResources()).getSpriteSets().get(settings.texture.particleTexture);
     }
     
     public void pickSprite(SpriteSet set) {

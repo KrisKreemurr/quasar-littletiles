@@ -24,7 +24,6 @@ import team.creative.littletiles.LittleTilesRegistry;
 import team.creative.littletiles.api.common.block.LittleBlock;
 import team.creative.littletiles.common.convertion.OldLittleTilesDataParser;
 import team.creative.littletiles.mixin.common.block.BlockMixin;
-import team.creative.littletiles.mixin.common.block.StateHolderAccessor;
 
 public class LittleBlockRegistry {
     

@@ -15,7 +15,7 @@ public class ServerGamePacketListenerImplMixin {
     
     @Redirect(at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/phys/shapes/Shapes;joinIsNotEmpty(Lnet/minecraft/world/phys/shapes/VoxelShape;Lnet/minecraft/world/phys/shapes/VoxelShape;Lnet/minecraft/world/phys/shapes/BooleanOp;)Z"),
-            method = "isPlayerCollidingWithAnythingNew", require = 1)
+            method = "isEntityCollidingWithAnythingNew", require = 1)
     private boolean joinIsNotEmptyCanBeIgnored(VoxelShape toAdd, VoxelShape shape, BooleanOp op) {
         if (toAdd instanceof BoxesVoxelShape)
             return true;

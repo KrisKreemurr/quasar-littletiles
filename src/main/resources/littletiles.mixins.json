@@ -44,7 +44,8 @@
         "client.level.ServerVerifiedStateAccessor",
         "client.network.ClientPacketListenerAccessor",
         "client.network.ClientPacketListenerMixin",
-        "client.render.ParticleEngineAccessor"
+        "client.render.ParticleEngineAccessor",
+        "client.render.ParticleResourcesAccessor"
     ],
     "minVersion": "0.8"
 }

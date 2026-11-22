@@ -5,7 +5,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -49,13 +48,11 @@ public class BlockMixin implements LittleBlockProvider {
         this.specialBlock = special;
     }
     
-    @Inject(method = "shouldRenderFace(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;Lnet/minecraft/core/BlockPos;)Z",
-            at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/world/level/block/state/BlockState;skipRendering(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;)Z"),
-            require = 1, cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
-    private static void shouldRenderFace(BlockState otherState, BlockGetter level, BlockPos otherPos, Direction direction, BlockPos pos, CallbackInfoReturnable<Boolean> info,
-            BlockState blockstate) {
-        if (blockstate.getBlock() instanceof BlockTile b)
-            info.setReturnValue(!b.hidesNeighborFace(level, pos, blockstate, otherState, direction.getOpposite()));
+    /** 26.x: shouldRenderFace(level, pos, state, neighborState, direction). A LittleTiles neighbour decides itself whether it hides the face. */
+    @Inject(method = "shouldRenderFace(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;)Z",
+            at = @At("HEAD"), require = 1, cancellable = true)
+    private static void shouldRenderFace(BlockGetter level, BlockPos pos, BlockState state, BlockState neighborState, Direction direction, CallbackInfoReturnable<Boolean> info) {
+        if (neighborState.getBlock() instanceof BlockTile b)
+            info.setReturnValue(!b.hidesNeighborFace(level, pos.relative(direction), neighborState, state, direction.getOpposite()));
     }
 }

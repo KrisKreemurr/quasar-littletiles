@@ -6,15 +6,17 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.KeyboardHandler;
+import net.minecraft.client.input.KeyEvent;
 import team.creative.littletiles.client.LittleTilesClient;
 
 @Mixin(KeyboardHandler.class)
 public class KeyboardHandlerMixin {
     
-    @Inject(method = "keyPress(JIIII)V", at = @At(value = "INVOKE",
-            target = "Lcom/mojang/blaze3d/platform/InputConstants;getKey(II)Lcom/mojang/blaze3d/platform/InputConstants$Key;"), cancellable = true)
-    private void onKeyPressed(long window, int keyCode, int scanCode, int action, int modifiers, CallbackInfo info) {
-        if (LittleTilesClient.PREVIEW_RENDERER != null && LittleTilesClient.PREVIEW_RENDERER.keyPressed(keyCode, scanCode, action, modifiers))
+    @Inject(method = "keyPress(JILnet/minecraft/client/input/KeyEvent;)V", at = @At(value = "INVOKE",
+            target = "Lcom/mojang/blaze3d/platform/InputConstants;getKey(Lnet/minecraft/client/input/KeyEvent;)Lcom/mojang/blaze3d/platform/InputConstants$Key;"), cancellable = true,
+            require = 0)
+    private void onKeyPressed(long window, int action, KeyEvent event, CallbackInfo info) {
+        if (LittleTilesClient.PREVIEW_RENDERER != null && LittleTilesClient.PREVIEW_RENDERER.keyPressed(event.key(), event.scancode(), action, event.modifiers()))
             info.cancel();
     }
     

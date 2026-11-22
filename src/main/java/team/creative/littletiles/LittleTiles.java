@@ -274,7 +274,7 @@ public class LittleTiles {
             List<BETiles> blocks = new ArrayList<>();
             
             for (ServerLevel level : x.getSource().getServer().getAllLevels())
-                for (ChunkHolder holder : ((ChunkMapAccessor) level.getChunkSource().chunkMap).callGetChunks()) {
+                for (ChunkHolder holder : ((ChunkMapAccessor) level.getChunkSource().chunkMap).getVisibleChunkMap().values()) {
                     var chunk = holder.getTickingChunk();
                     if (chunk != null)
                         for (BlockEntity be : chunk.getBlockEntities().values())
@@ -376,7 +376,7 @@ public class LittleTiles {
             List<BETiles> blocks = new ArrayList<>();
             
             for (ServerLevel level : x.getSource().getServer().getAllLevels()) {
-                for (ChunkHolder holder : ((ChunkMapAccessor) level.getChunkSource().chunkMap).callGetChunks()) {
+                for (ChunkHolder holder : ((ChunkMapAccessor) level.getChunkSource().chunkMap).getVisibleChunkMap().values()) {
                     var chunk = holder.getTickingChunk();
                     if (chunk != null)
                         for (BlockEntity be : chunk.getBlockEntities().values())

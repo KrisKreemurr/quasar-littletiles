@@ -85,7 +85,8 @@ public class EntityMixin {
         
     }
     
-    @WrapOperation(method = "move(Lnet/minecraft/world/entity/MoverType;Lnet/minecraft/world/phys/Vec3;)V", require = 1, at = @At(value = "INVOKE",
+    // TODO(quasar): 26.3 Entity.move no longer calls Block.updateEntityAfterFallOn directly; vertical push from moving structures needs a new hook (require = 0 so it doesn't crash).
+    @WrapOperation(method = "move(Lnet/minecraft/world/entity/MoverType;Lnet/minecraft/world/phys/Vec3;)V", require = 0, at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/level/block/Block;updateEntityAfterFallOn(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/world/entity/Entity;)V"))
     public void deltaMovementVertical(Block block, BlockGetter level, Entity entity, Operation<Void> original) {
         var vec = decreaseDelta(Axis.Y, entity);
@@ -243,8 +244,8 @@ public class EntityMixin {
         throw new UnsupportedOperationException();
     }
     
-    @Inject(method = "checkInsideBlocks()V", require = 1, at = @At("HEAD"))
-    protected void checkInsideBlocks(CallbackInfo info) {
+    @Inject(method = "checkInsideBlocks(Ljava/util/List;Lnet/minecraft/world/entity/InsideBlockEffectApplier$StepBasedCollector;)V", require = 1, at = @At("HEAD"))
+    protected void checkInsideBlocks(java.util.List<?> movements, InsideBlockEffectApplier.StepBasedCollector collector, CallbackInfo info) {
         if (!LittleTiles.CONFIG.general.checkCollisionListenerForAnimations)
             return;
         

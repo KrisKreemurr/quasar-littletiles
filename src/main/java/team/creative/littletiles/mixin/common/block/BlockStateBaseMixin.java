@@ -15,11 +15,7 @@ import team.creative.littletiles.common.block.mc.BlockTile;
 @Mixin(BlockStateBase.class)
 public class BlockStateBaseMixin {
     
-    @Inject(at = @At("HEAD"), method = "blocksMotion()Z", require = 1, cancellable = true)
-    public void blocksMotion(CallbackInfoReturnable<Boolean> info) {
-        if (((BlockStateBase) (Object) this).getBlock() instanceof BlockTile)
-            info.setReturnValue(true);
-    }
+    // TODO(quasar): blocksMotion() no longer exists in 26.3 (movement blocking is derived from the collision shape now).
     
     @Inject(at = @At("HEAD"),
             method = "isFaceSturdy(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;Lnet/minecraft/world/level/block/SupportType;)Z",

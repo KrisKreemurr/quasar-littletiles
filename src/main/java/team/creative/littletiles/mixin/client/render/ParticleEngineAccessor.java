@@ -12,7 +12,8 @@ import net.minecraft.resources.Identifier;
 @Mixin(ParticleEngine.class)
 public interface ParticleEngineAccessor {
     
-    @Accessor
-    public Map<Identifier, ? extends SpriteSet> getSpriteSets();
+    /** 26.3: sprite sets moved into ParticleResources (see ParticleResourcesAccessor). */
+    @Accessor("resourceManager")
+    public net.minecraft.client.particle.ParticleResources getResources();
     
 }
