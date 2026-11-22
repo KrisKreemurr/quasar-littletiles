@@ -26,7 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.items.wrapper.InvWrapper;
+import team.creative.littletiles.common.ingredient.LittleItemSlots;
 import team.creative.creativecore.common.util.inventory.InventoryUtils;
 import team.creative.creativecore.common.util.math.base.Axis;
 import team.creative.creativecore.common.util.math.base.Facing;
@@ -162,20 +162,28 @@ public class Little3dPrinter extends LittleStructurePremade {
         
         ticks = nbt.getIntOr("ticks", 0);
         index = nbt.getIntOr("index", 0);
-        amountPerTick = nbt.contains("amount") ? nbt.getInt("amount") : 1;
-        ticksToSkip = nbt.contains("skip") ? nbt.getInt("skip") : 10;
+        amountPerTick = nbt.getIntOr("amount", 1);
+        ticksToSkip = nbt.getIntOr("skip", 10);
         rememberStructures = nbt.getBooleanOr("structures", false);
         continueOnError = nbt.getBooleanOr("continue", false);
         
         if (nbt.contains("inventory")) {
-            var invNBT = nbt.getCompound("inventory");
-            inventory = new SimpleContainer(INVENTORY_SIZE);
+            var invNBT = nbt.getCompoundOrEmpty("inventory");
+            inventory = createInventory();
             InventoryUtils.load(inventory, provider, invNBT);
         } else
-            inventory = new SimpleContainer(INVENTORY_SIZE);
-        
-        if (inventory != null)
-            inventory.addListener(x -> onInventoryChanged());
+            inventory = createInventory();
+    }
+    
+    /** SimpleContainer lost its listeners in 26.x; setChanged is the hook now. */
+    private SimpleContainer createInventory() {
+        return new SimpleContainer(INVENTORY_SIZE) {
+            @Override
+            public void setChanged() {
+                super.setChanged();
+                onInventoryChanged();
+            }
+        };
     }
     
     @Override
@@ -348,7 +356,7 @@ public class Little3dPrinter extends LittleStructurePremade {
         
         @Override
         public LittleInventory createInventory() {
-            return new LittleInventory(new InvWrapper(structure.inventory));
+            return new LittleInventory(LittleItemSlots.of(structure.inventory));
         }
         
         @Override

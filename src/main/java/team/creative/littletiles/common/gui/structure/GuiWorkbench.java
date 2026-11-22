@@ -1,5 +1,6 @@
 package team.creative.littletiles.common.gui.structure;
 
+import net.minecraft.util.Prediction;
 import team.creative.creativecore.common.gui.IGuiParent;
 
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ public class GuiWorkbench extends GuiLayer {
                     if (LittleAction.checkAndTake((LittleActionSource) player, inventory, ingredients)) {
                         ItemStack stack = ItemMultiTiles.of(group);
                         if (!player.getInventory().add(stack))
-                            player.drop(stack, false);
+                            player.drop(stack, false, Prediction.PREDICTED);
                     }
                 } catch (NotEnoughIngredientsException e2) {
                     LittleIngredients missing = e2.getIngredients();
@@ -120,7 +121,7 @@ public class GuiWorkbench extends GuiLayer {
         setAlign(Align.CENTER);
         add(new CraftingGrid(this));
         add(new GuiListBoxBase<GuiLabel>(this, "missing", false, new ArrayList<>()).setDim(150, 100));
-        add(new GuiPlayerInventoryGrid(this).setUnexpandableX());
+        add(new GuiPlayerInventoryGrid(this).setFixedX());
     }
     
     @Override

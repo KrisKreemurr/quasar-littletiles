@@ -29,7 +29,7 @@ public class GuiFilterConfiguration extends GuiParent {
         boolean activeFilter = filter.hasFilter();
         add(new GuiLabel(this, "filter_label").setTranslate("gui.filter"));
         add(new GuiCheckBox(this, "any", selector == null || !activeFilter).setTranslate("gui.any"));
-        add(filterElement = (GuiElementFilter) GuiElementFilter.ofGroup(player, selector).setExpandableX().setDim(new GuiSizeRules().prefHeight(100)));
+        add(filterElement = (GuiElementFilter) GuiElementFilter.ofGroup(this, player, selector).setExpandableX().setDim(new GuiSizeRules().prefHeight(100)));
     }
     
     public TileFilterComponent save() {

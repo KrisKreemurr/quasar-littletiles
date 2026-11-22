@@ -40,7 +40,7 @@ public class GuiBuilder extends GuiLayer {
             int width = nbt.getIntOr("width", 0);
             int height = nbt.getIntOr("height", 0);
             int thickness = nbt.getIntOr("thickness", 0);
-            Block block = BuiltInRegistries.BLOCK.get(Identifier.parse(nbt.getStringOr("block", "")));
+            Block block = BuiltInRegistries.BLOCK.getValue(Identifier.parse(nbt.getStringOr("block", "")));
             LittleGrid grid = LittleGrid.get(nbt.getIntOr("grid", 0));
             
             builder.lastBlockState = block.defaultBlockState();
@@ -101,13 +101,13 @@ public class GuiBuilder extends GuiLayer {
         box.select(LittleStructureBuilder.REGISTRY.get(builder.lastStructureType));
         add(box.setExpandableX());
         
-        GuiStackSelector selector = new GuiStackSelector(this, "preview", getPlayer(), LittleGuiUtils.getCollector(getPlayer()), true);
+        GuiStackSelector selector = new GuiStackSelector(this, "preview", LittleGuiUtils.getCollector(getPlayer()), true);
         selector.setSelectedForce(new ItemStack(builder.lastBlockState.getBlock()));
         add(selector.setExpandableX());
         
         add(new GuiLeftRightBox(this).addLeft(new GuiLabel(this, "failed").setTranslate("gui.structure_builder.failed").setVisible(false)).addRight(new GuiButton(this, "craft", x -> {
             if ((getPlayer().isCreative() && builder.inventory.getItem(0).isEmpty()) || builder.inventory.getItem(0).getItem() instanceof ItemLittleBlueprint) {
-                get("failed").visible = false;
+                get("failed").setVisible(false);
                 CompoundTag nbt = new CompoundTag();
                 GuiCounter width = (GuiCounter) get("width");
                 nbt.putInt("width", width.getValue());
@@ -125,7 +125,7 @@ public class GuiBuilder extends GuiLayer {
                 nbt.putString("block", block.builtInRegistryHolder().key().identifier().toString());
                 CRAFT.send(nbt);
             } else
-                get("failed").visible = true;
+                get("failed").setVisible(true);
             
         }).setTranslate("gui.structure_builder.craft")));
         

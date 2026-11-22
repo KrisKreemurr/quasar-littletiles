@@ -7,7 +7,6 @@ import java.util.Map.Entry;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandler;
 import team.creative.creativecore.common.util.text.TextBuilder;
 import team.creative.creativecore.common.util.type.map.LinkedHashMapInteger;
 
@@ -37,9 +36,9 @@ public class StackIngredient extends LittleIngredient<StackIngredient> implement
         }
     }
     
-    public StackIngredient(IItemHandler inventory) {
-        for (int i = 0; i < inventory.getSlots(); i++) {
-            ItemStack stack = inventory.getStackInSlot(i);
+    public StackIngredient(LittleItemSlots inventory) {
+        for (int i = 0; i < inventory.size(); i++) {
+            ItemStack stack = inventory.get(i);
             if (!stack.isEmpty())
                 add(new StackIngredientEntry(stack, stack.getCount())); // Might be bad for performance (for huge inventories)
         }

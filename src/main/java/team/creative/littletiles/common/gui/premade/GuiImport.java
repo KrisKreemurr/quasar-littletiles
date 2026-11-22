@@ -107,7 +107,7 @@ public class GuiImport extends GuiLayer {
         
         secondRow.add(new GuiButton(this, "import_button", x -> {
             try {
-                CompoundTag nbt = TagParser.parseTag(textfield.getText());
+                CompoundTag nbt = TagParser.parseCompoundFully(textfield.getText());
                 
                 CompoundTag tempNbt = nbt.copy();
                 if (OldLittleTilesDataParser.isOld(tempNbt))
@@ -137,7 +137,7 @@ public class GuiImport extends GuiLayer {
         
         add(new GuiInventoryGrid(this, "import", importSlot));
         
-        add(new GuiPlayerInventoryGrid(this).setUnexpandableX());
+        add(new GuiPlayerInventoryGrid(this).setFixedX());
     }
     
 }

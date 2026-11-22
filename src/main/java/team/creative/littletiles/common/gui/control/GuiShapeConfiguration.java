@@ -10,7 +10,7 @@ import team.creative.creativecore.common.config.gui.GuiConfigSubControlNested;
 import team.creative.creativecore.common.gui.GuiParent;
 import team.creative.creativecore.common.gui.control.collection.GuiComboBoxTree;
 import team.creative.creativecore.common.gui.control.parent.GuiScrollY;
-import team.creative.creativecore.common.gui.extension.GuiExtensionCreator.ExtensionDirection;
+import team.creative.creativecore.client.gui.extension.GuiExtensionCreator.ExtensionDirection;
 import team.creative.creativecore.common.gui.flow.GuiFlow;
 import team.creative.creativecore.common.util.inventory.ContainerSlotView;
 import team.creative.littletiles.LittleTilesRegistry;
@@ -64,7 +64,7 @@ public class GuiShapeConfiguration extends GuiParent {
         else
             config = ShapeRegistry.createConfigDefault(box.selected());
         if (config != null)
-            scroll.add(ShapeRegistry.SHAPE_CONFIG_REGISTRY.create("config", config, Side.CLIENT));
+            scroll.add(ShapeRegistry.SHAPE_CONFIG_REGISTRY.create(scroll, "config", config, Side.CLIENT));
         scroll.reflow();
     }
     

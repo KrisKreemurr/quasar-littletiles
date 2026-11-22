@@ -2,7 +2,7 @@ package team.creative.littletiles.common.gui.handler;
 
 import java.util.function.Predicate;
 
-import net.minecraft.data.models.blockstates.PropertyDispatch.TriFunction;
+import com.mojang.datafixers.util.Function3;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import team.creative.creativecore.common.gui.GuiLayer;
@@ -17,10 +17,10 @@ public class LittleStructureGuiCreator extends GuiCreator {
     
     public final Predicate<LittlePermissionInteract> test;
     
-    public LittleStructureGuiCreator(TriFunction<CompoundTag, Player, LittleStructure, GuiLayer> function, Predicate<LittlePermissionInteract> test) {
+    public LittleStructureGuiCreator(Function3<CompoundTag, Player, LittleStructure, GuiLayer> function, Predicate<LittlePermissionInteract> test) {
         super((nbt, player) -> {
             try {
-                return function.apply(nbt, player, new StructureLocation(nbt.getCompound("location")).find(player.level()));
+                return function.apply(nbt, player, new StructureLocation(nbt.getCompoundOrEmpty("location")).find(player.level()));
             } catch (LittleActionException e) {
                 e.printStackTrace();
                 return null;

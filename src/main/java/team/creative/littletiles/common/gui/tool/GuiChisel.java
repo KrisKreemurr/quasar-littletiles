@@ -72,7 +72,7 @@ public class GuiChisel extends GuiConfigureTool {
         parent.add(new GuiShowItem(this, "item").setDim(60, 60));
         parent.add(new GuiGridConfig(this, "grid", getPlayer(), PlacementPlayerSetting.grid(getPlayer()), LittleTilesClient::grid));
         
-        GuiStackSelector selector = new GuiStackSelector(this, "preview", getPlayer(), LittleGuiUtils.getCollector(getPlayer()), true);
+        GuiStackSelector selector = new GuiStackSelector(this, "preview", LittleGuiUtils.getCollector(getPlayer()), true);
         selector.setSelectedForce(element.getBlock().getStack());
         left.add(selector);
         

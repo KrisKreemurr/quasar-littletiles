@@ -10,8 +10,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.IItemHandler;
 import team.creative.creativecore.common.util.inventory.InventoryUtils;
 import team.creative.creativecore.common.util.mc.LevelUtils;
 import team.creative.littletiles.api.common.ingredient.ILittleIngredientInventory;
@@ -21,7 +19,7 @@ import team.creative.littletiles.common.ingredient.NotEnoughIngredientsException
 public class LittleInventory implements Iterable<ItemStack> {
     
     protected Player player;
-    protected IItemHandler inventory;
+    protected LittleItemSlots inventory;
     
     private boolean simulate;
     
@@ -33,14 +31,14 @@ public class LittleInventory implements Iterable<ItemStack> {
     public boolean allowDrop = true;
     
     public LittleInventory(Player player) {
-        this(player, player.getCapability(Capabilities.ItemHandler.ENTITY, null));
+        this(player, LittleItemSlots.of(player.getInventory()));
     }
     
-    public LittleInventory(IItemHandler inventory) {
+    public LittleInventory(LittleItemSlots inventory) {
         this(null, inventory);
     }
     
-    public LittleInventory(Player player, IItemHandler inventory) {
+    public LittleInventory(Player player, LittleItemSlots inventory) {
         this.player = player;
         this.inventory = inventory;
         this.inventories = new ArrayList<>();
@@ -63,11 +61,8 @@ public class LittleInventory implements Iterable<ItemStack> {
                     inventories.add(ingredient);
                     inventoriesId.add(i);
                 }
-            } else if (!onlyIngredientInventories) {
-                IItemHandler handler = stack.getCapability(Capabilities.ItemHandler.ITEM);
-                if (handler != null)
-                    subInventories.add(new LittleInventory(player, handler));
             }
+            // TODO(quasar): sub-inventories from item capabilities (backpacks…) need a writable ResourceHandler bridge; skipped for now.
         }
     }
     
@@ -123,7 +118,7 @@ public class LittleInventory implements Iterable<ItemStack> {
                 if (simulate)
                     cachedInventory.set(i, stack);
                 else
-                    inventory.insertItem(i, stack, false);
+                    inventory.insert(i, stack);
                 return true;
             }
         }
@@ -156,13 +151,13 @@ public class LittleInventory implements Iterable<ItemStack> {
     }
     
     public ItemStack get(int index) {
-        return simulate ? cachedInventory.get(index) : inventory.getStackInSlot(index);
+        return simulate ? cachedInventory.get(index) : inventory.get(index);
     }
     
     public int size() {
         if (inventory instanceof Inventory)
             return 36;
-        return simulate ? cachedInventory.size() : inventory.getSlots();
+        return simulate ? cachedInventory.size() : inventory.size();
     }
     
     @Override
@@ -175,12 +170,12 @@ public class LittleInventory implements Iterable<ItemStack> {
             
             @Override
             public boolean hasNext() {
-                return index < inventory.getSlots();
+                return index < inventory.size();
             }
             
             @Override
             public ItemStack next() {
-                return inventory.getStackInSlot(index++);
+                return inventory.get(index++);
             }
             
         };

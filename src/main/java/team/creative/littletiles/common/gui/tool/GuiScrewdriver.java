@@ -76,12 +76,12 @@ public class GuiScrewdriver extends GuiConfigure {
         add(box.setExpandableX());
         
         add(new GuiLabel(this, "filter_label").setTranslate("gui.filter"));
-        add(filter = (GuiElementFilter) GuiElementFilter.ofGroup(getPlayer(), lastSelectedFilter).setExpandableX().setDim(new GuiSizeRules().prefHeight(100)));
+        add(filter = (GuiElementFilter) GuiElementFilter.ofGroup(this, getPlayer(), lastSelectedFilter).setExpandableX().setDim(new GuiSizeRules().prefHeight(100)));
         add(new GuiCheckBox(this, "remove", false).setTranslate("gui.remove"));
         
         add(new GuiCheckBox(this, "replace", false).setTranslate("gui.replace_with"));
         
-        GuiStackSelector selector = new GuiStackSelector(this, "replacement", getPlayer(), LittleGuiUtils.getCollector(getPlayer()), true);
+        GuiStackSelector selector = new GuiStackSelector(this, "replacement", LittleGuiUtils.getCollector(getPlayer()), true);
         if (lastSelectedReplaceStack != null)
             selector.setSelectedForce(lastSelectedReplaceStack);
         add(selector.setExpandableX());

@@ -1,5 +1,6 @@
 package team.creative.littletiles.common.gui.tool;
 
+import net.minecraft.util.Prediction;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -242,7 +243,7 @@ public class GuiBag extends GuiConfigure {
         super.closed();
         ItemStack stack = input.getItem(0);
         if (!stack.isEmpty())
-            getPlayer().drop(stack, true);
+            getPlayer().drop(stack, true, Prediction.PREDICTED);
     }
     
     @Override

@@ -13,7 +13,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.IItemHandler;
+import team.creative.littletiles.common.ingredient.LittleItemSlots;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
 import team.creative.creativecore.common.gui.control.collection.GuiStackSelector;
 import team.creative.creativecore.common.gui.control.collection.GuiStackSelector.StackCollector;
 import team.creative.creativecore.common.gui.control.collection.GuiStackSelector.StackSelector;
@@ -45,16 +48,17 @@ public class LittleGuiUtils {
             super(selector);
         }
         
-        protected void collect(IItemHandler inventory, BlockIngredient ingredients) {
-            for (int i = 0; i < inventory.getSlots(); i++) {
-                ItemStack stack = inventory.getStackInSlot(i);
+        protected void collect(LittleItemSlots inventory, BlockIngredient ingredients) {
+            for (int i = 0; i < inventory.size(); i++) {
+                ItemStack stack = inventory.get(i);
                 if (stack.getItem() instanceof ILittleIngredientInventory) {
                     LittleIngredients ingredientsInventory = ((ILittleIngredientInventory) stack.getItem()).getInventory(stack);
                     if (ingredientsInventory != null && ingredientsInventory.contains(BlockIngredient.class))
                         ingredients.add(ingredientsInventory.get(BlockIngredient.class));
                 } else {
                     @Nullable
-                    IItemHandler handler = stack.getCapability(Capabilities.ItemHandler.ITEM);
+                    ResourceHandler<ItemResource> resources = ItemAccess.forStack(stack).getCapability(Capabilities.Item.ITEM);
+                    LittleItemSlots handler = resources == null ? null : LittleItemSlots.readOnly(resources);
                     if (handler != null)
                         collect(handler, ingredients);
                 }
@@ -77,7 +81,8 @@ public class LittleGuiUtils {
                     if (inventory != null && inventory.contains(BlockIngredient.class))
                         ingredients.add(inventory.get(BlockIngredient.class));
                 } else {
-                    IItemHandler handler = stack.getCapability(Capabilities.ItemHandler.ITEM);
+                    ResourceHandler<ItemResource> resources = ItemAccess.forStack(stack).getCapability(Capabilities.Item.ITEM);
+                    LittleItemSlots handler = resources == null ? null : LittleItemSlots.readOnly(resources);
                     if (handler != null)
                         collect(handler, ingredients);
                 }

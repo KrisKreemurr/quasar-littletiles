@@ -63,7 +63,7 @@ public class GuiStorage extends GuiLayer {
         
         GuiPlayerInventoryGrid playerGrid = new GuiPlayerInventoryGrid(this);
         if (!size.expanded)
-            playerGrid.setUnexpandableX();
+            playerGrid.setFixedX();
         add(playerGrid);
         
     }

@@ -30,16 +30,16 @@ public class GuiElementFilterGroup extends GuiElementFilter {
     
     public GuiElementFilterGroup(IGuiParent parent, Player player, GuiElementFilterOperator operator, BiFilter<IParentCollection, LittleTile>... filters) {
         super(parent);
-        add(list = new GuiListBoxBase<>(this, "list", true, new ArrayList<>(Stream.of(filters).map(x -> GuiElementFilter.of(player, x)).toList())));
+        add(list = new GuiListBoxBase<>(this, "list", true, new ArrayList<>(Stream.of(filters).map(x -> GuiElementFilter.of(this, player, x)).toList())));
         list.setExpandable();
         list.setDim(new GuiSizeRules().minHeight(40));
         var map = new TextMapBuilder<Consumer<Integer>>();
-        map.addComponent(x -> list.addItem(GuiElementFilter.of(getPlayer(), TileFilters.block(Blocks.STONE))), Component.translatable("gui.filter.block"));
-        map.addComponent(x -> list.addItem(GuiElementFilter.of(getPlayer(), TileFilters.tag(BlockTags.LOGS))), Component.translatable("gui.filter.block_tag"));
-        map.addComponent(x -> list.addItem(GuiElementFilter.of(getPlayer(), TileFilters.color(ColorUtils.WHITE))), Component.translatable("gui.filter.color"));
-        map.addComponent(x -> list.addItem(GuiElementFilter.of(getPlayer(), TileFilters.or())), Component.translatable("gui.filter.group"));
-        map.addComponent(x -> list.addItem(GuiElementFilter.of(getPlayer(), TileFilters.name("stone"))), Component.translatable("gui.filter.name"));
-        map.addComponent(x -> list.addItem(GuiElementFilter.of(getPlayer(), TileFilters.missing())), Component.translatable("gui.filter.missing"));
+        map.addComponent(x -> list.addItem(GuiElementFilter.of(this, getPlayer(), TileFilters.block(Blocks.STONE))), Component.translatable("gui.filter.block"));
+        map.addComponent(x -> list.addItem(GuiElementFilter.of(this, getPlayer(), TileFilters.tag(BlockTags.LOGS))), Component.translatable("gui.filter.block_tag"));
+        map.addComponent(x -> list.addItem(GuiElementFilter.of(this, getPlayer(), TileFilters.color(ColorUtils.WHITE))), Component.translatable("gui.filter.color"));
+        map.addComponent(x -> list.addItem(GuiElementFilter.of(this, getPlayer(), TileFilters.or())), Component.translatable("gui.filter.group"));
+        map.addComponent(x -> list.addItem(GuiElementFilter.of(this, getPlayer(), TileFilters.name("stone"))), Component.translatable("gui.filter.name"));
+        map.addComponent(x -> list.addItem(GuiElementFilter.of(this, getPlayer(), TileFilters.missing())), Component.translatable("gui.filter.missing"));
         GuiParent lower = new GuiParent(this);
         add(lower);
         lower.add(this.operator = new GuiStateButton<>(this, "operator", new TextMapBuilder<GuiElementFilterOperator>().addComponent(GuiElementFilterOperator.values(), x -> Component

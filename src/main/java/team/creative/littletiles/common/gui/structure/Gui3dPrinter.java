@@ -170,7 +170,7 @@ public class Gui3dPrinter extends GuiLayer {
         errors.setSpacing(5);
         state.add(errors);
         errors.getLeft().setFlow(GuiFlow.STACK_Y);
-        errors.getLeft().setUnexpandableX();
+        errors.getLeft().setFixedX();
         errors.addLeft(new GuiLabel(this, "errors").setTranslate("gui.3dprinter.errors"));
         errors.addLeft(new GuiButton(this, "clear", x -> CLEAR_ERRORS.send(EndTag.INSTANCE)).setTranslate("gui.3dprinter.clear"));
         errorScroll = new GuiScrollY(this);
@@ -186,7 +186,7 @@ public class Gui3dPrinter extends GuiLayer {
         GuiParent playerInventory = new GuiParent(this, GuiFlow.STACK_Y).setAlign(Align.CENTER);
         inventories.add(playerInventory.setExpandable());
         playerInventory.add(new GuiLabel(this, "inventory_label").setTranslate("gui.player.inventory"));
-        playerInventory.add(new GuiPlayerInventoryGrid(this).setUnexpandable());
+        playerInventory.add(new GuiPlayerInventoryGrid(this).setFixed());
         
         updateSpeedLabel();
     }
