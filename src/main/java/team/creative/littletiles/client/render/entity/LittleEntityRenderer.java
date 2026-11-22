@@ -11,13 +11,15 @@ import team.creative.littletiles.common.entity.LittleEntity;
 
 public class LittleEntityRenderer {
 
-    public LittleEntityRenderer(EntityRendererProvider.Context context) {}
+    public LittleEntityRenderer(EntityRendererProvider.Context context) { super(context); }
 
     public boolean shouldRender(LittleEntity animation, Frustum frustum, double camX, double camY, double camZ) { return false; }
 
     public Identifier getTextureLocation(LittleEntity animation) { return null; }
 
     public static boolean isVisible(LittleEntity animation, Frustum frustum, double camX, double camY, double camZ) { return false; }
+
+    protected LittleEntityRenderer() {}
 
 }
 

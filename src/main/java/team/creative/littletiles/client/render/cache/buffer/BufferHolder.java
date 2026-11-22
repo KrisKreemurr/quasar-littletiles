@@ -9,10 +9,13 @@ import java.util.List;
 import com.mojang.blaze3d.vertex.MeshData;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import net.caffeinemc.mods.sodium.client.model.quad.properties.ModelQuadFacing;
 import net.minecraft.world.phys.Vec3;
 import team.creative.littletiles.LittleTiles;
 import team.creative.creativecore.client.render.VertexFormatUtils;
 import team.creative.creativecore.common.util.type.itr.SingleIterator;
+import team.creative.littletiles.mixin.client.render.ByteBufferBuilderResultAccessor;
+import team.creative.littletiles.mixin.client.render.MeshDataAccessor;
 
 // QUASAR STUB: generated no-op stand-in; the original lives in src/parked (render rewrite pending).
 
@@ -79,6 +82,8 @@ public class BufferHolder implements BufferCache {
     public void applyOffset(Vec3 vec, int sectionIndex) {}
 
     public String toString() { return null; }
+
+    protected BufferHolder() {}
 
 }
 

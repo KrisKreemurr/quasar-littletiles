@@ -10,9 +10,11 @@ import team.creative.littletiles.common.entity.EntitySit;
 
 public class LittleSitRenderer {
 
-    public LittleSitRenderer(EntityRendererProvider.Context context) {}
+    public LittleSitRenderer(EntityRendererProvider.Context context) { super(context); }
 
     public Identifier getTextureLocation(EntitySit animation) { return null; }
+
+    protected LittleSitRenderer() {}
 
 }
 

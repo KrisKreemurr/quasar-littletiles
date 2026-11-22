@@ -7,17 +7,21 @@ import java.util.Map.Entry;
 import java.util.Set;
 import javax.annotation.Nullable;
 import org.joml.Matrix4f;
+import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.MeshData.SortState;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexBuffer;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexSorting;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.SectionBufferBuilderPack;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -33,6 +37,7 @@ import team.creative.creativecore.common.util.type.map.ChunkLayerMap;
 import team.creative.littletiles.LittleTiles;
 import team.creative.littletiles.client.LittleTilesClient;
 import team.creative.littletiles.client.level.little.FakeClientLevel;
+import team.creative.littletiles.client.mod.sodium.SodiumManager;
 import team.creative.littletiles.client.render.cache.buffer.BufferCollection;
 import team.creative.littletiles.client.render.cache.buffer.ChunkBufferUploader;
 import team.creative.littletiles.client.render.cache.build.RenderingLevelHandler;
@@ -51,6 +56,7 @@ public class LittleAnimationRenderManager extends LittleEntityRenderManager<Litt
 
     public static LittleEntityRenderManager of(LittleAnimationEntity entity) { return null; }
 
+    protected ChunkLayerMap<VertexBuffer> buffers;
     protected Set<ChunkSectionLayer> hasBlocks;
     protected List<BlockEntity> renderableBlockEntities;
     protected MeshData.SortState transparencyState;
@@ -58,6 +64,7 @@ public class LittleAnimationRenderManager extends LittleEntityRenderManager<Litt
     private SectionAdditional additional;
     public ChunkLayerMap<BufferCollection> lastUploaded;
     private volatile int queued;
+    public LittleAnimationRenderManager(LittleAnimationEntity entity) { super(entity); }
 
     public boolean isSmall() { return false; }
 
@@ -77,11 +84,13 @@ public class LittleAnimationRenderManager extends LittleEntityRenderManager<Litt
 
     public LittleAnimationLevel getLevel() { return null; }
 
+    public VertexBuffer getVertexBuffer(ChunkSectionLayer layer) { return null; }
 
     public void markReadyForUpdate(boolean playerChanged) {}
 
     public void compileSections(Camera camera) {}
 
+    protected void renderAllBlockEntities(PoseStack pose, Frustum frustum, Vec3 cam, float frameTime, MultiBufferSource bufferSource) {}
 
     public SortState getTransparencyState() { return null; }
 
@@ -95,6 +104,7 @@ public class LittleAnimationRenderManager extends LittleEntityRenderManager<Litt
 
     public void resortTransparency(ChunkSectionLayer layer, double x, double y, double z) {}
 
+    public void renderChunkLayer(ChunkSectionLayer layer, PoseStack pose, double x, double y, double z, Matrix4f projectionMatrix, Uniform offset) {}
 
     protected void setBlockDirty(BlockPos pos, boolean playerChanged) {}
 
@@ -138,6 +148,8 @@ public class LittleAnimationRenderManager extends LittleEntityRenderManager<Litt
     public boolean shouldRender(boolean sodiumLayer) { return false; }
 
     public RenderingLevelHandler renderingHandler() { return null; }
+
+    protected LittleAnimationRenderManager() {}
 
 }
 
