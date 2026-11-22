@@ -1,5 +1,8 @@
 package team.creative.littletiles.server.level.little;
 
+import net.minecraft.server.level.ChunkTaskDispatcher;
+import net.minecraft.util.thread.ConsecutiveExecutor;
+import net.minecraft.world.level.TicketStorage;
 import java.io.IOException;
 import java.util.BitSet;
 import java.util.Collections;
@@ -23,16 +26,13 @@ import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ChunkResult;
 import net.minecraft.server.level.ChunkTaskPriorityQueue;
-import net.minecraft.server.level.ChunkTaskPriorityQueueSorter;
 import net.minecraft.server.level.DistanceManager;
 import net.minecraft.server.level.GenerationChunkHolder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ThreadedLevelLightEngine;
-import net.minecraft.server.level.progress.ChunkProgressListener;
 import net.minecraft.util.StaticCache2D;
 import net.minecraft.util.thread.BlockableEventLoop;
-import net.minecraft.util.thread.ProcessorMailbox;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -57,18 +57,19 @@ public class LittleChunkMap extends ChunkMap {
     private ChunkScanAccess fakeAccess;
     private DistanceManager distanceManager;
     private ThreadedLevelLightEngine lightEngine;
-    private ChunkTaskPriorityQueueSorter queueSorter;
+    private ChunkTaskDispatcher queueSorter;
     
-    public LittleChunkMap(ServerLevel level, LevelStorageSource.LevelStorageAccess access, DataFixer fixer, StructureTemplateManager templateManager, Executor exe, BlockableEventLoop<Runnable> loop, LightChunkGetter lightGetter, ChunkGenerator generator, ChunkProgressListener progress, ChunkStatusUpdateListener status, Supplier<DimensionDataStorage> supplier, int viewDistance, boolean sync) {
-        super(level, access, fixer, templateManager, exe, loop, lightGetter, generator, progress, status, supplier, viewDistance, sync);
+    public LittleChunkMap(ServerLevel level, LevelStorageSource.LevelStorageAccess access, DataFixer fixer, StructureTemplateManager templateManager, Executor exe, BlockableEventLoop<Runnable> loop, LightChunkGetter lightGetter, ChunkGenerator generator, ChunkStatusUpdateListener status, TicketStorage tickets, int viewDistance, boolean sync) {
+        super(level, access, fixer, templateManager, exe, loop, lightGetter, generator, status, tickets, viewDistance, sync);
     }
     
     public void init(ServerLevel level, LittleServerChunkCache chunkCache, LightChunkGetter lightGetter, Executor exe) {
         this.chunkCache = chunkCache;
         this.fakeAccess = (pos, visitor) -> CompletableFuture.runAsync(() -> {});
-        ProcessorMailbox<Runnable> mailLight = ProcessorMailbox.create(exe, "light");
-        this.queueSorter = new ChunkTaskPriorityQueueSorter(ImmutableList.of(mailLight), exe, Integer.MAX_VALUE);
-        this.lightEngine = new ThreadedLevelLightEngine(lightGetter, this, level.dimensionType().hasSkyLight(), mailLight, queueSorter.getProcessor(mailLight, false));
+        // 26.3: light work runs on a ConsecutiveExecutor + ChunkTaskDispatcher (was ProcessorMailbox + queue sorter)
+        ConsecutiveExecutor lightExecutor = new ConsecutiveExecutor(exe, "light");
+        this.queueSorter = new ChunkTaskDispatcher(lightExecutor, exe);
+        this.lightEngine = new ThreadedLevelLightEngine(lightGetter, this, level.dimensionType().hasSkyLight(), lightExecutor, queueSorter);
         this.distanceManager = CreativeHackery.allocateInstance(LittleDistanceManager.class);
     }
     

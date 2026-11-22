@@ -21,7 +21,6 @@ import net.minecraft.server.level.ChunkResult;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.TicketType;
-import net.minecraft.server.level.progress.ChunkProgressListener;
 import net.minecraft.util.VisibleForDebug;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.util.thread.BlockableEventLoop;
@@ -51,8 +50,8 @@ public class LittleServerChunkCache extends ServerChunkCache implements Iterable
     private final HashMap<Long, LittleChunkHolder> chunks = new HashMap<>();
     private final MainThreadExecutor mainThreadProcessor;
     
-    public LittleServerChunkCache(LittleServerLevel level, LevelStorageAccess storageAccess, DataFixer dataFixer, StructureTemplateManager structureTemplate, Executor exe, ChunkGenerator generator, int viewDistance, int simulationDistance, boolean sync, ChunkProgressListener progress, ChunkStatusUpdateListener status, Supplier<DimensionDataStorage> supplier) {
-        super(level, storageAccess, dataFixer, structureTemplate, exe, generator, viewDistance, simulationDistance, sync, progress, status, supplier);
+    public LittleServerChunkCache(LittleServerLevel level, LevelStorageAccess storageAccess, DataFixer dataFixer, StructureTemplateManager structureTemplate, Executor exe, ChunkGenerator generator, int viewDistance, int simulationDistance, boolean sync, ChunkStatusUpdateListener status) {
+        super(level, storageAccess, dataFixer, structureTemplate, exe, generator, viewDistance, simulationDistance, sync, status);
         mainThreadProcessor = new MainThreadExecutor(level);
     }
     

@@ -5,8 +5,6 @@ import java.util.UUID;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.level.GameType;
-import net.minecraft.world.level.border.WorldBorder;
-import net.minecraft.world.level.border.WorldBorder.Settings;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.timers.TimerQueue;
 import team.creative.littletiles.common.level.little.FakeLevelInfo;
@@ -76,14 +74,6 @@ public class FakeServerLevelInfo extends FakeLevelInfo implements ServerLevelDat
     @Override
     public GameType getGameType() {
         return GameType.SURVIVAL;
-    }
-    
-    // 26.3: no longer part of the level data interfaces (kept as a plain method)
-    public void setWorldBorder(Settings settings) {}
-    
-    // 26.3: no longer part of the level data interfaces (kept as a plain method)
-    public Settings getWorldBorder() {
-        return WorldBorder.DEFAULT_SETTINGS;
     }
     
     @Override

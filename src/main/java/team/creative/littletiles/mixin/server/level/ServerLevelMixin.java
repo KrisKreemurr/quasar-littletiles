@@ -15,7 +15,6 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.progress.ChunkProgressListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -37,10 +36,10 @@ public abstract class ServerLevelMixin extends Level {
     }
     
     @Redirect(at = @At(value = "NEW", target = "net/minecraft/server/level/ServerChunkCache"), method = "<init>", require = 1)
-    public ServerChunkCache newServerChunkCache(ServerLevel level, LevelStorageAccess storageAccess, DataFixer dataFixer, StructureTemplateManager structureTemplate, Executor exe, ChunkGenerator generator, int viewDistance, int simulationDistance, boolean sync, ChunkProgressListener progress, ChunkStatusUpdateListener status, Supplier<DimensionDataStorage> supplier) {
+    public ServerChunkCache newServerChunkCache(ServerLevel level, LevelStorageAccess storageAccess, DataFixer dataFixer, StructureTemplateManager structureTemplate, Executor exe, ChunkGenerator generator, int viewDistance, int simulationDistance, boolean sync, ChunkStatusUpdateListener status) {
         if (level instanceof LittleServerLevel)
-            return new LittleServerChunkCache((LittleServerLevel) level, storageAccess, dataFixer, structureTemplate, exe, generator, viewDistance, simulationDistance, sync, progress, status, supplier);
-        return new ServerChunkCache(level, storageAccess, dataFixer, structureTemplate, exe, generator, viewDistance, simulationDistance, sync, progress, status, supplier);
+            return new LittleServerChunkCache((LittleServerLevel) level, storageAccess, dataFixer, structureTemplate, exe, generator, viewDistance, simulationDistance, sync, status);
+        return new ServerChunkCache(level, storageAccess, dataFixer, structureTemplate, exe, generator, viewDistance, simulationDistance, sync, status);
     }
     
     @Unique

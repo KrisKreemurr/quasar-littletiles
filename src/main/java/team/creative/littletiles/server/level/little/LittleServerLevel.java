@@ -58,7 +58,7 @@ public abstract class LittleServerLevel extends ServerLevel implements LittleLev
     
     protected LittleServerLevel(MinecraftServer server, ServerLevelData worldInfo, ResourceKey<Level> dimension, boolean debug, long seed, RegistryAccess access) {
         super(server, Util.backgroundExecutor(), ((MinecraftServerAccessor) server).getStorageSource(), worldInfo, dimension, overworldStem(
-            server), LittleChunkProgressListener.INSTANCE, debug, seed, Collections.EMPTY_LIST, false, null);
+            server), debug, seed, Collections.EMPTY_LIST, false);
     }
     
     @Override
