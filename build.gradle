@@ -1,54 +1,18 @@
 plugins {
     id 'eclipse'
     id 'idea'
-    id 'com.modrinth.minotaur' version '2.+'
-    id 'net.neoforged.gradle.userdev' version '7.0.+'
+    id 'net.neoforged.moddev' version '2.0.+'
 }
 
 repositories {
-    maven {
-        url "https://maven.su5ed.dev/releases"
-    }
-    maven {
-        url "https://cursemaven.com"
-        content {
-            includeGroup "curse.maven"
-        }
-    }
-    maven {
-        url = "https://api.modrinth.com/maven"
-    }
     maven { url = 'https://maven.fabricmc.net' }
-    maven {
-        name "CaffeineMC"
-        url "https://maven.caffeinemc.net/releases" // or /snapshots
-    }
-    exclusiveContent { // Sable
-        forRepository {
-            maven {
-                url = "https://maven.ryanhcode.dev/releases"
-                name = "RyanHCode Maven"
-            }
-        }
-        filter {
-            includeGroup("dev.ryanhcode.sable")
-            includeGroup("dev.ryanhcode.sable-companion")
-        }
-    }
-    maven {
-        name = 'BlameJared Maven (CrT / Bookshelf)'
-        url = 'https://maven.blamejared.com'
-    }
-    maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" }
 }
-
 
 group= "team.creative" + project.mod_id
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
 java.sourceSets.create("api") {
-    
     java {
         srcDir("src/api/java")
     }
@@ -59,34 +23,52 @@ java.sourceSets.create("api") {
 sourceSets.main.compileClasspath += sourceSets.api.output
 sourceSets.main.runtimeClasspath += sourceSets.api.output
 
+// Quasar MC: compat for mods that aren't in our pack (or not on 26.3 yet) is left out of the build.
+// Bring a folder back once that mod exists for 26.3.
+sourceSets.main.java {
+    exclude 'team/creative/littletiles/client/mod/sodium/**'
+    exclude 'team/creative/littletiles/client/mod/iris/**'
+    exclude 'team/creative/littletiles/common/mod/jade/**'
+    exclude 'team/creative/littletiles/common/mod/jei/**'
+    exclude 'team/creative/littletiles/common/mod/sable/**'
+    exclude 'team/creative/littletiles/common/mod/theoneprobe/**'
+    exclude 'team/creative/littletiles/mixin/sodium/**'
+    exclude 'team/creative/littletiles/mixin/sable/**'
+}
+
+// show every compile error while porting, not just the first 100
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += ['-Xmaxerrs', '10000']
+}
+
 project.evaluationDependsOn(":CreativeCore")
 
-runs {  
-    configureEach {
-        workingDirectory project.file('run')
-        systemProperty 'forge.logging.console.level', 'debug'
+neoForge {
+    version = "${forge_version}"
+    validateAccessTransformers = true
+
+    runs {
+        client {
+            client()
+        }
+        server {
+            server()
+        }
     }
-    
-    client {
-    }
-    
-    server {
+
+    mods {
+        LittleTiles {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.api
+        }
+        CreativeCore {
+            sourceSet project(':CreativeCore').sourceSets.main
+        }
     }
 }
 
 dependencies {
-    implementation "net.neoforged:neoforge:${forge_version}"
-    
     implementation project(':CreativeCore')
-    
-    implementation("net.caffeinemc:sodium-neoforge-mod:0.8.12-beta.1+mc1.21.1")
-    implementation("net.caffeinemc:sodium-neoforge-api:0.8.12-beta.1+mc1.21.1")
-    implementation("net.caffeinemc:sodium-neoforge:0.8.12-beta.1+mc1.21.1")
-    
-    implementation "dev.ryanhcode.sable:sable-common-1.21.1:2.0.6"
-    
-    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:19.44.0.401"
-    runtimeOnly "mezz.jei:jei-${minecraft_version}-neoforge:19.44.0.401"
 }
 
 modDependencies = [
@@ -100,12 +82,5 @@ modProperties = [
     '    "mixin.entity.collisions" = false'
 ]
 modImplemented = [
-    [ name: "maven.modrinth:iris:KduFYu4t", disabled: true ],
-    [ name: "curse.maven:theoneprobe-245211:5502323", disabled: true ],
-    [ name: "net.fabricmc:fabric-loader:${project.fabric_version}", disabled: true ],
-    [ name: "org.sinytra.forgified-fabric-api:fabric-api-base:0.4.42+d1308ded19" , disabled: true ],
-    [ name: "org.sinytra.forgified-fabric-api:fabric-renderer-api-v1:3.4.0+acb05a3919", disabled: true ],
-    [ name: "org.sinytra.forgified-fabric-api:fabric-rendering-data-attachment-v1:0.3.48+73761d2e19", disabled: true ],
-    [ name: "org.sinytra.forgified-fabric-api:fabric-block-view-api-v2:1.0.10+9afaaf8c19", disabled: true ],
-    [ name: "maven.modrinth:jade:15.10.6+neoforge", disabled: false ],
+    [ name: "net.fabricmc:fabric-loader:${project.fabric_version}", disabled: true ]
 ]

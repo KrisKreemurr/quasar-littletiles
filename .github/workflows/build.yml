@@ -1,0 +1,66 @@
+name: Build (Quasar MC, 26.3)
+
+on:
+  push:
+    branches: [ "quasar/26.3" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # CreativeMD builds his mods inside a shared workspace (CreativeMD/ForgeMods);
+      # check that out and drop this repo in as its CreativeCore folder.
+      - name: Check out the ForgeMods workspace (26.x)
+        uses: actions/checkout@v4
+        with:
+          repository: CreativeMD/ForgeMods
+          ref: 26.x
+          submodules: false
+
+      - name: Check out Quasar CreativeCore (quasar/26.3)
+        uses: actions/checkout@v4
+        with:
+          repository: KrisKreemurr/quasar-creativecore
+          ref: quasar/26.3
+          path: CreativeCore
+
+      - name: Check out Quasar LittleTiles
+        uses: actions/checkout@v4
+        with:
+          path: LittleTiles
+
+      - name: Only build CreativeCore + LittleTiles, on our NeoForge version
+        run: |
+          sed -i '/^include/d; /^\/\/include/d' settings.gradle
+          echo "include ':CreativeCore'" >> settings.gradle
+          echo "include ':LittleTiles'" >> settings.gradle
+          sed -i 's/^forge_version=.*/forge_version=26.3.0.115/' gradle.properties
+          cat settings.gradle
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 25
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
+
+      - name: Build
+        run: |
+          chmod +x gradlew
+          ./gradlew :LittleTiles:build --stacktrace 2>&1 | tee build.log
+          exit ${PIPESTATUS[0]}
+
+      - name: Collect jar
+        run: |
+          mkdir -p out
+          find LittleTiles/build/libs -name "*.jar" | tee /dev/stderr
+          cp LittleTiles/build/libs/*.jar out/
+          ls -la out
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: quasar-littletiles-26.3
+          path: out/*.jar
