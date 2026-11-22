@@ -9,7 +9,7 @@ import team.creative.littletiles.common.entity.LittleEntity;
 
 // QUASAR STUB: generated no-op stand-in; the original lives in src/parked (render rewrite pending).
 
-public class LittleEntityRenderer extends EntityRenderer<LittleEntity> {
+public class LittleEntityRenderer {
 
     public LittleEntityRenderer(EntityRendererProvider.Context context) {}
 

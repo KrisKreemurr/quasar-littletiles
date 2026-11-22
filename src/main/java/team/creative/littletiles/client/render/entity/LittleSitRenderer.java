@@ -8,7 +8,7 @@ import team.creative.littletiles.common.entity.EntitySit;
 
 // QUASAR STUB: generated no-op stand-in; the original lives in src/parked (render rewrite pending).
 
-public class LittleSitRenderer extends EntityRenderer<EntitySit> {
+public class LittleSitRenderer {
 
     public LittleSitRenderer(EntityRendererProvider.Context context) {}
 

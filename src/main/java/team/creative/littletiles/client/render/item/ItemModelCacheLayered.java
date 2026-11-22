@@ -1,18 +1,14 @@
 package team.creative.littletiles.client.render.item;
 
 import java.util.List;
-import net.minecraft.client.renderer.block.model.BakedQuad;
 
 // QUASAR STUB: generated no-op stand-in; the original lives in src/parked (render rewrite pending).
 
 public class ItemModelCacheLayered extends ItemModelCache {
 
-    private List<BakedQuad> translucentCache;
     public ItemModelCacheLayered() {}
 
-    public void setQuads(boolean translucent, List<BakedQuad> baked) {}
 
-    public List<BakedQuad> getQuads(boolean translucent) { return null; }
 
     public boolean hasTranslucent() { return false; }
 

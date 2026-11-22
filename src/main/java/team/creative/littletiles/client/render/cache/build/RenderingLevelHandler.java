@@ -9,7 +9,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import team.creative.creativecore.common.level.ISubLevel;
 import team.creative.littletiles.client.level.little.FakeClientLevel;
-import team.creative.littletiles.client.mod.sodium.SodiumManager;
 import team.creative.littletiles.client.render.cache.pipeline.LittleRenderPipelineType;
 import team.creative.littletiles.client.render.mc.RenderChunkExtender;
 import team.creative.littletiles.client.render.mc.ViewAreaExtender;
@@ -17,7 +16,6 @@ import team.creative.littletiles.common.block.entity.BETiles;
 import team.creative.littletiles.common.entity.animation.LittleAnimationEntity;
 import team.creative.littletiles.common.level.little.LittleLevel;
 import team.creative.littletiles.common.mod.sable.SableManager;
-import team.creative.littletiles.mixin.client.render.LevelRendererAccessor;
 
 // QUASAR STUB: generated no-op stand-in; the original lives in src/parked (render rewrite pending).
 
