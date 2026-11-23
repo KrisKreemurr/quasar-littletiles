@@ -71,7 +71,55 @@ public class LittleSignalDisplay extends LittleStructurePremade {
         }
     }
     
-    // TODO(quasar): signal display texture upload + renderTick (GL texture quad) parked for the render rewrite.
+    /** Quasar MC (26.3): the display's pixels, drawn every frame by {@link team.creative.littletiles.client.render.level.SignalDisplayRenderer}
+     * (one coloured square per signal bit instead of the old GL texture). */
+    @OnlyIn(Dist.CLIENT)
+    public void quasar$renderPixels(java.util.function.BiConsumer<net.minecraft.world.phys.Vec3[], Integer> out) {
+        if (!hasLevel() || frame == null || facing == null || topRight == null)
+            return;
+        var output = getOutput(0);
+        if (output == null)
+            return;
+        int bandwidth = output.getBandwidth();
+        int size = (int) Math.sqrt(bandwidth);
+        if (size <= 0)
+            return;
+        var state = output.getState();
+        team.creative.creativecore.common.util.math.box.AlignedBox box = frame.getBox().getBox(frame.getGrid());
+        var face = team.creative.creativecore.common.util.math.box.BoxFace.get(facing);
+        var uAxis = face.getTexUAxis();
+        var vAxis = face.getTexVAxis();
+        var n = facing.axis;
+        float plane = facing.positive ? box.getMin(n) + 0.005F : box.getMax(n) - 0.005F;
+        // Same orientation as the old texture: u/v = 1 on the side away from topRight.
+        boolean uFlip = topRight.get(uAxis) > 0, vFlip = topRight.get(vAxis) > 0;
+        float u0 = box.getMin(uAxis), u1 = box.getMax(uAxis), v0 = box.getMin(vAxis), v1 = box.getMax(vAxis);
+        BlockPos pos = getStructurePos();
+        int alpha = ColorUtils.alpha(color);
+        int on = color == -1 ? 0xFFFFFFFF : color;
+        int off = (alpha << 24);
+        for (int i = 0; i < size * size; i++) {
+            int col = i % size, row = i / size;
+            float ua = col / (float) size, ub = (col + 1) / (float) size;
+            float va = row / (float) size, vb = (row + 1) / (float) size;
+            float pu0 = uFlip ? u1 - ub * (u1 - u0) : u0 + ua * (u1 - u0);
+            float pu1 = uFlip ? u1 - ua * (u1 - u0) : u0 + ub * (u1 - u0);
+            float pv0 = vFlip ? v1 - vb * (v1 - v0) : v0 + va * (v1 - v0);
+            float pv1 = vFlip ? v1 - va * (v1 - v0) : v0 + vb * (v1 - v0);
+            net.minecraft.world.phys.Vec3[] quad = { point(pos, n, plane, uAxis, pu0, vAxis, pv0), point(pos, n, plane, uAxis, pu1, vAxis, pv0), point(pos, n, plane, uAxis,
+                pu1, vAxis, pv1), point(pos, n, plane, uAxis, pu0, vAxis, pv1) };
+            out.accept(quad, state != null && state.is(i) ? on : off);
+        }
+    }
+
+    private static net.minecraft.world.phys.Vec3 point(BlockPos pos, team.creative.creativecore.common.util.math.base.Axis n, float plane,
+            team.creative.creativecore.common.util.math.base.Axis u, float uv, team.creative.creativecore.common.util.math.base.Axis v, float vv) {
+        double[] c = new double[3];
+        c[n.ordinal()] = plane;
+        c[u.ordinal()] = uv;
+        c[v.ordinal()] = vv;
+        return new net.minecraft.world.phys.Vec3(pos.getX() + c[0], pos.getY() + c[1], pos.getZ() + c[2]);
+    }
     
     @Override
     public boolean hasStructureColor() {
@@ -117,6 +165,7 @@ public class LittleSignalDisplay extends LittleStructurePremade {
     @Override
     @OnlyIn(Dist.CLIENT)
     public void getRenderingBoxes(BlockPos pos, ChunkLayerMapList<LittleRenderBox> cubes) {
+        team.creative.littletiles.client.render.level.SignalDisplayRenderer.track(this);
         if (ColorUtils.isInvisible(color))
             return;
         
