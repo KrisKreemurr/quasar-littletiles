@@ -46,31 +46,115 @@ public class PreviewRenderer {
 
     public static PoseStack EMPTY;
     public PreviewManager manager;
-    public PreviewRenderer(PreviewManager manager) {}
+    public PreviewRenderer(PreviewManager manager) {
+        this.manager = manager;
+    }
 
-    public Player player() { return null; }
+    public Player player() {
+        return manager.player();
+    }
 
-    public Level level() { return null; }
+    public Level level() {
+        return manager.level();
+    }
 
-    public BlockHitResult blockHit() { return null; }
+    public BlockHitResult blockHit() {
+        return manager.blockHit();
+    }
 
-    public Level blockHitLevel() { return null; }
+    public Level blockHitLevel() {
+        return manager.blockHitLevel();
+    }
 
-    public ILittleLevelContext blockHitContext() { return null; }
+    public ILittleLevelContext blockHitContext() {
+        return manager.blockHitContext();
+    }
 
-    public boolean isUsingSecondMode() { return false; }
+    public boolean isUsingSecondMode() {
+        return team.creative.littletiles.client.action.LittleActionHandlerClient.isUsingSecondMode();
+    }
 
-    public LittleTileContext selectFocused(BlockHitResult result) { return null; }
+    public LittleTileContext selectFocused(BlockHitResult result) {
+        return LittleTileContext.selectFocused(blockHitLevel(), result.getBlockPos(), player());
+    }
 
-    public float partialTickTime() { return 0F; }
+    public float partialTickTime() {
+        return team.creative.creativecore.common.util.mc.TickUtils.getFrameTime(level());
+    }
 
-    public boolean isVisible(AABB bb) { return false; }
+    public boolean isVisible(AABB bb) {
+        return true; // TODO(quasar): frustum check once previews render again
+    }
 
-    public int select(ILittleLevelContext context, List<ShapePosition> positions) { return 0; }
 
-    public int selectBox(List<LittleBoxLevel> positions) { return 0; }
+    private Vec3[] quasar$ray() {
+        var player = player();
+        float partialTickTime = partialTickTime();
+        Vec3 pos = player.getEyePosition(partialTickTime);
+        double reach = team.creative.creativecore.common.util.mc.PlayerUtils.getReach(player);
+        Vec3 view = player.getViewVector(partialTickTime);
+        return new Vec3[] { pos, pos.add(view.x * reach, view.y * reach, view.z * reach) };
+    }
+    
+    public int select(ILittleLevelContext context, List<ShapePosition> positions) {
+        int index = -1;
+        double distance = Double.MAX_VALUE;
+        Vec3[] ray = quasar$ray();
+        Vec3 pos = context.toFakeWorld(ray[0]);
+        Vec3 look = context.toFakeWorld(ray[1]);
+        for (int i = 0; i < positions.size(); i++) {
+            java.util.Optional<Vec3> result = positions.get(i).getBox().clip(pos, look);
+            if (result.isPresent()) {
+                double tempDistance = pos.distanceToSqr(result.get());
+                if (tempDistance < distance) {
+                    index = i;
+                    distance = tempDistance;
+                }
+            }
+        }
+        return index;
+    }
+    
+    public int selectBox(List<LittleBoxLevel> positions) {
+        int index = -1;
+        double distance = Double.MAX_VALUE;
+        Vec3[] ray = quasar$ray();
+        for (int i = 0; i < positions.size(); i++) {
+            var context = positions.get(i).context;
+            var contextPos = context.toFakeWorld(ray[0]);
+            var contextLook = context.toFakeWorld(ray[1]);
+            java.util.Optional<Vec3> result = positions.get(i).toAABB().clip(contextPos, contextLook);
+            if (result.isPresent()) {
+                double tempDistance = contextPos.distanceToSqr(result.get());
+                if (tempDistance < distance) {
+                    index = i;
+                    distance = tempDistance;
+                }
+            }
+        }
+        return index;
+    }
+    
+    public int selectBox(ILittleLevelContext context, List<LittleBoxAbsolute> positions) {
+        int index = -1;
+        double distance = Double.MAX_VALUE;
+        Vec3[] ray = quasar$ray();
+        Vec3 pos = context.toFakeWorld(ray[0]);
+        Vec3 look = context.toFakeWorld(ray[1]);
+        for (int i = 0; i < positions.size(); i++) {
+            java.util.Optional<Vec3> result = positions.get(i).toAABB().clip(pos, look);
+            if (result.isPresent()) {
+                double tempDistance = pos.distanceToSqr(result.get());
+                if (tempDistance < distance) {
+                    index = i;
+                    distance = tempDistance;
+                }
+            }
+        }
+        return index;
+    }
 
-    public int selectBox(ILittleLevelContext context, List<LittleBoxAbsolute> positions) { return 0; }
+
 
     protected void startPreviewRender(boolean lines) {}
 
