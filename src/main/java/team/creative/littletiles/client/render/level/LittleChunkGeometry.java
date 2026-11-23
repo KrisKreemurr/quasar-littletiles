@@ -94,7 +94,7 @@ public final class LittleChunkGeometry {
     }
 
     /** One section build. Not thread-safe; one instance per build. */
-    private static final class Mesher {
+    static final class Mesher {
 
         private final AddSectionGeometryEvent.SectionRenderingContext context;
         private final BlockAndTintGetter region;
@@ -372,7 +372,7 @@ public final class LittleChunkGeometry {
         }
 
         /** Solves u = ua*a + ub*b + uc and v = va*a + vb*b + vc from three non-collinear corners of the quad. */
-        private static float[] uvMap(BakedQuad quad, Axis one, Axis two) {
+        static float[] uvMap(BakedQuad quad, Axis one, Axis two) {
             int[][] triples = { { 0, 1, 2 }, { 0, 1, 3 }, { 0, 2, 3 }, { 1, 2, 3 } };
             for (int[] t : triples) {
                 Vector3fc p0 = quad.position(t[0]), p1 = quad.position(t[1]), p2 = quad.position(t[2]);
@@ -397,7 +397,7 @@ public final class LittleChunkGeometry {
 
         /** Sutherland-Hodgman clip of a planar polygon to [minA, maxA] x [minB, maxB] on the face axes (vertices are
          * interpolated in 3D, so sloped faces stay on their plane). */
-        private static Vec3f[] clip(Vec3f[] polygon, Axis one, Axis two, float minA, float minB, float maxA, float maxB) {
+        static Vec3f[] clip(Vec3f[] polygon, Axis one, Axis two, float minA, float minB, float maxA, float maxB) {
             List<Vec3f> current = new ArrayList<>(List.of(polygon));
             current = clipEdge(current, one, minA, true);
             current = clipEdge(current, one, maxA, false);
@@ -462,7 +462,7 @@ public final class LittleChunkGeometry {
             return (color & 0xFF000000) | (r << 16) | (g << 8) | b;
         }
 
-        private static int multiply(int first, int second) {
+        static int multiply(int first, int second) {
             if (second == -1)
                 return first;
             int a = (((first >>> 24) & 0xFF) * ((second >>> 24) & 0xFF)) / 255;
@@ -472,7 +472,7 @@ public final class LittleChunkGeometry {
             return (a << 24) | (r << 16) | (g << 8) | b;
         }
 
-        private static float get(Vector3fc p, Axis axis) {
+        static float get(Vector3fc p, Axis axis) {
             return switch (axis) {
                 case X -> p.x();
                 case Y -> p.y();

@@ -1,6 +1,9 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "littletiles:item/premade"
+    "type": "minecraft:special",
+    "base": "minecraft:block/block",
+    "model": {
+      "type": "littletiles:tiles"
+    }
   }
 }
