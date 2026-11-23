@@ -11,7 +11,6 @@ import java.util.concurrent.TimeoutException;
 import javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
@@ -320,7 +319,37 @@ public class LittleToolPlacer extends LittleTool {
     
     @Override
     protected void renderInternal(PreviewRenderer renderer, PoseStack pose, Vec3 cam, boolean lines) {
-        // TODO(quasar): render code parked for the render rewrite (see src/parked / upstream 1.21).
+        if (this.builtLines != lines)
+            return;
+        
+        var mesh = getMeshData(renderer, lines);
+        if (mesh == null || placedPosition == null)
+            return;
+        
+        if (marked != null)
+            renderer.renderLineBox(placedContext, pose, cam, marked.getBB(), marked.getPos(), true);
+        
+        renderer.wrapPreviewRender(placedContext, placedPosition.getPos(), cam, lines, () -> {
+            var min = placedPosition.getMin();
+            renderer.drawTranslated(mesh, lines, min.getPosX(), min.getPosY(), min.getPosZ());
+            
+            if (builtResult != null) {
+                int colorAlpha = 255;
+                if (LittleActionHandlerClient.isUsingSecondMode() != placer.snapToGridByDefault(stack)) {
+                    pose.pushPose();
+                    pose.translate(-placedPosition.getPos().getX(), -placedPosition.getPos().getY(), -placedPosition.getPos().getZ());
+                    List<RenderBox> cubes = getPositingCubes(placedLevel, placedPosition.getPos());
+                    BufferBuilder builder = renderer.createTesselatorBuilder(lines);
+                    if (cubes != null)
+                        for (RenderBox cube : cubes)
+                            renderer.buildBox(pose, cube, builder, colorAlpha, lines);
+                    var data = builder.build();
+                    if (data != null)
+                        renderer.draw(data, lines);
+                    pose.popPose();
+                }
+            }
+        });
     }
     
     private List<RenderBox> getPositingCubes(Level level, BlockPos pos) {

@@ -10,7 +10,6 @@ import java.util.concurrent.TimeoutException;
 
 import org.spongepowered.include.com.google.common.base.Objects;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 
 import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -268,7 +267,30 @@ public class LittleToolShaper extends LittleTool {
     
     @Override
     protected void renderInternal(PreviewRenderer renderer, PoseStack pose, Vec3 cam, boolean lines) {
-        // TODO(quasar): render code parked for the render rewrite (see src/parked / upstream 1.21).
+        if (marked && lines)
+            renderer.renderPositions(pose, context, positions.getFirst().getPos(), cam, positions, x -> markedPosition == x);
+        
+        if (builtLines != lines || !built)
+            return;
+        
+        var result = getShapeResult();
+        MeshData mesh;
+        BlockPos pos;
+        
+        if (result != null && result.data() != null) {
+            mesh = result.data();
+            pos = result.pos();
+        } else {
+            var selection = builtSelection;
+            var builder = renderer.createTesselatorBuilder(lines);
+            renderer.buildBox(pose, selection.overallBox.getRenderingBox(selection.grid), builder, 255, lines);
+            mesh = builder.build();
+            pos = selection.pos;
+        }
+        
+        if (mesh != null)
+            renderer.wrapPreviewRender(context, pos, cam, lines, () -> renderer.draw(mesh, lines));
+        
     }
     
     @Override

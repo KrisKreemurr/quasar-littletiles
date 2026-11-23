@@ -10,7 +10,6 @@ import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -152,8 +151,79 @@ public class BuildingModeMirrors extends BuildingModeFeature implements Building
     
     @Override
     public boolean render(PreviewRenderer renderer, PoseStack pose, Vec3 cam, boolean lines) {
-        // TODO(quasar): render code parked for the render rewrite (see src/parked / upstream 1.21).
-        return false;
+        var blockHit = renderer.blockHit();
+        var player = renderer.player();
+        var level = renderer.level();
+        
+        if (!lines) {
+            pose.pushPose();
+            pose.translate(-cam.x, -cam.y, -cam.z);
+            renderer.wrapPreviewRender(false, () -> {
+                for (MirrorOrigin mirror : mirrorOrigins)
+                    mirror.renderMirrors(renderer, pose);
+            });
+            
+            pose.popPose();
+            return active;
+        }
+        
+        if (!active)
+            return false;
+        
+        var context = renderer.blockHitContext();
+        if (context.isSubLevel()) {
+            Vec3 newLocation = context.toRealWorld(blockHit.getLocation());
+            BlockPos blockPos = BlockPos.containing(newLocation);
+            if (blockHit.getType() == Type.MISS)
+                blockHit = BlockHitResult.miss(newLocation, blockHit.getDirection(), blockPos);
+            else
+                blockHit = new BlockHitResult(newLocation, blockHit.getDirection(), blockPos, blockHit.isInside());
+        }
+        
+        pose.pushPose();
+        pose.translate(-cam.x, -cam.y, -cam.z);
+        if (first != null)
+            renderer.drawABB(pose, first.getBB(), false);
+        if (last != null)
+            renderer.drawABB(pose, last.getBB(), false);
+        pose.popPose();
+        
+        if (first != null && last != null) {
+            first.sameGrid(last, () -> {
+                var boxes = new LittleBoxesSimple(first.getPos(), first.getGrid());
+                LittleBox box = LittleBox.ofNothing();
+                box.growToIncludePixel(first.getRelative(boxes.pos));
+                box.growToIncludePixel(last.getRelative(boxes.pos));
+                boxes.add(box);
+                var result = renderer.buildBoxes(pose, boxes, lines);
+                renderer.renderLinesHighlight(ILittleLevelContext.STANDARD, cam, result.pos(), result.data(), color);
+                result.close();
+            });
+        }
+        
+        if (blockHit != null)
+            last = new ShapePosition(player, level, PlacementHelper.getPosition(level, blockHit, positionGrid()), blockHit, false, inside());
+        
+        if (result == null && mirrorOrigins != null && !mirrorOrigins.isEmpty()) {
+            LittleBoxes boxes = new LittleBoxesSimple(mirrorOrigins.getFirst().pos(), LittleGrid.MIN);
+            for (MirrorOrigin origin : mirrorOrigins)
+                boxes.addBox(origin.box);
+            result = renderer.buildBoxes(pose, boxes, lines);
+        }
+        
+        if (mirrorOrigins != null && result != null) {
+            if (marked != -1 && marked < mirrorOrigins.size()) {
+                pose.pushPose();
+                pose.translate(-cam.x, -cam.y, -cam.z);
+                mirrorOrigins.get(marked).render(pose, true);
+                pose.popPose();
+            }
+            
+            renderer.renderLinesHighlight(ILittleLevelContext.STANDARD, cam, result.pos(), result.data(), color);
+            
+        }
+        
+        return active; // Disable standard rendering during selection mode.
     }
     
     private void removeCache() {
@@ -329,8 +399,22 @@ public class BuildingModeMirrors extends BuildingModeFeature implements Building
                 actions.add(actions.get(i).mirror(axis, box));
         }
         
+        /** Quasar MC (26.3): a large translucent plane through the mirror centre, drawn as a world gizmo. */
         private void renderMirror(PoseStack pose, Axis axis, Vec3 center, int color) {
-            // TODO(quasar): render code parked for the render rewrite (see src/parked / upstream 1.21).
+            color = ColorUtils.setAlpha(color, 100);
+            var a = team.creative.creativecore.common.util.math.base.Axis.get(axis);
+            float size = 1000;
+            Vec3d vec = new Vec3d(center);
+            vec.set(a.one(), vec.get(a.one()) - size);
+            vec.set(a.two(), vec.get(a.two()) - size);
+            Vec3 c1 = new Vec3(vec.x, vec.y, vec.z);
+            vec.set(a.one(), vec.get(a.one()) + size * 2);
+            Vec3 c2 = new Vec3(vec.x, vec.y, vec.z);
+            vec.set(a.two(), vec.get(a.two()) + size * 2);
+            Vec3 c3 = new Vec3(vec.x, vec.y, vec.z);
+            vec.set(a.one(), vec.get(a.one()) - size * 2);
+            Vec3 c4 = new Vec3(vec.x, vec.y, vec.z);
+            net.minecraft.gizmos.Gizmos.rect(c1, c2, c3, c4, net.minecraft.gizmos.GizmoStyle.fill(color));
         }
         
         public void renderMirrors(PreviewRenderer renderer, PoseStack pose) {
@@ -343,8 +427,14 @@ public class BuildingModeMirrors extends BuildingModeFeature implements Building
                 renderMirror(pose, Axis.Z, center, zColor);
         }
         
+        /** Quasar MC (26.3): mirror origin outline as a world gizmo (orange, drawn on top, when selected). */
         public void render(PoseStack pose, boolean selected) {
-            // TODO(quasar): render code parked for the render rewrite (see src/parked / upstream 1.21).
+            ABB box = this.box.toABB();
+            box.inflate(0.002);
+            var bb = new net.minecraft.world.phys.AABB(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ);
+            net.minecraft.gizmos.Gizmos.cuboid(bb, net.minecraft.gizmos.GizmoStyle.stroke(0xFF000000, 3.0F));
+            if (selected)
+                net.minecraft.gizmos.Gizmos.cuboid(bb, net.minecraft.gizmos.GizmoStyle.stroke(0xFFFF4D00, 6.0F)).setAlwaysOnTop();
         }
         
         public void toggle(Axis axis) {

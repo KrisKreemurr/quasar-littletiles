@@ -1,6 +1,5 @@
 package team.creative.littletiles.client.tool;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
@@ -107,7 +106,26 @@ public class LittleToolSelection extends LittleTool {
     
     @Override
     protected void renderInternal(PreviewRenderer renderer, PoseStack pose, Vec3 cam, boolean lines) {
-        // TODO(quasar): render code parked for the render rewrite (see src/parked / upstream 1.21).
+        if (!selector.hasSelection(stack))
+            return;
+        var sel = selector.getSelection(stack);
+        if (cachedSelection == null || !cachedSelection.equals(sel))
+            build(renderer);
+        
+        if (cachedSelection == null)
+            return;
+        
+        var result = getRenderResult(lines);
+        if (result == null || result.data == null)
+            return;
+        
+        renderer.wrapPreviewRender(renderQueue.context, renderQueue.origin, cam, lines, () -> {
+            renderer.draw(result.data, lines);
+            
+            if (cachedSelection.mode.hasRenderTick(stack, cachedSelection))
+                cachedSelection.mode.renderTick(renderer, (LittleActionSource) renderer.player(), renderer.level(), stack, cachedSelection, pose, lines);
+        });
+
     }
     
     @Override
@@ -186,7 +204,20 @@ public class LittleToolSelection extends LittleTool {
         }
         
         public void addLine(Vec3 start, Vec3 end, int color) {
-            // TODO(quasar): render code parked for the render rewrite (see src/parked / upstream 1.21).
+            checkOrigin();
+            start.subtract(origin.getX(), origin.getY(), origin.getZ());
+            end.subtract(origin.getX(), origin.getY(), origin.getZ());
+            int red = ColorUtils.red(color);
+            int green = ColorUtils.green(color);
+            int blue = ColorUtils.blue(color);
+            int alpha = ColorUtils.alpha(color);
+            Vec3f normal = new Vec3f();
+            var builder = getBuilder(true);
+            VectorFan.setLineNormal(normal, (float) start.x, (float) start.y, (float) start.z, (float) end.x, (float) end.y, (float) end.z);
+            builder.addVertex(PreviewRenderer.EMPTY.last().pose(), (float) start.x, (float) start.y, (float) start.z).setColor(red, green, blue, alpha).setNormal(
+                PreviewRenderer.EMPTY.last(), normal.x, normal.y, normal.z);
+            builder.addVertex(PreviewRenderer.EMPTY.last().pose(), (float) end.x, (float) end.y, (float) end.z).setColor(red, green, blue, alpha).setNormal(PreviewRenderer.EMPTY
+                    .last(), normal.x, normal.y, normal.z);
         }
         
         public SelectionRenderResult build(boolean lines) {

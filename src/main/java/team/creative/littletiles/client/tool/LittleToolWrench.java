@@ -6,7 +6,6 @@ import java.util.List;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
@@ -115,7 +114,7 @@ public class LittleToolWrench extends LittleTool {
     
     @Override
     protected void renderInternal(PreviewRenderer renderer, PoseStack pose, Vec3 cam, boolean lines) {
-        // TODO(quasar): render code parked for the render rewrite (see src/parked / upstream 1.21).
+        // TODO(quasar): wrench structure labels (text in the world) need a 26.x text renderer; parked.
     }
     
     @Override

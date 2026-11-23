@@ -7,7 +7,6 @@ import java.util.function.BooleanSupplier;
 
 import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
@@ -130,8 +129,56 @@ public class BuildingModeAreaRule extends BuildingModeFeature implements Buildin
     
     @Override
     public boolean render(PreviewRenderer renderer, PoseStack pose, Vec3 cam, boolean lines) {
-        // TODO(quasar): render code parked for the render rewrite (see src/parked / upstream 1.21).
-        return false;
+        if (!lines)
+            return active;
+        
+        var blockHit = renderer.blockHit();
+        var player = renderer.player();
+        var level = renderer.level();
+        
+        var context = renderer.blockHitContext();
+        if (context.isSubLevel()) {
+            Vec3 newLocation = context.toRealWorld(blockHit.getLocation());
+            BlockPos blockPos = BlockPos.containing(newLocation);
+            if (blockHit.getType() == Type.MISS)
+                blockHit = BlockHitResult.miss(newLocation, blockHit.getDirection(), blockPos);
+            else
+                blockHit = new BlockHitResult(newLocation, blockHit.getDirection(), blockPos, blockHit.isInside());
+        }
+        
+        if (active) {
+            if (first != null)
+                positions.add(first);
+            if (last != null)
+                positions.add(last);
+            renderer.renderPositions(pose, ILittleLevelContext.STANDARD, positions.getFirst().getPos(), cam, positions, x -> markedPosition == x);
+            if (first != null)
+                positions.removeLast();
+            if (last != null)
+                positions.removeLast();
+            
+            if (first != null && last != null) {
+                var boxes = new LittleBoxesSimple(first.getPos(), first.getGrid());
+                boxes.minGrid(last);
+                LittleBox box = LittleBox.ofNothing();
+                box.growToInclude(first.getRelative(boxes.pos, boxes.grid));
+                box.growToInclude(last.getRelative(boxes.pos, boxes.grid));
+                boxes.add(box);
+                var result = renderer.buildBoxes(pose, boxes, lines, true);
+                renderer.renderLinesHighlight(ILittleLevelContext.STANDARD, cam, result.pos(), result.data(), color.toInt(), 1);
+                result.close();
+            }
+        }
+        
+        if (blockHit != null)
+            last = new ShapePosition(player, level, PlacementHelper.getPosition(level, blockHit, positionGrid()), blockHit, false, inside());
+        
+        if (result == null && boxes != null && !boxes.isEmpty())
+            result = renderer.buildBoxes(pose, boxes, lines, true);
+        
+        if (boxes != null && result != null)
+            renderer.renderLinesHighlight(ILittleLevelContext.STANDARD, cam, result.pos(), result.data(), color.toInt(), 1);
+        return active; // Disable standard rendering during selection mode.
     }
     
     private void removeCache() {

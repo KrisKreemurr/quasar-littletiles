@@ -1,5 +1,8 @@
 package team.creative.littletiles.client.render.overlay;
 
+import net.neoforged.neoforge.client.event.RenderFrameEvent;
+import net.minecraft.world.phys.Vec3;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
@@ -42,8 +45,8 @@ import team.creative.littletiles.common.mod.sable.SableManager;
 /** Turns clicks and keys into LittleTiles tool actions (place, chisel, hammer, configure, undo/redo, tool keys).
  * <p>
  * Quasar MC (26.3): restored from the parked original. The per-frame tool update runs on the client tick instead of a
- * render-level stage. TODO(quasar): the preview drawing (ghost tiles, tool lines and the tile-shaped block outline) comes
- * back with the render rewrite; until then tools work without a visible preview. */
+ * render-level stage; previews are drawn as vanilla gizmos (see PreviewRenderer). TODO(quasar): tile-shaped block outline
+ * (RenderHighlightEvent) and tool GUI hints (OverlayRenderer). */
 public class PreviewManager implements LevelAwareHandler {
 
     public static final Identifier WHITE_TEXTURE = Identifier.tryBuild(LittleTiles.MODID, "textures/preview.png");
@@ -108,6 +111,29 @@ public class PreviewManager implements LevelAwareHandler {
         processKeys(stack, true);
     }
 
+    private boolean loggedRenderError = false;
+    
+    /** Draws the tool previews. RenderFrameEvent.Pre fires inside vanilla's per-frame gizmo collector, so the gizmos the
+     * renderer emits are drawn in this frame. Filled boxes first, then outlines (the old two render stages). */
+    @SubscribeEvent
+    protected void renderFrame(RenderFrameEvent.Pre event) {
+        if (tool == null || MC.player == null || MC.level == null || !LittleAction.canPlace(MC.player))
+            return;
+        if (tool.stack == null || !(tool.stack.getItem() instanceof ILittleTool))
+            return;
+        try {
+            Vec3 cam = MC.gameRenderer.mainCamera().position();
+            renderer.frameCam = cam;
+            tool.render(renderer, new PoseStack(), cam, false);
+            tool.render(renderer, new PoseStack(), cam, true);
+        } catch (Throwable e) {
+            if (!loggedRenderError) {
+                loggedRenderError = true;
+                LittleTiles.LOGGER.error("LittleTiles preview rendering failed (logged once)", e);
+            }
+        }
+    }
+    
     private void processKeys(ItemStack stack, boolean execute) {
         while (LittleTilesClient.KEY_UNDO.consumeClick()) {
             try {
