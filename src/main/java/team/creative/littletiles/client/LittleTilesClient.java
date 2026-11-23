@@ -165,6 +165,16 @@ public class LittleTilesClient {
         team.creative.littletiles.client.render.level.LittleChunkGeometry.init();
         bus.addListener((net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent event) -> event.register(
             net.minecraft.resources.Identifier.fromNamespaceAndPath(LittleTiles.MODID, "tiles"), team.creative.littletiles.client.render.level.LittleItemRenderer.Unbaked.MAP_CODEC));
+        bus.addListener((net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent event) -> {
+            event.register(net.minecraft.resources.Identifier.fromNamespaceAndPath(LittleTiles.MODID, "element"),
+                team.creative.littletiles.client.render.level.LittleItemRenderer.UnbakedElement.MAP_CODEC);
+            event.register(net.minecraft.resources.Identifier.fromNamespaceAndPath(LittleTiles.MODID, "ingredient"),
+                team.creative.littletiles.client.render.level.LittleItemRenderer.UnbakedIngredient.MAP_CODEC);
+        });
+        bus.addListener((net.neoforged.neoforge.client.event.RegisterColorHandlersEvent.ItemTintSources event) -> event.register(
+            net.minecraft.resources.Identifier.fromNamespaceAndPath(LittleTiles.MODID, "color"), team.creative.littletiles.client.item.ColorTint.MAP_CODEC));
+        bus.addListener((net.neoforged.neoforge.client.event.RegisterSelectItemModelPropertyEvent event) -> event.register(
+            net.minecraft.resources.Identifier.fromNamespaceAndPath(LittleTiles.MODID, "premade"), team.creative.littletiles.client.item.PremadeIdProperty.TYPE));
         bus.addListener((net.neoforged.neoforge.client.event.RegisterRangeSelectItemModelPropertyEvent event) -> event.register(
             net.minecraft.resources.Identifier.fromNamespaceAndPath(LittleTiles.MODID, "filled"), team.creative.littletiles.client.item.BottleFilledProperty.MAP_CODEC));
         // TODO(quasar): item models (multi tiles, premade, glove/chisel previews, block ingredient), item tints and the "filled" bottle property

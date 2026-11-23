@@ -1,6 +1,18 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "littletiles:item/chisel"
+    "type": "minecraft:composite",
+    "models": [
+      {
+        "type": "minecraft:model",
+        "model": "littletiles:item/chisel"
+      },
+      {
+        "type": "minecraft:special",
+        "base": "littletiles:item/chisel",
+        "model": {
+          "type": "littletiles:element"
+        }
+      }
+    ]
   }
 }

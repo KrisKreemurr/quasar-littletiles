@@ -1,6 +1,16 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "littletiles:item/paint_brush"
+    "model": "littletiles:item/paint_brush",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -1
+      },
+      {
+        "type": "littletiles:color",
+        "default": 16777215
+      }
+    ]
   }
 }

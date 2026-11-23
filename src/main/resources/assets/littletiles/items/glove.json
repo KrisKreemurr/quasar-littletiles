@@ -1,6 +1,18 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "littletiles:item/glove"
+    "type": "minecraft:composite",
+    "models": [
+      {
+        "type": "minecraft:model",
+        "model": "littletiles:item/glove"
+      },
+      {
+        "type": "minecraft:special",
+        "base": "littletiles:item/glove",
+        "model": {
+          "type": "littletiles:element"
+        }
+      }
+    ]
   }
 }

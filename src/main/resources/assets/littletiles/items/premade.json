@@ -1,9 +1,99 @@
 {
   "model": {
-    "type": "minecraft:special",
-    "base": "minecraft:block/block",
-    "model": {
-      "type": "littletiles:tiles"
+    "type": "minecraft:select",
+    "property": "littletiles:premade",
+    "cases": [
+      {
+        "when": "signal_display_1",
+        "model": {
+          "type": "minecraft:model",
+          "model": "littletiles:item/premade/signal_display_1"
+        }
+      },
+      {
+        "when": "signal_display_16",
+        "model": {
+          "type": "minecraft:model",
+          "model": "littletiles:item/premade/signal_display_16"
+        }
+      },
+      {
+        "when": "signal_display_4",
+        "model": {
+          "type": "minecraft:model",
+          "model": "littletiles:item/premade/signal_display_4"
+        }
+      },
+      {
+        "when": "single_cable1",
+        "model": {
+          "type": "minecraft:model",
+          "model": "littletiles:item/premade/single_cable1"
+        }
+      },
+      {
+        "when": "single_cable16",
+        "model": {
+          "type": "minecraft:model",
+          "model": "littletiles:item/premade/single_cable16"
+        }
+      },
+      {
+        "when": "single_cable4",
+        "model": {
+          "type": "minecraft:model",
+          "model": "littletiles:item/premade/single_cable4"
+        }
+      },
+      {
+        "when": "single_input1",
+        "model": {
+          "type": "minecraft:model",
+          "model": "littletiles:item/premade/single_input1"
+        }
+      },
+      {
+        "when": "single_input16",
+        "model": {
+          "type": "minecraft:model",
+          "model": "littletiles:item/premade/single_input16"
+        }
+      },
+      {
+        "when": "single_input4",
+        "model": {
+          "type": "minecraft:model",
+          "model": "littletiles:item/premade/single_input4"
+        }
+      },
+      {
+        "when": "single_output1",
+        "model": {
+          "type": "minecraft:model",
+          "model": "littletiles:item/premade/single_output1"
+        }
+      },
+      {
+        "when": "single_output16",
+        "model": {
+          "type": "minecraft:model",
+          "model": "littletiles:item/premade/single_output16"
+        }
+      },
+      {
+        "when": "single_output4",
+        "model": {
+          "type": "minecraft:model",
+          "model": "littletiles:item/premade/single_output4"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:special",
+      "base": "minecraft:block/block",
+      "model": {
+        "type": "littletiles:tiles"
+      }
     }
   }
 }

@@ -1,6 +1,9 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "littletiles:item/blockingredient"
+    "type": "minecraft:special",
+    "base": "minecraft:block/block",
+    "model": {
+      "type": "littletiles:ingredient"
+    }
   }
 }

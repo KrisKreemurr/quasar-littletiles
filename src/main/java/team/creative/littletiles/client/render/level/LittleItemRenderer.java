@@ -45,14 +45,24 @@ import team.creative.littletiles.common.block.little.tile.group.LittleGroup;
  * mesher) and replayed every frame through {@link SubmitNodeCollector#submitCustomGeometry}. */
 public final class LittleItemRenderer implements SpecialModelRenderer<LittleItemRenderer.Mesh> {
 
-    public static final LittleItemRenderer INSTANCE = new LittleItemRenderer();
+    /** What a renderer draws: the stack's tile group (fitted to a block), the tool's selected block (small cube in the
+     * corner of the tool icon: chisel, glove) or a block ingredient's fill level. */
+    public enum Mode {
+        TILES,
+        ELEMENT,
+        INGREDIENT
+    }
+
+    public static final LittleItemRenderer INSTANCE = new LittleItemRenderer(Mode.TILES);
+    public static final LittleItemRenderer ELEMENT = new LittleItemRenderer(Mode.ELEMENT);
+    public static final LittleItemRenderer INGREDIENT = new LittleItemRenderer(Mode.INGREDIENT);
 
     public record Unbaked() implements SpecialModelRenderer.Unbaked<Mesh> {
         public static final MapCodec<Unbaked> MAP_CODEC = MapCodec.unit(new Unbaked());
 
         @Override
         public SpecialModelRenderer<Mesh> bake(SpecialModelRenderer.BakingContext context) {
-            CACHE.clear(); // models may have changed
+            clearCache(); // models may have changed
             return INSTANCE;
         }
 
@@ -62,9 +72,49 @@ public final class LittleItemRenderer implements SpecialModelRenderer<LittleItem
         }
     }
 
+    public record UnbakedElement() implements SpecialModelRenderer.Unbaked<Mesh> {
+        public static final MapCodec<UnbakedElement> MAP_CODEC = MapCodec.unit(new UnbakedElement());
+
+        @Override
+        public SpecialModelRenderer<Mesh> bake(SpecialModelRenderer.BakingContext context) {
+            clearCache();
+            return ELEMENT;
+        }
+
+        @Override
+        public MapCodec<? extends SpecialModelRenderer.Unbaked<Mesh>> type() {
+            return MAP_CODEC;
+        }
+    }
+
+    public record UnbakedIngredient() implements SpecialModelRenderer.Unbaked<Mesh> {
+        public static final MapCodec<UnbakedIngredient> MAP_CODEC = MapCodec.unit(new UnbakedIngredient());
+
+        @Override
+        public SpecialModelRenderer<Mesh> bake(SpecialModelRenderer.BakingContext context) {
+            clearCache();
+            return INGREDIENT;
+        }
+
+        @Override
+        public MapCodec<? extends SpecialModelRenderer.Unbaked<Mesh>> type() {
+            return MAP_CODEC;
+        }
+    }
+
+    private static void clearCache() {
+        synchronized (CACHE) {
+            CACHE.clear();
+        }
+    }
+
+    private final Mode mode;
+
     /** Lazily built vertex data for one tile group (x, y, z, u, v, argb, nx, ny, nz per vertex; quads). */
     public static final class Mesh {
         final LittleGroup group;
+        /** Boxes given directly (element / ingredient modes), used as they are (no fitting). */
+        final List<RenderBox> boxes;
         String name = "?";
         float[] solid;
         float[] translucent;
@@ -72,6 +122,16 @@ public final class LittleItemRenderer implements SpecialModelRenderer<LittleItem
 
         Mesh(LittleGroup group) {
             this.group = group;
+            this.boxes = null;
+        }
+
+        Mesh(List<RenderBox> boxes) {
+            this.group = null;
+            this.boxes = boxes;
+        }
+
+        boolean empty() {
+            return group == null && (boxes == null || boxes.isEmpty());
         }
     }
 
@@ -84,10 +144,45 @@ public final class LittleItemRenderer implements SpecialModelRenderer<LittleItem
         }
     };
 
-    private LittleItemRenderer() {}
+    private LittleItemRenderer(Mode mode) {
+        this.mode = mode;
+    }
 
     @Override
     public Mesh extractArgument(ItemStack stack) {
+        if (mode == Mode.ELEMENT) {
+            var element = team.creative.littletiles.common.block.little.element.LittleElement.getOrDefault(stack);
+            BlockState state = element.getState();
+            Object key = new Key(state, element.color);
+            synchronized (CACHE) {
+                Mesh mesh = CACHE.get(key);
+                if (mesh != null)
+                    return mesh;
+            }
+            RenderBox box = new RenderBox(0, 0, 0, 1, 1, 1, state);
+            box.color = element.color;
+            Mesh mesh = new Mesh(List.of(box));
+            synchronized (CACHE) {
+                CACHE.put(key, mesh);
+            }
+            return mesh;
+        }
+        if (mode == Mode.INGREDIENT) {
+            var ingredient = team.creative.littletiles.common.item.ItemBlockIngredient.loadIngredient(stack);
+            if (ingredient == null || ingredient.block == null)
+                return null;
+            Object key = new Key(ingredient.block, Math.min(1, ingredient.value));
+            synchronized (CACHE) {
+                Mesh mesh = CACHE.get(key);
+                if (mesh != null)
+                    return mesh;
+            }
+            Mesh mesh = new Mesh(ingredientBoxes(ingredient.block.getState(), ingredient.value));
+            synchronized (CACHE) {
+                CACHE.put(key, mesh);
+            }
+            return mesh;
+        }
         if (!(stack.getItem() instanceof ILittlePlacer placer))
             return null;
         Object data = stack.get(LittleTilesRegistry.DATA.value());
@@ -113,10 +208,54 @@ public final class LittleItemRenderer implements SpecialModelRenderer<LittleItem
 
     private record Key(Object item, Object data) {}
 
+    /** The original LittleTiles block-ingredient icon: the block filled up to the ingredient's volume (planes, then a row,
+     * then single pixels), or a small centred cube for less than one plane. */
+    private static List<RenderBox> ingredientBoxes(BlockState state, double value) {
+        List<RenderBox> cubes = new ArrayList<>();
+        double volume = Math.min(1, value);
+        var grid = team.creative.littletiles.common.grid.LittleGrid.overallDefault();
+        long pixels = (long) (volume * grid.count3d);
+        if (pixels < grid.count * grid.count)
+            cubes.add(new RenderBox(0.4F, 0.4F, 0.4F, 0.6F, 0.6F, 0.6F, state));
+        else {
+            long remaining = pixels;
+            long planes = pixels / grid.count2d;
+            remaining -= planes * grid.count2d;
+            long rows = remaining / grid.count;
+            remaining -= rows * grid.count;
+            float height = (float) (planes * grid.pixelLength);
+            if (planes > 0)
+                cubes.add(new RenderBox(0, 0, 0, 1, height, 1, state));
+            float width = (float) (rows * grid.pixelLength);
+            if (rows > 0)
+                cubes.add(new RenderBox(0, height, 0, 1, height + (float) grid.pixelLength, width, state));
+            if (remaining > 0)
+                cubes.add(new RenderBox(0, height, width, 1, height + (float) grid.pixelLength, width + (float) grid.pixelLength, state));
+        }
+        return cubes;
+    }
+
     @Override
     public void submit(Mesh mesh, PoseStack pose, SubmitNodeCollector collector, int light, int overlay, boolean glint, int outline) {
-        if (mesh == null || mesh.group == null)
+        if (mesh == null || mesh.empty())
             return;
+        if (mode == Mode.ELEMENT) {
+            // Small isometric cube in the lower right corner of the flat tool icon, a little in front of it.
+            PoseStack local = new PoseStack(); // own stack: the submitted pose must not change after we return
+            local.last().pose().set(pose.last().pose());
+            local.last().normal().set(pose.last().normal());
+            local.translate(0.72F, 0.26F, 0.6F);
+            local.mulPose(com.mojang.math.Axis.XP.rotationDegrees(30));
+            local.mulPose(com.mojang.math.Axis.YP.rotationDegrees(225));
+            local.scale(0.42F, 0.42F, 0.42F);
+            local.translate(-0.5F, -0.5F, -0.5F);
+            draw(mesh, local, collector, light, overlay);
+            return;
+        }
+        draw(mesh, pose, collector, light, overlay);
+    }
+
+    private void draw(Mesh mesh, PoseStack pose, SubmitNodeCollector collector, int light, int overlay) {
         if (!mesh.built) {
             mesh.built = true;
             try {
@@ -150,6 +289,15 @@ public final class LittleItemRenderer implements SpecialModelRenderer<LittleItem
     // ================ building ================
 
     private static void build(Mesh mesh) {
+        if (mesh.boxes != null) {
+            List<RenderBox> solid = new ArrayList<>(), translucent = new ArrayList<>();
+            for (RenderBox box : mesh.boxes)
+                (box.isTranslucent() ? translucent : solid).add(box);
+            Builder builder = new Builder(new float[] { 1, 0, 0, 0 });
+            mesh.solid = builder.boxes(solid);
+            mesh.translucent = builder.boxes(translucent);
+            return;
+        }
         List<RenderBox> solid = mesh.group.getRenderingBoxes(false);
         List<RenderBox> translucent = mesh.group.getRenderingBoxes(true);
 

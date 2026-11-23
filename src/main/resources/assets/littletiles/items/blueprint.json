@@ -1,6 +1,17 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "littletiles:item/blueprint"
+    "model": "littletiles:item/blueprint",
+    "tints": [
+      {
+        "type": "littletiles:color",
+        "default": 15919046
+      },
+      {
+        "type": "littletiles:color",
+        "secondary": true,
+        "default": 12167547
+      }
+    ]
   }
 }
