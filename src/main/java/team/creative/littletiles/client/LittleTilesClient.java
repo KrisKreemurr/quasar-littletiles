@@ -245,7 +245,7 @@ public class LittleTilesClient {
     
     /** TODO(quasar): real renderers for animated structures / sized TNT / seats come with the render rewrite; until then they are invisible. */
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(LittleTilesRegistry.SIZED_TNT_TYPE.get(), NoopRenderer::new);
+        event.registerEntityRenderer(LittleTilesRegistry.SIZED_TNT_TYPE.get(), team.creative.littletiles.client.render.entity.RenderSizedTNTPrimed::new);
         event.registerEntityRenderer(LittleTilesRegistry.ENTITY_LEVEL.get(), team.creative.littletiles.client.render.entity.LittleEntityRenderer::new);
         event.registerEntityRenderer(LittleTilesRegistry.ENTITY_ANIMATION.get(), team.creative.littletiles.client.render.entity.LittleEntityRenderer::new);
         event.registerEntityRenderer(LittleTilesRegistry.SIT_TYPE.get(), NoopRenderer::new);
