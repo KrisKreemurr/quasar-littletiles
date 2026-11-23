@@ -296,6 +296,7 @@ public class PreviewRenderer {
     /** Reads a mesh back (position + colour of every vertex) and turns it into gizmos: LINES -> lines, QUADS -> filled rects. */
     /** Diagnostics: gizmos emitted / meshes drawn since the counters were last reset (PreviewManager logs them once). */
     public int debugGizmos, debugMeshes, debugEmptyMeshes;
+    private boolean loggedSample;
     
     private void emit(MeshData data, int baseColor, float alpha, boolean onTop, float lineWidth) {
         var state = data.drawState();
@@ -326,6 +327,11 @@ public class PreviewRenderer {
                 gizmo = Gizmos.rect(points[0], points[1], points[2], points[3], GizmoStyle.fill(argb));
             if (onTop)
                 gizmo.setAlwaysOnTop();
+            if (debugGizmos == 0 && !loggedSample) {
+                loggedSample = true;
+                LittleTiles.LOGGER.info("LittleTiles preview sample: first {} from {} to {} argb={} camera={} stride={} vertices={}", lines ? "line" : "rect", points[0], points[1],
+                    Integer.toHexString(argb), frameCam, stride, count);
+            }
             debugGizmos++;
         }
     }
@@ -339,7 +345,7 @@ public class PreviewRenderer {
         int r = ((baseArgb >> 16) & 0xFF) * vr / 255;
         int g = ((baseArgb >> 8) & 0xFF) * vg / 255;
         int b = (baseArgb & 0xFF) * vb / 255;
-        int a = Mth.clamp((int) (alpha * va), 0, 255);
+        int a = Mth.clamp((int) (alpha * 255), 0, 255); // config alpha only: a misread vertex alpha must never hide the preview
         return (a << 24) | (r << 16) | (g << 8) | b;
     }
     

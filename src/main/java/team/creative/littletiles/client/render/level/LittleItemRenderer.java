@@ -65,6 +65,7 @@ public final class LittleItemRenderer implements SpecialModelRenderer<LittleItem
     /** Lazily built vertex data for one tile group (x, y, z, u, v, argb, nx, ny, nz per vertex; quads). */
     public static final class Mesh {
         final LittleGroup group;
+        String name = "?";
         float[] solid;
         float[] translucent;
         boolean built;
@@ -99,6 +100,7 @@ public final class LittleItemRenderer implements SpecialModelRenderer<LittleItem
         Mesh mesh;
         try {
             mesh = placer.hasTiles(stack) ? new Mesh(placer.getTiles(stack)) : new Mesh(null);
+            mesh.name = stack.getHoverName().getString();
         } catch (Throwable e) {
             LittleTiles.LOGGER.error("Failed to read tiles of item {}", stack, e);
             mesh = new Mesh(null);
@@ -163,8 +165,10 @@ public final class LittleItemRenderer implements SpecialModelRenderer<LittleItem
                 maxY = Math.max(maxY, box.maxY);
                 maxZ = Math.max(maxZ, box.maxZ);
             }
-        if (minX > maxX)
+        if (minX > maxX) {
+            LittleTiles.LOGGER.info("LittleTiles item icon has no boxes: {}", mesh.name);
             return;
+        }
         float size = Math.max(maxX - minX, Math.max(maxY - minY, maxZ - minZ));
         float scale = size > 1 ? 1 / size : 1;
         float[] transform = { scale, 0.5F - (minX + maxX) / 2 * scale, 0.5F - (minY + maxY) / 2 * scale, 0.5F - (minZ + maxZ) / 2 * scale };
@@ -172,6 +176,9 @@ public final class LittleItemRenderer implements SpecialModelRenderer<LittleItem
         Builder builder = new Builder(transform);
         mesh.solid = builder.boxes(solid);
         mesh.translucent = builder.boxes(translucent);
+        if (mesh.solid.length == 0 && mesh.translucent.length == 0)
+            LittleTiles.LOGGER.info("LittleTiles item icon is empty: {} ({} solid + {} translucent boxes, structure {})", mesh.name, solid.size(), translucent.size(), mesh.group
+                    .hasStructure() ? mesh.group.getStructureType() : "none");
     }
 
     private static final class Builder {
