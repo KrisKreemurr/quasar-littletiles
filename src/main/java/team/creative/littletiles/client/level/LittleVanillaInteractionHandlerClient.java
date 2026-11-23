@@ -47,7 +47,7 @@ import team.creative.littletiles.mixin.client.MultiPlayerGameModeAccessor;
 
 public class LittleVanillaInteractionHandlerClient extends LevelHandler {
 
-    private static Minecraft mc;
+    private static final Minecraft mc = Minecraft.getInstance();
     private Level destroyLevel;
     private BlockPos destroyBlockPos;
     private ItemStack destroyingItem;
@@ -56,11 +56,11 @@ public class LittleVanillaInteractionHandlerClient extends LevelHandler {
     private boolean isDestroying;
     public LittleVanillaInteractionHandlerClient(Level level) { super(level); }
 
-    public Player getPlayer() { return null; }
+    public Player getPlayer() { return mc.player; }
 
-    public GameType getGameMode() { return null; }
+    public GameType getGameMode() { return mc.gameMode == null ? GameType.SURVIVAL : mc.gameMode.getPlayerMode(); }
 
-    public ClientPacketListener getVanillaConnection() { return null; }
+    public ClientPacketListener getVanillaConnection() { return mc.getConnection(); }
 
     private void ensureHasSentCarriedItem() {}
 
@@ -76,9 +76,57 @@ public class LittleVanillaInteractionHandlerClient extends LevelHandler {
 
     private boolean sameDestroyTarget(Level level, BlockPos pos) { return false; }
 
-    public InteractionResult useItemOn(Level level, LocalPlayer player, InteractionHand hand, BlockHitResult result) { return null; }
+    /** Quasar MC (26.3): right click on a block inside an animated structure (e.g. closing an open door). Predicts the
+     * result locally like vanilla and sends the use packet into the structure's sub-level. */
+    public InteractionResult useItemOn(Level level, LocalPlayer player, InteractionHand hand, BlockHitResult result) {
+        if (!level.getWorldBorder().isWithinBounds(result.getBlockPos()))
+            return InteractionResult.FAIL;
+        InteractionResult interaction = performUseItemOn(level, player, hand, result);
+        LittleTilesClient.PLAYER_CONNECTION.send(level, new ServerboundUseItemOnPacket(hand, result, 0));
+        return interaction;
+    }
 
-    private InteractionResult performUseItemOn(Level level, LocalPlayer player, InteractionHand hand, BlockHitResult hit) { return null; }
+    private InteractionResult performUseItemOn(Level level, LocalPlayer player, InteractionHand hand, BlockHitResult hit) {
+        BlockPos blockpos = hit.getBlockPos();
+        ItemStack itemstack = player.getItemInHand(hand);
+        var event = CommonHooks.onRightClickBlock(player, hand, blockpos, hit);
+        if (event.isCanceled())
+            return event.getCancellationResult();
+        if (getGameMode() == GameType.SPECTATOR)
+            return InteractionResult.SUCCESS;
+        UseOnContext context = new UseOnContext(level, player, hand, itemstack, hit);
+        if (event.getUseItem() != net.minecraft.util.TriState.FALSE) {
+            InteractionResult first = itemstack.onItemUseFirst(context);
+            if (first != InteractionResult.PASS)
+                return first;
+        }
+        boolean holding = !player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty();
+        boolean bypass = player.isSecondaryUseActive() && holding && !(player.getMainHandItem().doesSneakBypassUse(level, blockpos, player) && player.getOffhandItem()
+                .doesSneakBypassUse(level, blockpos, player));
+        if (event.getUseBlock().isTrue() || (event.getUseBlock().isDefault() && !bypass)) {
+            BlockState state = level.getBlockState(blockpos);
+            InteractionResult withItem = state.useItemOn(itemstack, level, player, hand, hit);
+            if (withItem.consumesAction())
+                return withItem;
+            if (withItem instanceof InteractionResult.TryEmptyHandInteraction && hand == InteractionHand.MAIN_HAND) {
+                InteractionResult without = state.useWithoutItem(level, player, hit);
+                if (without.consumesAction())
+                    return without;
+            }
+        }
+        if (event.getUseBlock().isFalse())
+            return InteractionResult.PASS;
+        if (event.getUseItem().isTrue() || (!itemstack.isEmpty() && !player.getCooldowns().isOnCooldown(itemstack))) {
+            if (getGameMode().isCreative()) {
+                int count = itemstack.getCount();
+                InteractionResult used = itemstack.useOn(context);
+                itemstack.setCount(count);
+                return used;
+            }
+            return itemstack.useOn(context);
+        }
+        return InteractionResult.PASS;
+    }
 
     public InteractionResult useItem(Level level, Player player, InteractionHand hand) { return null; }
 
