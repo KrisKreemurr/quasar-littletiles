@@ -1,3 +1,5 @@
 {
-    "loader": "creativecore:empty"
+  "textures": {
+    "particle": "minecraft:block/stone"
+  }
 }

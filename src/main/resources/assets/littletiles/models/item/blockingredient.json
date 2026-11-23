@@ -1,9 +1,3 @@
 {
-    "loader": "creativecore:layer",
-    "layers": [
-        {
-            "loader": "creativecore:box",
-            "item": "littletiles:blockingredient"
-        }
-    ]
+  "parent": "littletiles:block/colored_clean"
 }

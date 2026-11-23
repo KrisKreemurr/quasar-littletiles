@@ -1,15 +1,6 @@
 {
-    "loader": "creativecore:layer",
-    "layers": [
-        {
-            "parent": "item/handheld",
-            "textures": {
-                "layer0": "littletiles:item/chisel"
-            }
-        },
-        {
-            "loader": "creativecore:preview",
-            "item": "littletiles:chisel"
-        }
-    ]
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "littletiles:item/chisel"
+  }
 }

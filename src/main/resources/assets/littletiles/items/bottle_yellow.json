@@ -1,0 +1,47 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "property": "littletiles:filled",
+    "entries": [
+      {
+        "threshold": 0.1667,
+        "model": {
+          "type": "minecraft:model",
+          "model": "littletiles:item/bottle_yellow1"
+        }
+      },
+      {
+        "threshold": 0.3333,
+        "model": {
+          "type": "minecraft:model",
+          "model": "littletiles:item/bottle_yellow2"
+        }
+      },
+      {
+        "threshold": 0.5,
+        "model": {
+          "type": "minecraft:model",
+          "model": "littletiles:item/bottle_yellow3"
+        }
+      },
+      {
+        "threshold": 0.6667,
+        "model": {
+          "type": "minecraft:model",
+          "model": "littletiles:item/bottle_yellow4"
+        }
+      },
+      {
+        "threshold": 0.8333,
+        "model": {
+          "type": "minecraft:model",
+          "model": "littletiles:item/bottle_yellow5"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "littletiles:item/bottle_yellow0"
+    }
+  }
+}

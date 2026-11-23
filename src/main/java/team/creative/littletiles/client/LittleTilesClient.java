@@ -162,6 +162,8 @@ public class LittleTilesClient {
         // TODO(quasar): colored water tint (was RegisterColorHandlersEvent.Block) - 26.x block tints are data-driven.
         bus.addListener(LittleTilesClient::registerKeys);
         bus.addListener(LittleTilesClient::registerRenderers);
+        bus.addListener((net.neoforged.neoforge.client.event.RegisterRangeSelectItemModelPropertyEvent event) -> event.register(
+            net.minecraft.resources.Identifier.fromNamespaceAndPath(LittleTiles.MODID, "filled"), team.creative.littletiles.client.item.BottleFilledProperty.MAP_CODEC));
         // TODO(quasar): item models (multi tiles, premade, glove/chisel previews, block ingredient), item tints and the "filled" bottle property
         // are data-driven client item definitions in 26.x; they come back with the render rewrite (special item models).
     }

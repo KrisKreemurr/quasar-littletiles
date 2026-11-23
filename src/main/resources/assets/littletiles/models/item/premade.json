@@ -1,9 +1,6 @@
 {
-    "loader": "creativecore:layer",
-    "layers": [
-        {
-            "loader": "creativecore:box",
-            "item": "littletiles:premade"
-        }
-    ]
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "littletiles:item/blueprint_border"
+  }
 }

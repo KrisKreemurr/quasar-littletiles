@@ -1,16 +1,7 @@
 {
-    "loader": "creativecore:layer",
-    "layers": [
-        {
-            "parent": "item/handheld",
-            "textures": {
-                "layer0": "littletiles:item/blueprint",
-                "layer1": "littletiles:item/blueprint_border"
-            }
-        },
-        {
-            "loader": "creativecore:box",
-            "item": "littletiles:tiles"
-        }
-    ]
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "littletiles:item/blueprint",
+    "layer1": "littletiles:item/blueprint_border"
+  }
 }
