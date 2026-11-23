@@ -194,11 +194,11 @@ public final class LittleItemRenderer implements SpecialModelRenderer<LittleItem
         }
         Mesh mesh;
         try {
-            mesh = placer.hasTiles(stack) ? new Mesh(placer.getTiles(stack)) : new Mesh(null);
+            mesh = placer.hasTiles(stack) ? new Mesh(placer.getTiles(stack)) : new Mesh((LittleGroup) null);
             mesh.name = stack.getHoverName().getString();
         } catch (Throwable e) {
             LittleTiles.LOGGER.error("Failed to read tiles of item {}", stack, e);
-            mesh = new Mesh(null);
+            mesh = new Mesh((LittleGroup) null);
         }
         synchronized (CACHE) {
             CACHE.put(key, mesh);
@@ -245,8 +245,8 @@ public final class LittleItemRenderer implements SpecialModelRenderer<LittleItem
             local.last().pose().set(pose.last().pose());
             local.last().normal().set(pose.last().normal());
             local.translate(0.72F, 0.26F, 0.6F);
-            local.mulPose(com.mojang.math.Axis.XP.rotationDegrees(30));
-            local.mulPose(com.mojang.math.Axis.YP.rotationDegrees(225));
+            local.rotate(com.mojang.math.Axis.XP.rotationDegrees(30));
+            local.rotate(com.mojang.math.Axis.YP.rotationDegrees(225));
             local.scale(0.42F, 0.42F, 0.42F);
             local.translate(-0.5F, -0.5F, -0.5F);
             draw(mesh, local, collector, light, overlay);
