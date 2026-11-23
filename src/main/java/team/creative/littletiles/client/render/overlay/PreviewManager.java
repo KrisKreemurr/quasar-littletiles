@@ -95,7 +95,7 @@ public class PreviewManager implements LevelAwareHandler {
             lastHeld = stack.copy();
         }
 
-        if (!LittleAction.canPlace(player) || MC.options.hideGui) {
+        if (!LittleAction.canPlace(player)) {
             processKeys(stack, false); // Make sure the actions are not queued and performed once things can be placed
             return;
         }
