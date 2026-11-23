@@ -52,7 +52,7 @@ public abstract class MinecraftMixin {
                 continue;
             if (result.consumesAction()) {
                 if (result instanceof InteractionResult.Success success && success.swingSource() != InteractionResult.SwingSource.NONE)
-                    player.swing(hand);
+                    player.swing(hand, false);
                 info.cancel();
                 return;
             }
