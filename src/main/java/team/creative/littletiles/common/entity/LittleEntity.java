@@ -209,7 +209,8 @@ public abstract class LittleEntity<T extends LittleEntityPhysic> extends Entity 
         origin.tick();
         
         Vec3 center = physic.getCenter();
-        setPos(center.x, center.y, center.z);
+        if (center != null) // unknown until the structure's blocks have arrived (client) and its box was measured
+            setPos(center.x, center.y, center.z);
         
         syncMovement();
         

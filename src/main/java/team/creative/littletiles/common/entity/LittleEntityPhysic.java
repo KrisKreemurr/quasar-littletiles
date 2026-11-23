@@ -199,7 +199,8 @@ public abstract class LittleEntityPhysic<T extends LittleEntity<? extends Little
         
         coordinator.finish();
         updateBoundingBox();
-        parent.setPos(center.x, center.y, center.z);;
+        if (center != null)
+            parent.setPos(center.x, center.y, center.z);
     }
     
     public void transform(CollisionCoordinator coordinator) {
