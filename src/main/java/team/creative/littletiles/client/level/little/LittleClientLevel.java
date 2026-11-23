@@ -73,6 +73,11 @@ public abstract class LittleClientLevel extends ClientLevel implements LittleLev
     }
     
     @Override
+    public net.minecraft.client.ClientClockManager clockManager() {
+        return Minecraft.getInstance().getConnection().clockManager();
+    }
+    
+    @Override
     public void removeEntityById(int id, RemovalReason reason) {
         removeEntity(id, reason);
     }
@@ -263,6 +268,13 @@ public abstract class LittleClientLevel extends ClientLevel implements LittleLev
         @Override
         public RegistryAccess.Frozen registryAccess() {
             return this.access;
+        }
+        
+        /** 26.3: the level's environment attributes (sky brightness etc.) sample the world clocks through the connection. This listener is allocated
+         * without a constructor, so borrow the real connection's clocks. */
+        @Override
+        public net.minecraft.client.ClientClockManager clockManager() {
+            return Minecraft.getInstance().getConnection().clockManager();
         }
         
     }
