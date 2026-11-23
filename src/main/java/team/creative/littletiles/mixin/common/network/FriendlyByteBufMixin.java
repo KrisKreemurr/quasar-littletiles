@@ -11,8 +11,8 @@ import net.minecraft.network.FriendlyByteBuf;
 public class FriendlyByteBufMixin {
     
     @Redirect(method = "readNbt(Lio/netty/buffer/ByteBuf;)Lnet/minecraft/nbt/CompoundTag;", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/nbt/NbtAccounter;create(J)Lnet/minecraft/nbt/NbtAccounter;"), require = 1)
-    private static NbtAccounter createNbtAccounter(long value) {
+            target = "Lnet/minecraft/nbt/NbtAccounter;defaultQuota()Lnet/minecraft/nbt/NbtAccounter;"), require = 1)
+    private static NbtAccounter createNbtAccounter() {
         return NbtAccounter.unlimitedHeap();
     }
     
