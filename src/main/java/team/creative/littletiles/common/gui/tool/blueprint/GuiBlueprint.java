@@ -98,7 +98,7 @@ public class GuiBlueprint extends GuiConfigure implements LittleGuiHooks.PreRend
         super(client, "blueprint", view);
         setFlow(GuiFlow.STACK_X);
         setVAlign(VAlign.STRETCH);
-        setDim(new GuiSizeRules().minWidth(500).minHeight(300));
+        setDim(new GuiSizeRatioRules(0.75F, 1F).minWidth(500).minHeight(300)); // same size whatever structure type is picked
         registerEventChanged(x -> {
             if (x.control.is("type") && tree.selected() != null)
                 ((GuiTreeItemStructure) tree.selected()).load();
