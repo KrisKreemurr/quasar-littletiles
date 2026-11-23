@@ -313,10 +313,8 @@ public final class LittleItemRenderer implements SpecialModelRenderer<LittleItem
                 maxY = Math.max(maxY, box.maxY);
                 maxZ = Math.max(maxZ, box.maxZ);
             }
-        if (minX > maxX) {
-            LittleTiles.LOGGER.info("LittleTiles item icon has no boxes: {}", mesh.name);
+        if (minX > maxX)
             return;
-        }
         float size = Math.max(maxX - minX, Math.max(maxY - minY, maxZ - minZ));
         float scale = size > 1 ? 1 / size : 1;
         float[] transform = { scale, 0.5F - (minX + maxX) / 2 * scale, 0.5F - (minY + maxY) / 2 * scale, 0.5F - (minZ + maxZ) / 2 * scale };
@@ -324,9 +322,6 @@ public final class LittleItemRenderer implements SpecialModelRenderer<LittleItem
         Builder builder = new Builder(transform);
         mesh.solid = builder.boxes(solid);
         mesh.translucent = builder.boxes(translucent);
-        if (mesh.solid.length == 0 && mesh.translucent.length == 0)
-            LittleTiles.LOGGER.info("LittleTiles item icon is empty: {} ({} solid + {} translucent boxes, structure {})", mesh.name, solid.size(), translucent.size(), mesh.group
-                    .hasStructure() ? mesh.group.getStructureType() : "none");
     }
 
     private static final class Builder {

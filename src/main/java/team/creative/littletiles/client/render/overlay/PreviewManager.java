@@ -66,8 +66,6 @@ public class PreviewManager implements LevelAwareHandler {
 
     public void clearToolPreviews() {
         lastHeld = ItemStack.EMPTY;
-        debugFrames = 0;
-        renderer.debugGizmos = renderer.debugMeshes = renderer.debugEmptyMeshes = 0;
         if (tool != null)
             tool.remove();
         tool = null;
@@ -114,9 +112,7 @@ public class PreviewManager implements LevelAwareHandler {
     }
 
     private boolean loggedRenderError = false;
-    private int debugFrames;
-    private boolean loggedCantPlace;
-    private LittleTool debugTool;
+
     
     /** Draws the tool previews. RenderFrameEvent.Pre fires inside vanilla's per-frame gizmo collector, so the gizmos the
      * renderer emits are drawn in this frame. Filled boxes first, then outlines (the old two render stages). */
@@ -124,13 +120,8 @@ public class PreviewManager implements LevelAwareHandler {
     protected void renderFrame(RenderFrameEvent.Pre event) {
         if (tool == null || MC.player == null || MC.level == null)
             return;
-        if (!LittleAction.canPlace(MC.player)) {
-            if (!loggedCantPlace) {
-                loggedCantPlace = true;
-                LittleTiles.LOGGER.info("LittleTiles preview check: previews skipped, canPlace=false (gameMode={})", MC.player.gameMode());
-            }
+        if (!LittleAction.canPlace(MC.player))
             return;
-        }
         if (tool.stack == null || !(tool.stack.getItem() instanceof ILittleTool))
             return;
         try {
@@ -139,12 +130,6 @@ public class PreviewManager implements LevelAwareHandler {
             tool.render(renderer, new PoseStack(), cam, false);
             tool.render(renderer, new PoseStack(), cam, true);
             tool.renderGui(renderer, LittleTilesClient.OVERLAY_RENDERER, cam);
-            debugFrames++;
-            if (debugFrames == 120 && debugTool != tool) { // one line per tool selection, two seconds in
-                debugTool = tool;
-                LittleTiles.LOGGER.info("LittleTiles preview check: tool={} hit={} meshes={} empty={} gizmos={} thread={}", tool.getClass().getSimpleName(), blockHit() == null ? "none"
-                        : blockHit().getBlockPos(), renderer.debugMeshes, renderer.debugEmptyMeshes, renderer.debugGizmos, Thread.currentThread().getName());
-            }
         } catch (Throwable e) {
             if (!loggedRenderError) {
                 loggedRenderError = true;
