@@ -114,7 +114,26 @@ public class LittleToolWrench extends LittleTool {
     
     @Override
     protected void renderInternal(PreviewRenderer renderer, PoseStack pose, Vec3 cam, boolean lines) {
-        // TODO(quasar): wrench structure labels (text in the world) need a 26.x text renderer; parked.
+        // Quasar MC (26.3): structure info labels as vanilla billboard text gizmos (see-through like the original).
+        if (!lines || receivedStructures == null)
+            return;
+        net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
+        boolean focus = false;
+        LittleStructure focusedStructure = null;
+        if (mc.hasShiftDown()) {
+            focus = true;
+            if (mc.hitResult instanceof BlockHitResult b && mc.hitResult.getType() == net.minecraft.world.phys.HitResult.Type.BLOCK && renderer.level().getBlockState(b
+                    .getBlockPos()).getBlock() instanceof team.creative.littletiles.common.block.mc.BlockTile) {
+                LittleTileContext tileContext = renderer.selectFocused(b);
+                if (tileContext.isComplete() && tileContext.parent.isStructure())
+                    try {
+                        focusedStructure = tileContext.parent.getStructure();
+                    } catch (CorruptedConnectionException | NotYetConnectedException e) {}
+            }
+        }
+        for (StructureTooltip s : receivedStructures)
+            if (s.visible(focus, focusedStructure))
+                s.renderGizmos();
     }
     
     @Override
@@ -159,6 +178,17 @@ public class LittleToolWrench extends LittleTool {
         
         public void render(PoseStack pose, Object submitter, Font font, Quaternionf cameraOrientation) {
             // TODO(quasar): render code parked for the render rewrite (see src/parked / upstream 1.21).
+        }
+
+        public void renderGizmos() {
+            if (info == null)
+                return;
+            Vec3 pos = this.pos;
+            if (structure.getStructureLevel() instanceof team.creative.creativecore.common.level.IOrientatedLevel l)
+                pos = l.getOrigin().pose().transform(pos);
+            for (int i = 0; i < info.size(); i++)
+                net.minecraft.gizmos.Gizmos.billboardText(info.get(i).getString(), pos.add(0, -0.12 * i, 0), net.minecraft.gizmos.TextGizmo.Style.forColorAndCentered(-1))
+                        .setAlwaysOnTop();
         }
         
     }
