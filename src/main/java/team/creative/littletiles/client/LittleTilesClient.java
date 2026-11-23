@@ -164,6 +164,7 @@ public class LittleTilesClient {
         bus.addListener(LittleTilesClient::registerRenderers);
         team.creative.littletiles.client.render.level.LittleChunkGeometry.init();
         team.creative.littletiles.client.render.level.SignalDisplayRenderer.init();
+        team.creative.littletiles.client.render.overlay.TileOutlineRenderer.init();
         bus.addListener((net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent event) -> event.register(
             net.minecraft.resources.Identifier.fromNamespaceAndPath(LittleTiles.MODID, "tiles"), team.creative.littletiles.client.render.level.LittleItemRenderer.Unbaked.MAP_CODEC));
         bus.addListener((net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent event) -> {
