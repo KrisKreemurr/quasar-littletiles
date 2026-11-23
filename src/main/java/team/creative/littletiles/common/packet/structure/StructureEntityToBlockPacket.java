@@ -19,7 +19,8 @@ public class StructureEntityToBlockPacket extends LittleEntityPacket<LittleAnima
     @OnlyIn(Dist.CLIENT)
     public void execute(Player player, LittleAnimationEntity entity) {
         requiresClient(player);
-        LittleLevelTransitionManagerClient.queue(entity.level(), entity);
+        // Quasar MC (26.3): 1.21 handed the animation's compiled chunk buffers back to the world here. Both are now meshed straight from their
+        // blocks (LittleChunkGeometry / LittleEntityRenderer), so there is nothing to hand over.
     }
     
 }

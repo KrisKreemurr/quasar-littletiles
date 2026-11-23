@@ -85,8 +85,10 @@ public class StructureBlockToEntityPacket extends StructurePacket {
     
     @Override
     public void execute(Player player, LittleStructure structure) {
+        requiresClient(player);
+        if (true)
+            return; // Quasar MC (26.3): no compiled buffers to move into the animation, it is meshed from its own blocks (see LittleEntityRenderer)
         try {
-            requiresClient(player);
             Long2ObjectMap<SectionPos> chunks = new Long2ObjectOpenHashMap<>();
             LittleAnimationEntity ani = (LittleAnimationEntity) LittleTilesClient.ANIMATION_HANDLER.find(uuid);
             queueStructure(chunks, RenderingLevelHandler.of(ani.getSubLevel(), null), ani.getSubLevel(), RenderingLevelHandler.of(structure.getStructureLevel(), structure

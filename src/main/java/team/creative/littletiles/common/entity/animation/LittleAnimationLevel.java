@@ -281,9 +281,10 @@ public class LittleAnimationLevel extends Level implements LittleSubLevel, Itera
     
     @Override
     public void sendBlockUpdated(BlockPos pos, BlockState actualState, BlockState setState, int p_104688_) {
-        if (isClientSide() && renderManager != null)
-            this.renderManager.blockChanged(this, pos, actualState, setState, p_104688_);
-        else
+        if (isClientSide()) {
+            if (renderManager != null)
+                this.renderManager.blockChanged(this, pos, actualState, setState, p_104688_);
+        } else if (trackedChanges != null)
             trackedChanges.add(pos);
     }
     
