@@ -170,10 +170,22 @@ public class BERenderManager {
             requestedIndex++;
             
             this.eraseBoxCache |= eraseBoxCache;
-            
-            if (!queued && RenderingThread.queue(be, hasPos, pos))
-                queued = true;
         }
+        // Quasar MC: tiles are part of the chunk mesh now (LittleChunkGeometry), so a change just rebuilds the section.
+        markSectionDirty();
+    }
+    
+    private void markSectionDirty() {
+        if (!(be.getLevel() instanceof net.minecraft.client.multiplayer.ClientLevel level))
+            return;
+        net.minecraft.core.BlockPos pos = be.getBlockPos();
+        Runnable dirty = () -> level.setSectionDirtyWithNeighbors(net.minecraft.core.SectionPos.blockToSectionCoord(pos.getX()), net.minecraft.core.SectionPos
+                .blockToSectionCoord(pos.getY()), net.minecraft.core.SectionPos.blockToSectionCoord(pos.getZ()));
+        net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
+        if (mc.isSameThread())
+            dirty.run();
+        else
+            mc.execute(dirty);
     }
     
     public int startBuildingCache() {
