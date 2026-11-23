@@ -176,8 +176,11 @@ public class BERenderManager {
     }
     
     private void markSectionDirty() {
-        if (!(be.getLevel() instanceof net.minecraft.client.multiplayer.ClientLevel level))
+        if (!(be.getLevel() instanceof net.minecraft.client.multiplayer.ClientLevel level)) {
+            // Inside an animated structure / sub-level: its tiles are drawn by the entity renderer from a cached mesh.
+            team.creative.littletiles.client.render.entity.LittleEntityRenderer.invalidate(be);
             return;
+        }
         net.minecraft.core.BlockPos pos = be.getBlockPos();
         Runnable dirty = () -> level.setSectionDirtyWithNeighbors(net.minecraft.core.SectionPos.blockToSectionCoord(pos.getX()), net.minecraft.core.SectionPos
                 .blockToSectionCoord(pos.getY()), net.minecraft.core.SectionPos.blockToSectionCoord(pos.getZ()));

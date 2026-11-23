@@ -274,7 +274,7 @@ public final class LittleItemRenderer implements SpecialModelRenderer<LittleItem
         }
     }
 
-    private static void replay(float[] data, PoseStack.Pose pose, VertexConsumer consumer, int light, int overlay) {
+    public static void replay(float[] data, PoseStack.Pose pose, VertexConsumer consumer, int light, int overlay) {
         for (int i = 0; i + STRIDE <= data.length; i += STRIDE)
             consumer.addVertex(pose, data[i], data[i + 1], data[i + 2]).setColor(Float.floatToRawIntBits(data[i + 5])).setUv(data[i + 3], data[i + 4]).setOverlay(overlay)
                     .setLight(light).setNormal(pose, data[i + 6], data[i + 7], data[i + 8]);
@@ -287,6 +287,11 @@ public final class LittleItemRenderer implements SpecialModelRenderer<LittleItem
     }
 
     // ================ building ================
+
+    /** Vertex data (same layout as the item meshes) for boxes in block space, no fitting. Used for animated structures. */
+    public static float[] buildBoxes(List<? extends RenderBox> boxes) {
+        return new Builder(new float[] { 1, 0, 0, 0 }).boxes(new ArrayList<>(boxes));
+    }
 
     private static void build(Mesh mesh) {
         if (mesh.boxes != null) {
