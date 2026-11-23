@@ -21,7 +21,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.SectionPos;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.RandomSource;
-import net.minecraft.util.Tuple;
+import team.creative.creativecore.common.util.type.list.Tuple;
 import net.minecraft.world.level.BlockAndLightGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -134,9 +134,9 @@ public final class LittleChunkGeometry {
 
             for (ChunkLayerMapList<LittleRenderBox> map : boxes.values())
                 for (Tuple<ChunkSectionLayer, List<LittleRenderBox>> tuple : map.tuples()) {
-                    ChunkSectionLayer layer = tuple.getA();
+                    ChunkSectionLayer layer = tuple.key;
                     VertexConsumer consumer = null;
-                    for (LittleRenderBox box : tuple.getB()) {
+                    for (LittleRenderBox box : tuple.value) {
                         if (box.state == null)
                             continue;
                         if (consumer == null)
