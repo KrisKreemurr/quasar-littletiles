@@ -218,7 +218,7 @@ public class PreviewRenderer {
     
     public void buildBox(PoseStack pose, RenderBox box, BufferBuilder builder, int colorAlpha, boolean lines, boolean forceWhite) {
         if (lines) {
-            box.renderLines(pose, builder, colorAlpha, box.getCenter(), 0.001);
+            box.renderLines(pose, builder, colorAlpha, box.getCenter(), 0.004);
             return;
         }
         int color = forceWhite || box.color == -1 ? 0xFFFFFF : box.color & 0xFFFFFF;
@@ -289,6 +289,9 @@ public class PreviewRenderer {
             return;
         var config = LittleTiles.CONFIG.rendering.preview;
         emit(data, config.lineColor.toInt(), alpha, false, (float) config.lineThickness);
+        // Hammer/saw previews sit inside the block they cut, with edges on its surface: the depth test can hide them.
+        // A fainter always-on-top copy keeps the outline readable (like selection outlines in building tools).
+        emit(data, config.lineColor.toInt(), alpha * 0.6F, true, (float) config.lineThickness);
         if (highlight)
             emit(data, config.highlightLineColor.toInt(), alpha, true, (float) config.hightlightLineThickness);
     }
