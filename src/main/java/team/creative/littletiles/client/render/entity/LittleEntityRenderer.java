@@ -100,8 +100,9 @@ public class LittleEntityRenderer extends EntityRenderer<LittleEntity, LittleEnt
 
     /** Submits every block of the structure's sub-level. {@code world} is the space the structure's origin lives in, {@code cam} the camera position in
      * that space (zero for GUI previews). Also used by the blueprint previews. */
-    public static void submitStructure(LittleEntity entity, PoseStack world, Vec3 cam, float partialTick, int light, SubmitNodeCollector collector) {
+    public static int submitStructure(LittleEntity entity, PoseStack world, Vec3 cam, float partialTick, int light, SubmitNodeCollector collector) {
         world = copy(world);
+        int count = 0;
         Vec3 local = entity.getOrigin().pose(partialTick).setup(world, cam);
         for (ChunkAccess chunk : entity.getSubLevel().chunks()) {
             if (!(chunk instanceof LevelChunk levelChunk))
@@ -113,6 +114,7 @@ public class LittleEntityRenderer extends EntityRenderer<LittleEntity, LittleEnt
                 if (mesh == null)
                     continue;
                 BlockPos pos = be.getBlockPos();
+                count++;
                 if (mesh.solid != null && mesh.solid.length > 0) {
                     PoseStack at = at(world, pos, local);
                     float[] data = mesh.solid;
@@ -127,6 +129,7 @@ public class LittleEntityRenderer extends EntityRenderer<LittleEntity, LittleEnt
                 }
             }
         }
+        return count;
     }
 
     private static boolean logged;

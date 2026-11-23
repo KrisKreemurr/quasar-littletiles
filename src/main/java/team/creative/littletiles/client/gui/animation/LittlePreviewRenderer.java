@@ -63,6 +63,7 @@ public class LittlePreviewRenderer extends PictureInPictureRenderer<LittlePrevie
     private final ProjectionMatrixBuffer perspectiveBuffer = new ProjectionMatrixBuffer("littletiles_preview");
     private int guiScale = 1;
     private static boolean logged;
+    private static boolean reported;
     
     @Override
     public Class<LittlePreviewRenderState> getRenderStateClass() {
@@ -81,7 +82,12 @@ public class LittlePreviewRenderer extends PictureInPictureRenderer<LittlePrevie
         int height = (state.y1() - state.y0()) * guiScale;
         try {
             Minecraft.getInstance().gameRenderer.lighting().setupFor(Lighting.Entry.ITEMS_3D);
+            int before = PreviewScenes.submitted;
             state.scene().submit(new Target(width, height, guiScale, collector));
+            if (!reported) {
+                reported = true;
+                LittleTiles.LOGGER.info("Blueprint preview: first frame drawn ({}x{} px, {} block meshes)", width, height, PreviewScenes.submitted - before);
+            }
         } catch (Throwable e) {
             if (!logged) {
                 logged = true;

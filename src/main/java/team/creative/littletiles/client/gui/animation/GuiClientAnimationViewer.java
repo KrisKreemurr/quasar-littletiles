@@ -102,8 +102,10 @@ public class GuiClientAnimationViewer extends GuiClientControl<GuiAnimationViewe
     
     @Override
     protected void renderContent(GuiGraphicsExtractor graphics, Rect controlRect, Rect realRect, double controlScale, int mouseX, int mouseY) {
-        if (!control.storage.isReady())
+        if (!control.storage.isReady()) {
+            AnimationPreviewRenderer.renderStatus(graphics, control.storage, rect.getContentWidth(), rect.getContentHeight());
             return;
+        }
         
         if (!control.initialized) {
             control.resetView();

@@ -13,6 +13,11 @@ public interface GuiAnimationViewerStorage {
     
     public boolean isReady();
     
+    /** Shown in the viewer while it is not ready; {@code null} means still building. */
+    public default String status() {
+        return null;
+    }
+    
     public double longestSide();
     
     public AABB overall();

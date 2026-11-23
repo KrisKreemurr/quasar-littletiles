@@ -25,6 +25,9 @@ import team.creative.littletiles.common.math.vec.LittleVecGrid;
 /** What the structure previews draw (port of the 1.21 storage renderAll/renderItem). */
 public class PreviewScenes {
     
+    /** blocks submitted so far (diagnostics) */
+    public static int submitted;
+    
     public static float partialTick() {
         return Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false);
     }
@@ -32,7 +35,7 @@ public class PreviewScenes {
     public static void submitPreview(AnimationPreview preview, PoseStack pose, SubmitNodeCollector collector) {
         if (preview == null || preview.animation == null || preview.animation.getSubLevel() == null)
             return;
-        LittleEntityRenderer.submitStructure(preview.animation, pose, Vec3.ZERO, partialTick(), LightCoordsUtil.FULL_BRIGHT, collector);
+        submitted += LittleEntityRenderer.submitStructure(preview.animation, pose, Vec3.ZERO, partialTick(), LightCoordsUtil.FULL_BRIGHT, collector);
     }
     
     public static void submitStorage(GuiAnimationViewerStorage storage, PoseStack pose, SubmitNodeCollector collector) {

@@ -49,6 +49,20 @@ public class GuiBlueprintAnimationStorage implements Iterable<Entry<GuiTreeItemS
         return tree;
     }
     
+    private volatile String status;
+    
+    public void failed(Throwable e) {
+        Throwable cause = e;
+        while (cause.getCause() != null && cause.getCause() != cause)
+            cause = cause.getCause();
+        status = "Preview failed: " + cause.getClass().getSimpleName() + (cause.getMessage() != null ? " - " + cause.getMessage() : "");
+    }
+    
+    @Override
+    public String status() {
+        return status;
+    }
+    
     @Override
     public boolean highlightSelected() {
         return highlightSelected;

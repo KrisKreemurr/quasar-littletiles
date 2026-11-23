@@ -84,8 +84,10 @@ public class GuiClientIsoAnimationViewer extends GuiClientControl<GuiIsoAnimatio
     @Override
     protected void renderContent(GuiGraphicsExtractor graphics, Rect controlRect, Rect realRect, double controlScale, int mouseX, int mouseY) {
         GuiBlueprintAnimationStorage storage = control.item.blueprint.storage;
-        if (!storage.isReady() || !storage.isReady(control.item))
+        if (!storage.isReady() || !storage.isReady(control.item)) {
+            AnimationPreviewRenderer.renderStatus(graphics, storage, rect.getWidth(), rect.getHeight());
             return;
+        }
         
         if (!control.initialized) {
             control.resetView();

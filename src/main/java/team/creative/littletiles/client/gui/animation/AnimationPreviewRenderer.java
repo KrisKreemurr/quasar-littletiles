@@ -6,23 +6,19 @@ import net.minecraft.network.chat.Component;
 import team.creative.creativecore.client.render.gui.CreativeGuiGraphics;
 import team.creative.littletiles.common.gui.control.animation.GuiAnimationViewerStorage;
 
-/**
- * Draws structure previews inside GUIs.
- * <p>
- * TODO(quasar): 1.21 rendered the preview's chunk sections straight into a GL viewport (RenderSystem viewport/projection + VertexBuffer layers). The 26.x
- * GUI is render-state based, so this needs a picture-in-picture renderer that draws the sub-level's meshes into a texture; that comes with the LittleTiles
- * render rewrite. Until then the viewers show a placeholder but keep all their controls (rotate, pan, zoom, axis picking).
- */
 public class AnimationPreviewRenderer {
     
-    private static final Component PLACEHOLDER = Component.literal("3D preview not ported yet");
-    
-    public static void renderPlaceholder(GuiGraphicsExtractor graphics, GuiAnimationViewerStorage storage, int width, int height) {
+    /** Shown while the preview is still being built (or why it failed). */
+    public static void renderStatus(GuiGraphicsExtractor graphics, GuiAnimationViewerStorage storage, int width, int height) {
         CreativeGuiGraphics g = (CreativeGuiGraphics) graphics;
-        g.colorRect(0, 0, width, height, 0x80000000);
+        String status = storage.status();
+        Component text = Component.literal(status != null ? status : "Building preview...");
         var font = Minecraft.getInstance().font;
-        int textWidth = font.width(PLACEHOLDER);
-        g.drawString(PLACEHOLDER.getVisualOrderText(), width / 2 - textWidth / 2, height / 2 - font.lineHeight / 2, 0xFFAAAAAA, 0, false);
+        int y = height / 2 - font.lineHeight / 2;
+        for (var line : font.split(text, Math.max(20, width - 8))) {
+            g.drawString(line, width / 2 - font.width(line) / 2, y, status != null ? 0xFFFF7070 : 0xFFDDDDDD, 0, false);
+            y += font.lineHeight + 1;
+        }
     }
     
 }

@@ -350,7 +350,16 @@ public class GuiTreeItemStructure extends GuiTreeItem implements AnimationContex
     
     @OnlyIn(Dist.CLIENT)
     public void refreshAnimation() {
-        FakeClientLevel fakeLevel = FakeServerLevel.createClient("animationViewer");
+        long start = System.currentTimeMillis();
+        team.creative.littletiles.LittleTiles.LOGGER.info("Blueprint preview: building '{}'", title);
+        FakeClientLevel fakeLevel;
+        try {
+            fakeLevel = FakeServerLevel.createClient("animationViewer");
+        } catch (Throwable e) {
+            team.creative.littletiles.LittleTiles.LOGGER.error("Blueprint preview: could not create the preview level", e);
+            blueprint.storage.failed(e);
+            return;
+        }
         CompletableFuture.supplyAsync(() -> {
             try {
                 return new AnimationPreview(fakeLevel, structure, group, provider());
@@ -358,9 +367,13 @@ public class GuiTreeItemStructure extends GuiTreeItem implements AnimationContex
                 throw new RuntimeException(e);
             }
         }).whenComplete((preview, throwable) -> {
+            if (throwable != null) {
+                team.creative.littletiles.LittleTiles.LOGGER.error("Blueprint preview: could not build '{}'", title, throwable);
+                blueprint.storage.failed(throwable);
+                return;
+            }
+            team.creative.littletiles.LittleTiles.LOGGER.info("Blueprint preview: built '{}' in {} ms", title, System.currentTimeMillis() - start);
             blueprint.storage.completed(this, preview);
-            if (throwable != null)
-                team.creative.littletiles.LittleTiles.LOGGER.error("Could not build the blueprint preview", throwable);
         });
     }
     
