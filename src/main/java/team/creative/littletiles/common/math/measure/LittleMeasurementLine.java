@@ -112,8 +112,19 @@ public class LittleMeasurementLine extends LittleMeasurementSimple {
     
     @Override
     public RenderMeasurementResult build(PreviewRenderer renderer, PoseStack pose, BufferBuilder builder, Vec3 cam) {
-        // TODO(quasar): line drawing parked for the render rewrite (see upstream 1.21 LittleMeasurementLine.build)
-        return null;
+        if (start == null || end == null)
+            return null;
+        var pos = first.pos;
+        float dx = (float) (end.x - start.x), dy = (float) (end.y - start.y), dz = (float) (end.z - start.z);
+        float len = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+        if (len > 0) {
+            dx /= len;
+            dy /= len;
+            dz /= len;
+        }
+        builder.addVertex(pose.last().pose(), (float) start.x, (float) start.y, (float) start.z).setColor(color).setNormal(pose.last(), dx, dy, dz);
+        builder.addVertex(pose.last().pose(), (float) end.x, (float) end.y, (float) end.z).setColor(color).setNormal(pose.last(), dx, dy, dz);
+        return new RenderMeasurementResult(first.context, pos, builder);
     }
     
 }
