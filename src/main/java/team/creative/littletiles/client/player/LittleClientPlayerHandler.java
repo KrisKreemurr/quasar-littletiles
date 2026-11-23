@@ -469,7 +469,7 @@ public class LittleClientPlayerHandler implements TickablePacketListener, Client
     
     @Override
     public void handleDeleteChat(ClientboundDeleteChatPacket packet) {
-        handleDeleteChat(packet);
+        vanilla().handleDeleteChat(packet);
     }
     
     @Override
