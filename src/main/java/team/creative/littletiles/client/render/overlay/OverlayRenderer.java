@@ -1,5 +1,8 @@
 package team.creative.littletiles.client.render.overlay;
 
+import net.minecraft.gizmos.TextGizmo;
+import net.minecraft.gizmos.Gizmos;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -38,53 +41,107 @@ import team.creative.littletiles.common.item.tooltip.IItemTooltip;
 
 // QUASAR STUB: generated no-op stand-in; the original lives in src/parked (render rewrite pending).
 
+/** LittleTiles HUD overlay: tool / item hints (bottom left), action messages and measurement labels.
+ * <p>
+ * Quasar MC (26.3): drawn on NeoForge's RenderGuiEvent.Post with the 26.x GuiGraphicsExtractor; measurement labels are world
+ * text gizmos (the old screen projection used RenderSystem matrices that no longer exist). The CreativeCore overlay layer is
+ * kept as a container for building-mode controls but isn't drawn yet. TODO(quasar): draw OverlayGuiLayer controls. */
 public class OverlayRenderer implements LevelAwareHandler {
-
-    private static Minecraft MC;
-    private boolean doneInit;
+    
+    private static final Minecraft MC = Minecraft.getInstance();
+    private static final long MESSAGE_TIME = 5000;
+    
     private OverlayGuiLayer transparentLayer;
-    private SingletonList<GuiLayer> layers;
-    private Screen screen;
-    private int lastWidth;
-    private int lastHeight;
-    private List<OverlayText> scheduled;
-    public OverlayRenderer() {}
-
-    public OverlayGuiLayer gui() { return null; }
-
-    public void displayActionMessage(List<Component> message) {}
-
-
-    private Vec2d projectToScreen(Vec3 cam, Vec3d pos) { return null; }
-
-    public void renderLabel(Vec3 cam, Vec3d vec, Component component, int color) {}
-
-    public void renderPost(RenderGuiEvent.Post event) {}
-
-    public boolean isContainer() { return false; }
-
-    public boolean isClient() { return false; }
-
-    public Player getPlayer() { return null; }
-
-    public void closeTopLayer() {}
-
-    public void closeLayer(GuiLayer layer) {}
-
-    public List<GuiLayer> getLayers() { return null; }
-
-    public GuiLayer getTopLayer() { return null; }
-
-    public void openLayer(GuiLayer layer) {}
-
-    public void closeLayer(int layer) {}
-
-    public void send(CreativePacket message) {}
-
-    public void unload() {}
-
-    public Provider provider() { return null; }
-
+    private final List<Message> messages = new ArrayList<>();
+    
+    private record Message(List<Component> lines, long time) {}
+    
+    public OverlayRenderer() {
+        NeoForge.EVENT_BUS.addListener(this::renderPost);
+    }
+    
+    public OverlayGuiLayer gui() {
+        if (transparentLayer == null)
+            transparentLayer = new OverlayGuiLayer(true, "overlay");
+        return transparentLayer;
+    }
+    
+    public void displayActionMessage(List<Component> message) {
+        synchronized (messages) {
+            messages.add(new Message(message, net.minecraft.util.Util.getMillis()));
+            while (messages.size() > 4)
+                messages.remove(0);
+        }
+    }
+    
+    /** World-space label (measurements). Must run inside a gizmo collector (PreviewManager calls tools from RenderFrameEvent.Pre). */
+    public void renderLabel(Vec3 cam, Vec3d vec, Component component, int color) {
+        try {
+            Gizmos.billboardText(component.getString(), new Vec3(vec.x, vec.y, vec.z), TextGizmo.Style.forColorAndCentered(color));
+        } catch (IllegalStateException e) {} // no collector active
+    }
+    
+    public void renderPost(RenderGuiEvent.Post event) {
+        Player player = MC.player;
+        if (player == null)
+            return;
+        Font font = MC.font;
+        GuiGraphicsExtractor graphics = event.getGuiGraphics();
+        int width = MC.getWindow().getGuiScaledWidth();
+        int height = MC.getWindow().getGuiScaledHeight();
+        
+        // Action messages (e.g. missing ingredients), centred above the hotbar, fading out.
+        long now = net.minecraft.util.Util.getMillis();
+        synchronized (messages) {
+            messages.removeIf(m -> now - m.time > MESSAGE_TIME);
+            int y = height - 72;
+            for (int i = messages.size() - 1; i >= 0; i--) {
+                Message m = messages.get(i);
+                float left = 1F - (now - m.time) / (float) MESSAGE_TIME;
+                int alpha = Math.max(16, Math.min(255, (int) (left * 4 * 255)));
+                for (int l = m.lines.size() - 1; l >= 0; l--) {
+                    Component line = m.lines.get(l);
+                    y -= font.lineHeight + 1;
+                    graphics.text(font, line, (width - font.width(line)) / 2, y, (alpha << 24) | 0xFFFFFF, true);
+                }
+                y -= 3;
+            }
+        }
+        
+        // Tool hint, or the held item's help text.
+        Component tooltip = null;
+        if (LittleTilesClient.PREVIEW_RENDERER.tool() != null)
+            tooltip = LittleTilesClient.PREVIEW_RENDERER.tool().tooltip();
+        if (tooltip == null && LittleTiles.CONFIG.rendering.showTooltip && player.getMainHandItem().getItem() instanceof IItemTooltip item) {
+            ItemStack stack = player.getMainHandItem();
+            var id = stack.getItem().builtInRegistryHolder().key().identifier();
+            String tooltipKey = item.tooltipTranslateKey(stack, id.getNamespace() + "." + id.getPath() + ".tooltip");
+            if (LanguageUtils.can(tooltipKey))
+                tooltip = Component.translatable(tooltipKey, item.tooltipData(stack));
+        }
+        if (tooltip != null) {
+            String[] lines = tooltip.getString().split("\\n");
+            int y = height - 2;
+            for (int i = lines.length - 1; i >= 0; i--) {
+                String s = lines[i];
+                if (Strings.isNullOrEmpty(s))
+                    continue;
+                y -= font.lineHeight;
+                int w = font.width(s);
+                int top = 2 + y;
+                graphics.fill(1, top - 1, 2 + w + 1, top + font.lineHeight - 1, -1873784752);
+                graphics.text(font, s, 2, top, 0xFFE0E0E0, false);
+            }
+        }
+    }
+    
+    @Override
+    public void unload() {
+        synchronized (messages) {
+            messages.clear();
+        }
+    }
+    
     public static class OverlayGuiLayer extends GuiLayer {
 
         private GuiActionDisplay actionDisplay;

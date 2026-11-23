@@ -126,6 +126,7 @@ public class PreviewManager implements LevelAwareHandler {
             renderer.frameCam = cam;
             tool.render(renderer, new PoseStack(), cam, false);
             tool.render(renderer, new PoseStack(), cam, true);
+            tool.renderGui(renderer, LittleTilesClient.OVERLAY_RENDERER, cam);
         } catch (Throwable e) {
             if (!loggedRenderError) {
                 loggedRenderError = true;

@@ -80,7 +80,9 @@ public abstract class LittleTool {
             var gui = LittleTilesClient.OVERLAY_RENDERER.gui();
             for (BuildingModeFeature feature : features)
                 feature.create(gui, this, features);
-            gui.reflow();
+            try {
+                gui.reflow();
+            } catch (RuntimeException e) {} // Quasar MC: the overlay layer isn't drawn on 26.3 yet (no layout context)
             
         }
     }
