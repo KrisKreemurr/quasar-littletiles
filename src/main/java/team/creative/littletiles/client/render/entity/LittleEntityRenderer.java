@@ -89,36 +89,42 @@ public class LittleEntityRenderer extends EntityRenderer<LittleEntity, LittleEnt
             // The dispatcher moved the pose to the entity; go back to camera-relative world space, then apply the
             // structure's transform exactly like the original (origin pose setup returns the camera in its space).
             world.translate(-(state.x - cam.x), -(state.y - cam.y), -(state.z - cam.z));
-            Vec3 local = entity.getOrigin().pose(state.partialTick).setup(world, cam);
-            int light = state.lightCoords;
-            for (ChunkAccess chunk : entity.getSubLevel().chunks()) {
-                if (!(chunk instanceof LevelChunk levelChunk))
-                    continue;
-                for (BlockEntity be : levelChunk.getBlockEntities().values()) {
-                    if (!(be instanceof BETiles tiles))
-                        continue;
-                    Mesh mesh = mesh(tiles);
-                    if (mesh == null)
-                        continue;
-                    BlockPos pos = be.getBlockPos();
-                    if (mesh.solid != null && mesh.solid.length > 0) {
-                        PoseStack at = at(world, pos, local);
-                        float[] data = mesh.solid;
-                        collector.submitCustomGeometry(at, Sheets.cutoutBlockItemSheet(), (p, consumer) -> LittleItemRenderer.replay(data, p, consumer, light,
-                            net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY));
-                    }
-                    if (mesh.translucent != null && mesh.translucent.length > 0) {
-                        PoseStack at = at(world, pos, local);
-                        float[] data = mesh.translucent;
-                        collector.submitCustomGeometry(at, Sheets.translucentBlockItemSheet(), (p, consumer) -> LittleItemRenderer.replay(data, p, consumer, light,
-                            net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY));
-                    }
-                }
-            }
+            submitStructure(entity, world, cam, state.partialTick, state.lightCoords, collector);
         } catch (Throwable e) {
             if (!logged) {
                 logged = true;
                 LittleTiles.LOGGER.error("Failed to render animated LittleTiles structure (logged once)", e);
+            }
+        }
+    }
+
+    /** Submits every block of the structure's sub-level. {@code world} is the space the structure's origin lives in, {@code cam} the camera position in
+     * that space (zero for GUI previews). Also used by the blueprint previews. */
+    public static void submitStructure(LittleEntity entity, PoseStack world, Vec3 cam, float partialTick, int light, SubmitNodeCollector collector) {
+        world = copy(world);
+        Vec3 local = entity.getOrigin().pose(partialTick).setup(world, cam);
+        for (ChunkAccess chunk : entity.getSubLevel().chunks()) {
+            if (!(chunk instanceof LevelChunk levelChunk))
+                continue;
+            for (BlockEntity be : levelChunk.getBlockEntities().values()) {
+                if (!(be instanceof BETiles tiles))
+                    continue;
+                Mesh mesh = mesh(tiles);
+                if (mesh == null)
+                    continue;
+                BlockPos pos = be.getBlockPos();
+                if (mesh.solid != null && mesh.solid.length > 0) {
+                    PoseStack at = at(world, pos, local);
+                    float[] data = mesh.solid;
+                    collector.submitCustomGeometry(at, Sheets.cutoutBlockItemSheet(), (p, consumer) -> LittleItemRenderer.replay(data, p, consumer, light,
+                        net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY));
+                }
+                if (mesh.translucent != null && mesh.translucent.length > 0) {
+                    PoseStack at = at(world, pos, local);
+                    float[] data = mesh.translucent;
+                    collector.submitCustomGeometry(at, Sheets.translucentBlockItemSheet(), (p, consumer) -> LittleItemRenderer.replay(data, p, consumer, light,
+                        net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY));
+                }
             }
         }
     }

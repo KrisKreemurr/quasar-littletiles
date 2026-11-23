@@ -143,7 +143,7 @@ public class GuiBlueprintAdd extends GuiLayer implements GuiAnimationViewerStora
             }).whenComplete((preview, throwable) -> {
                 setAnimation(request, preview);
                 if (throwable != null)
-                    throwable.printStackTrace();
+                    team.creative.littletiles.LittleTiles.LOGGER.error("Could not build the blueprint preview", throwable);
             });
             get("save").setEnabled(true);
             return;
@@ -295,7 +295,8 @@ public class GuiBlueprintAdd extends GuiLayer implements GuiAnimationViewerStora
     @Override
     @OnlyIn(Dist.CLIENT)
     public Iterable<AnimationPreview> previewsToRender() {
-        return Collections.EMPTY_LIST;
+        AnimationPreview preview = current;
+        return preview == null ? Collections.EMPTY_LIST : Collections.singletonList(preview);
     }
     
     public static class GuiBlueprintAddTreeItem extends GuiTreeItem {

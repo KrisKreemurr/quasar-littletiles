@@ -1,6 +1,7 @@
 package team.creative.littletiles.client.gui.animation;
 
 import team.creative.littletiles.client.gui.LittleGuiDist;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -134,7 +135,12 @@ public class GuiClientAnimationViewer extends GuiClientControl<GuiAnimationViewe
         if (down)
             control.projection().up(-amount, control);
         
-        AnimationPreviewRenderer.renderPlaceholder(graphics, control.storage, rect.getContentWidth(), rect.getContentHeight());
+        GuiAnimationViewer viewer = control;
+        LittlePreviewRenderState.submit(graphics, rect.getContentWidth(), rect.getContentHeight(), target -> {
+            PoseStack pose = target.perspective(70F);
+            viewer.projection().prepareRendering(pose, viewer.storage.center(), viewer);
+            PreviewScenes.submitStorage(viewer.storage, pose, target.collector);
+        });
     }
     
     @Override

@@ -360,7 +360,7 @@ public class GuiTreeItemStructure extends GuiTreeItem implements AnimationContex
         }).whenComplete((preview, throwable) -> {
             blueprint.storage.completed(this, preview);
             if (throwable != null)
-                throwable.printStackTrace();
+                team.creative.littletiles.LittleTiles.LOGGER.error("Could not build the blueprint preview", throwable);
         });
     }
     

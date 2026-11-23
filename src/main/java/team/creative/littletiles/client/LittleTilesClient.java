@@ -162,6 +162,8 @@ public class LittleTilesClient {
         // TODO(quasar): colored water tint (was RegisterColorHandlersEvent.Block) - 26.x block tints are data-driven.
         bus.addListener(LittleTilesClient::registerKeys);
         bus.addListener(LittleTilesClient::registerRenderers);
+        bus.addListener((net.neoforged.neoforge.client.event.RegisterPictureInPictureRenderersEvent event) -> event.register(
+            team.creative.littletiles.client.gui.animation.LittlePreviewRenderState.class, team.creative.littletiles.client.gui.animation.LittlePreviewRenderer::new));
         team.creative.littletiles.client.render.level.LittleChunkGeometry.init();
         team.creative.littletiles.client.render.level.SignalDisplayRenderer.init();
         team.creative.littletiles.client.render.overlay.TileOutlineRenderer.init();

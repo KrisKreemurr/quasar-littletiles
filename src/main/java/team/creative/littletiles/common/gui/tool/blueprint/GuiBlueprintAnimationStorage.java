@@ -45,6 +45,10 @@ public class GuiBlueprintAnimationStorage implements Iterable<Entry<GuiTreeItemS
         this.tree = tree;
     }
     
+    public GuiTree tree() {
+        return tree;
+    }
+    
     @Override
     public boolean highlightSelected() {
         return highlightSelected;
@@ -166,6 +170,8 @@ public class GuiBlueprintAnimationStorage implements Iterable<Entry<GuiTreeItemS
     }
     
     public void completed(GuiTreeItemStructure structure, AnimationPreview preview) {
+        if (preview == null)
+            return;
         if (RenderSystem.isOnRenderThread())
             put(structure, preview);
         else

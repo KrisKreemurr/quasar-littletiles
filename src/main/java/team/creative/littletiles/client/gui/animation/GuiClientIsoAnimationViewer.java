@@ -1,5 +1,7 @@
 package team.creative.littletiles.client.gui.animation;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+
 import team.creative.littletiles.client.gui.LittleGuiDist;
 import org.joml.Matrix3x2fStack;
 
@@ -97,8 +99,24 @@ public class GuiClientIsoAnimationViewer extends GuiClientControl<GuiIsoAnimatio
         control.offX.tick();
         control.offY.tick();
         
-        // TODO(quasar): structure + axis box (RenderBox lines) need the picture-in-picture preview renderer, see AnimationPreviewRenderer
-        AnimationPreviewRenderer.renderPlaceholder(graphics, storage, rect.getWidth(), rect.getHeight());
+        GuiIsoAnimationViewer viewer = control;
+        float guiPixels = calculateScale();
+        LittlePreviewRenderState.submit(graphics, rect.getWidth(), rect.getHeight(), target -> {
+            // orthographic: depth is squashed so the axis can sit in front of everything without leaving the depth range
+            PoseStack pose = target.ortho();
+            transform(pose, viewer, storage, guiPixels * target.pixelScale);
+            PreviewScenes.submitStorage(storage, pose, target.collector);
+            if (viewer.visibleAxis && viewer.getBox() != null) {
+                PoseStack axis = target.ortho();
+                axis.translate(0, 0, 900);
+                transform(axis, viewer, storage, guiPixels * target.pixelScale);
+                net.minecraft.world.phys.AABB bb = viewer.getBox().getBB(viewer.getGrid());
+                target.collector.submitShapeOutline(axis, net.minecraft.world.phys.shapes.Shapes.create(bb), net.minecraft.client.renderer.rendertype.RenderTypes.lines(),
+                    0xFF000000, 5.0F, false);
+                target.collector.submitShapeOutline(PreviewScenes.copy(axis), net.minecraft.world.phys.shapes.Shapes.create(bb),
+                    net.minecraft.client.renderer.rendertype.RenderTypes.lines(), 0xFFFFFFFF, 2.5F, false);
+            }
+        });
         
         CreativeGuiGraphics g = (CreativeGuiGraphics) graphics;
         Matrix3x2fStack pose = graphics.pose();
@@ -123,6 +141,17 @@ public class GuiClientIsoAnimationViewer extends GuiClientControl<GuiIsoAnimatio
         drawIcon(g, icon, 0, -9, ColorUtils.BLACK);
         drawIcon(g, icon, 0, -8, ColorUtils.WHITE);
         pose.popMatrix();
+    }
+    
+    private static void transform(PoseStack pose, GuiIsoAnimationViewer viewer, GuiBlueprintAnimationStorage storage, float scale) {
+        pose.scale(1, 1, 0.2F);
+        pose.scale(scale, scale, scale);
+        pose.translate(viewer.offX.current(), -viewer.offY.current(), 0);
+        pose.rotate(com.mojang.math.Axis.XP.rotationDegrees((float) viewer.rotX.current()));
+        pose.rotate(com.mojang.math.Axis.YP.rotationDegrees((float) viewer.rotY.current()));
+        pose.rotate(com.mojang.math.Axis.ZP.rotationDegrees((float) viewer.rotZ.current()));
+        var center = storage.center();
+        pose.translate(-center.x, -center.y, -center.z);
     }
     
     private static void drawIcon(CreativeGuiGraphics g, Icon icon, int x, int y, int color) {
