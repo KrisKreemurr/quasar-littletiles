@@ -133,6 +133,8 @@ public class LittleGuiUtils {
     
     /** Enabled state lives on the client dist since CreativeCore 26.x; the server side treats every control as enabled. */
     public static boolean isEnabled(GuiControl control) {
+        if (control == null)
+            return false;
         if (control.isClient() && control.dist() instanceof team.creative.creativecore.client.gui.GuiClientControl client)
             return client.enabled;
         return true;

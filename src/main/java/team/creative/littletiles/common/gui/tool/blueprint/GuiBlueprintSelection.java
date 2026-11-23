@@ -94,6 +94,8 @@ public class GuiBlueprintSelection extends GuiConfigure {
         if (preventSave)
             return false;
         GuiComboBox<SelectionMode> box = get("selection_mode");
+        if (box == null) // the screen never finished building
+            return false;
         data.set(LittleTilesRegistry.SELECTION.get(), SelectionComponent.getOrDefault(tool.get()).withMode(box.selected(SelectionMode.REGISTRY.getDefault())));
         return true;
     }
@@ -188,6 +190,8 @@ public class GuiBlueprintSelection extends GuiConfigure {
     
     public void updateSlider() {
         GuiArraySlider slider = (GuiArraySlider) get("scale");
+        if (slider == null) // selecting the mode in create() fires a change event before the rest of the screen exists
+            return;
         boolean includeVanilla = LittleGuiUtils.isEnabled(get("includeVanilla", GuiCheckBox.class)) && get("includeVanilla", GuiCheckBox.class).get();
         boolean includeCB = LittleGuiUtils.isEnabled(get("includeCB", GuiCheckBox.class)) && get("includeCB", GuiCheckBox.class).get();
         boolean includeLT = LittleGuiUtils.isEnabled(get("includeLT", GuiCheckBox.class)) && get("includeLT", GuiCheckBox.class).get();
