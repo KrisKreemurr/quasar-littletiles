@@ -213,7 +213,10 @@ public class LittleToolSelection extends LittleTool {
             int alpha = ColorUtils.alpha(color);
             Vec3f normal = new Vec3f();
             var builder = getBuilder(true);
-            VectorFan.setLineNormal(normal, (float) start.x, (float) start.y, (float) start.z, (float) end.x, (float) end.y, (float) end.z);
+            normal.set((float) (end.x - start.x), (float) (end.y - start.y), (float) (end.z - start.z));
+            float length = (float) Math.sqrt(normal.x * normal.x + normal.y * normal.y + normal.z * normal.z);
+            if (length > 0)
+                normal.set(normal.x / length, normal.y / length, normal.z / length);
             builder.addVertex(PreviewRenderer.EMPTY.last().pose(), (float) start.x, (float) start.y, (float) start.z).setColor(red, green, blue, alpha).setNormal(
                 PreviewRenderer.EMPTY.last(), normal.x, normal.y, normal.z);
             builder.addVertex(PreviewRenderer.EMPTY.last().pose(), (float) end.x, (float) end.y, (float) end.z).setColor(red, green, blue, alpha).setNormal(PreviewRenderer.EMPTY
