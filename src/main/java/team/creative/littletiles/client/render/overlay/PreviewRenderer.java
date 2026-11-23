@@ -312,12 +312,15 @@ public class PreviewRenderer {
         int stride = state.format().getVertexSize();
         ByteBuffer buffer = data.vertexBuffer().duplicate().order(ByteOrder.nativeOrder());
         boolean lines = state.primitiveTopology() == PrimitiveTopology.LINES;
-        int per = lines ? 2 : 4;
-        Vec3[] points = new Vec3[per];
+        // 26.x stores every LINES vertex twice (lines are expanded to quads): a, a, b, b. Detect it from the data.
+        boolean doubled = lines && count >= 4 && count % 4 == 0 && samePosition(buffer, 0, stride);
+        int per = lines ? (doubled ? 4 : 2) : 4;
+        int[] pick = lines ? (doubled ? new int[] { 0, 2 } : new int[] { 0, 1 }) : new int[] { 0, 1, 2, 3 };
+        Vec3[] points = new Vec3[pick.length];
         for (int i = 0; i + per <= count; i += per) {
             int color = 0;
-            for (int k = 0; k < per; k++) {
-                int offset = (i + k) * stride;
+            for (int k = 0; k < pick.length; k++) {
+                int offset = (i + pick[k]) * stride;
                 points[k] = toWorld(buffer.getFloat(offset), buffer.getFloat(offset + 4), buffer.getFloat(offset + 8));
                 if (k == 0)
                     color = buffer.getInt(offset + 12); // colour follows the position in both preview formats (RGBA bytes)
@@ -337,6 +340,11 @@ public class PreviewRenderer {
             }
             debugGizmos++;
         }
+    }
+    
+    private static boolean samePosition(ByteBuffer buffer, int vertex, int stride) {
+        int a = vertex * stride, b = (vertex + 1) * stride;
+        return buffer.getFloat(a) == buffer.getFloat(b) && buffer.getFloat(a + 4) == buffer.getFloat(b + 4) && buffer.getFloat(a + 8) == buffer.getFloat(b + 8);
     }
     
     /** Shader colour (config) x vertex colour, like the old setShaderColor * vertex colour. */

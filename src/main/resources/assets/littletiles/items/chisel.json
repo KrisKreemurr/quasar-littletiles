@@ -1,18 +1,34 @@
 {
   "model": {
-    "type": "minecraft:composite",
-    "models": [
+    "type": "minecraft:select",
+    "property": "minecraft:display_context",
+    "cases": [
       {
-        "type": "minecraft:model",
-        "model": "littletiles:item/chisel"
-      },
-      {
-        "type": "minecraft:special",
-        "base": "littletiles:item/chisel",
+        "when": [
+          "gui",
+          "fixed"
+        ],
         "model": {
-          "type": "littletiles:element"
+          "type": "minecraft:composite",
+          "models": [
+            {
+              "type": "minecraft:model",
+              "model": "littletiles:item/chisel"
+            },
+            {
+              "type": "minecraft:special",
+              "base": "littletiles:item/chisel",
+              "model": {
+                "type": "littletiles:element"
+              }
+            }
+          ]
         }
       }
-    ]
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "littletiles:item/chisel"
+    }
   }
 }
