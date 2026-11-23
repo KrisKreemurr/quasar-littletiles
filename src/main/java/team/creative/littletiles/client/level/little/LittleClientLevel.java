@@ -114,22 +114,26 @@ public abstract class LittleClientLevel extends ClientLevel implements LittleLev
     
     @Override
     public void sendBlockUpdated(BlockPos pos, BlockState actualState, BlockState setState, int p_104688_) {
-        this.renderManager.blockChanged(this, pos, actualState, setState, p_104688_);
+        if (renderManager != null)
+            this.renderManager.blockChanged(this, pos, actualState, setState, p_104688_);
     }
     
     @Override
     public void setBlocksDirty(BlockPos pos, BlockState actualState, BlockState setState) {
-        this.renderManager.setBlockDirty(pos, actualState, setState);
+        if (renderManager != null) // previews in GUIs have no render manager, they are drawn from the block entities directly
+            this.renderManager.setBlockDirty(pos, actualState, setState);
         blockChangeListeners.forEach(x -> x.blockChanged(pos, setState));
     }
     
     @Override
     public void setSectionDirtyWithNeighbors(int x, int y, int z) {
-        this.renderManager.setSectionDirtyWithNeighbors(x, y, z);
+        if (renderManager != null)
+            this.renderManager.setSectionDirtyWithNeighbors(x, y, z);
     }
     
     public void setSectionDirty(int x, int y, int z) {
-        this.renderManager.setSectionDirty(x, y, z);
+        if (renderManager != null)
+            this.renderManager.setSectionDirty(x, y, z);
     }
     
     public TransientEntitySectionManager<Entity> getEStorage() {
@@ -141,7 +145,7 @@ public abstract class LittleClientLevel extends ClientLevel implements LittleLev
         chunk.setLightCorrect(true);
         LevelChunkSection[] section = chunk.getSections();
         for (int i = 0; i < section.length; i++)
-            if (!section[i].hasOnlyAir())
+            if (!section[i].hasOnlyAir() && renderManager != null)
                 this.renderManager.setSectionDirty(chunk.getPos().x(), chunk.getSectionYFromSectionIndex(i), chunk.getPos().z());
     }
     
@@ -219,7 +223,8 @@ public abstract class LittleClientLevel extends ClientLevel implements LittleLev
     
     @Override
     public void destroyBlockProgress(int id, BlockPos pos, int progress) {
-        renderManager.destroyBlockProgress(id, pos, progress);
+        if (renderManager != null)
+            renderManager.destroyBlockProgress(id, pos, progress);
     }
     
     @Override

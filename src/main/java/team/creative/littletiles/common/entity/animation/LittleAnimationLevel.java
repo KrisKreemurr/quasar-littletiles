@@ -281,7 +281,7 @@ public class LittleAnimationLevel extends Level implements LittleSubLevel, Itera
     
     @Override
     public void sendBlockUpdated(BlockPos pos, BlockState actualState, BlockState setState, int p_104688_) {
-        if (isClientSide())
+        if (isClientSide() && renderManager != null)
             this.renderManager.blockChanged(this, pos, actualState, setState, p_104688_);
         else
             trackedChanges.add(pos);
@@ -289,7 +289,7 @@ public class LittleAnimationLevel extends Level implements LittleSubLevel, Itera
     
     @Override
     public void setBlocksDirty(BlockPos pos, BlockState actualState, BlockState setState) {
-        if (isClientSide())
+        if (isClientSide() && renderManager != null)
             this.renderManager.setBlockDirty(pos, actualState, setState);
         blockChangeListeners.forEach(x -> x.blockChanged(pos, setState));
     }
@@ -311,7 +311,7 @@ public class LittleAnimationLevel extends Level implements LittleSubLevel, Itera
     
     @Override
     public void destroyBlockProgress(int id, BlockPos pos, int progress) {
-        if (isClientSide())
+        if (isClientSide() && renderManager != null)
             renderManager.destroyBlockProgress(id, pos, progress);
     }
     

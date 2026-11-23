@@ -38,7 +38,8 @@ public abstract class ClientChunkCacheMixin extends ChunkSource {
                 if (be instanceof BETiles t)
                     t.render.hasLightChanged = true;
             for (LittleEntity entity : LittleTiles.ANIMATION_HANDLERS.get((Level) getLevel()).find(pos))
-                entity.getRenderManager().onLightUpdate(layer, pos);
+                if (entity.getRenderManager() != null)
+                    entity.getRenderManager().onLightUpdate(layer, pos);
         }
     }
     

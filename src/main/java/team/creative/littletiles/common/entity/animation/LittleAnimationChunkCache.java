@@ -65,7 +65,8 @@ public class LittleAnimationChunkCache extends ChunkSource {
     
     @Override
     public void onLightUpdate(LightLayer layer, SectionPos pos) {
-        getLevel().renderManager.setSectionDirty(pos.x(), pos.y(), pos.z());
+        if (getLevel().renderManager != null)
+            getLevel().renderManager.setSectionDirty(pos.x(), pos.y(), pos.z());
     }
     
     @Override
