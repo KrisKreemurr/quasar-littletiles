@@ -226,7 +226,7 @@ public class GuiBlueprint extends GuiConfigure implements LittleGuiHooks.PreRend
         tree.updateTree();
         
         GuiParent sidebar = new GuiParent(this, GuiFlow.STACK_Y).setAlign(Align.STRETCH);
-        top.add(sidebar.setDim(new GuiSizeRatioRules().widthRatio(0.2F).maxWidth(100)));
+        top.add(sidebar.setDim(new GuiSizeRatioRules().widthRatio(0.2F).maxWidth(100)).setExpandableY());
         sidebar.add(tree.setExpandableY());
         
         sidebarButtons = new GuiParent(this, GuiFlow.FIT_X);
