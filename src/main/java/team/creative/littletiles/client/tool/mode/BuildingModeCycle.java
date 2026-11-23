@@ -64,6 +64,11 @@ public class BuildingModeCycle<T> extends BuildingModeFeature implements Buildin
         changed();
     }
     
+    @Override
+    public Component quasar$info() {
+        return Component.translatable(title, translate.apply(selected), key.getTranslatedKeyMessage());
+    }
+    
     public void cycle() {
         selected = registry.get(registry.next(registry.name(selected)));
         changed();

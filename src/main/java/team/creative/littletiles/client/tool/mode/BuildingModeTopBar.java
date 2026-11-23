@@ -31,6 +31,11 @@ public class BuildingModeTopBar extends BuildingModeFeature {
         
         public void createInfo(GuiParent parent);
         
+        /** Quasar MC (26.3): the same info as plain text for the HUD top bar (the GUI controls aren't drawn on the HUD). */
+        public default net.minecraft.network.chat.Component quasar$info() {
+            return null;
+        }
+        
     }
     
 }

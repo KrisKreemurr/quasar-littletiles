@@ -49,6 +49,11 @@ public class BuildingModeToggle extends BuildingModeFeature implements BuildingM
     }
     
     @Override
+    public Component quasar$info() {
+        return Component.literal(enabled ? "[x] " : "[ ] ").append(Component.translatable(title)).append(" (").append(key.getTranslatedKeyMessage()).append(")");
+    }
+    
+    @Override
     public void createInfo(GuiParent parent) {
         parent.add(box = new GuiCheckBox(parent, title, enabled).setTitle(Component.translatable(title).append(" (").append(key.getTranslatedKeyMessage()).append(")")));
     }

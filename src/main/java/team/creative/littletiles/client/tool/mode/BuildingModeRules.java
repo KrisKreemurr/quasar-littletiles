@@ -43,6 +43,11 @@ public class BuildingModeRules extends BuildingModeFeature implements BuildingMo
     public KeyConfig key = new KeyConfig(InputConstants.KEY_R, KeyModifier.NONE);
     
     @Override
+    public Component quasar$info() {
+        return Component.translatable("building.rules").append(" (").append(key.getTranslatedKeyMessage()).append(")");
+    }
+    
+    @Override
     public void createInfo(GuiParent parent) {
         parent.add(label = new GuiLabel(parent, "rules").setTitle(Component.translatable("building.rules").append(" (").append(key.getTranslatedKeyMessage()).append(")")));
         ex = new GuiExtensionCreator<GuiClientControl, GuiMenuRoot<BooleanSupplier>>(LittleGuiDist.client(label));

@@ -69,6 +69,14 @@ public class BuildingModeMeasureType extends BuildingModeFeature implements Buil
             changedLabel(stack.get(LittleTilesRegistry.MEASUREMENT_TYPE).type);
     }
     
+    @Override
+    public Component quasar$info() {
+        var stack = MC.player == null ? null : MC.player.getMainHandItem();
+        if (stack == null || !stack.has(LittleTilesRegistry.MEASUREMENT_TYPE))
+            return null;
+        return Component.translatable(title, stack.get(LittleTilesRegistry.MEASUREMENT_TYPE).type.translatable(), key.getTranslatedKeyMessage());
+    }
+    
     public void cycle() {
         var stack = MC.player.getMainHandItem();
         if (stack.has(LittleTilesRegistry.MEASUREMENT_TYPE)) {

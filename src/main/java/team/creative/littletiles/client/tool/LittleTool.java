@@ -102,6 +102,11 @@ public abstract class LittleTool {
         return true;
     }
     
+    /** Features of the active Building Mode (read-only view for the HUD), empty when it is off. */
+    public List<BuildingModeFeature> activeFeatures() {
+        return buildingMode && features != null ? features : java.util.Collections.emptyList();
+    }
+    
     public boolean buildingMode() {
         return buildingMode;
     }

@@ -104,6 +104,13 @@ public class BuildingModeGridScroll extends BuildingModeFeature implements ICrea
     }
     
     @Override
+    public Component quasar$info() {
+        if (MC.player == null)
+            return null;
+        return Component.translatable("building.grid.info", key.getTranslatedKeyMessage(), PlacementPlayerSetting.grid(MC.player).count);
+    }
+    
+    @Override
     public void createInfo(GuiParent parent) {
         parent.add(label = new GuiLabel(parent, "grid"));
         updateTitle();

@@ -108,6 +108,29 @@ public class OverlayRenderer implements LevelAwareHandler {
             }
         }
         
+        // Building Mode top bar (grid, measures, transform mode, toggles), one line across the top of the screen.
+        if (LittleTilesClient.PREVIEW_RENDERER.tool() != null) {
+            List<Component> infos = new ArrayList<>();
+            for (var feature : LittleTilesClient.PREVIEW_RENDERER.tool().activeFeatures())
+                if (feature instanceof team.creative.littletiles.client.tool.mode.BuildingModeTopBar.BuildingModeInfo info)
+                    try {
+                        Component text = info.quasar$info();
+                        if (text != null)
+                            infos.add(text);
+                    } catch (RuntimeException e) {}
+            if (!infos.isEmpty()) {
+                int total = -10;
+                for (Component c : infos)
+                    total += font.width(c) + 10;
+                graphics.fill(0, 0, width, font.lineHeight + 6, 0x90000000);
+                int x = Math.max(4, (width - total) / 2);
+                for (Component c : infos) {
+                    graphics.text(font, c, x, 3, 0xFFFFFFFF, true);
+                    x += font.width(c) + 10;
+                }
+            }
+        }
+        
         // Tool hint, or the held item's help text.
         Component tooltip = null;
         if (LittleTilesClient.PREVIEW_RENDERER.tool() != null)

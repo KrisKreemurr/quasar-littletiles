@@ -67,6 +67,14 @@ public class BuildingModeTransformMode extends BuildingModeFeature implements Bu
         changedLabel(stack.getOrDefault(LittleTilesRegistry.TRANSFORM_MODE, TransformMode.DEFAULT));
     }
     
+    @Override
+    public Component quasar$info() {
+        if (MC.player == null)
+            return null;
+        var mode = MC.player.getMainHandItem().getOrDefault(LittleTilesRegistry.TRANSFORM_MODE, TransformMode.DEFAULT);
+        return Component.translatable(title, mode.translatable(), key.getTranslatedKeyMessage());
+    }
+    
     public void cycle() {
         var stack = MC.player.getMainHandItem();
         var mode = stack.getOrDefault(LittleTilesRegistry.TRANSFORM_MODE, TransformMode.DEFAULT);
