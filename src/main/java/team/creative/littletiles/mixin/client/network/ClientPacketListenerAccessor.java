@@ -20,7 +20,7 @@ public interface ClientPacketListenerAccessor {
     public void callPostAddEntitySoundInstance(Entity entity);
     
     @Invoker
-    public void callApplyLightData(int x, int z, ClientboundLightUpdatePacketData data);
+    public void callApplyLightData(int x, int z, ClientboundLightUpdatePacketData data, boolean markDirty);
     
     // Quasar MC: lets LittleTiles run vanilla's own handler against a sub-level (see LittleClientPlayerHandler.inSubLevel)
     @Accessor("level")
