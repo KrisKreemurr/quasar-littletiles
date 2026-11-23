@@ -579,12 +579,26 @@ public class BlockTile extends BaseEntityBlock implements LittlePhysicBlock, Sim
     
     @Override
     public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData, Player player) {
-        if (!level.isClientSide())
+        // Quasar MC (26.x): pick block is resolved on the server now (ServerboundPickItemFromBlockPacket), so the focused tile
+        // is ray traced here from the player's view instead of the client-only BETiles.getFocusedTile(player, partialTicks).
+        if (player == null)
             return ItemStack.EMPTY;
-        
-        LittleTileContext result = LittleTileContext.selectFocused(level, pos, player);
+        BETiles be = loadBE(level, pos);
+        if (be == null)
+            return ItemStack.EMPTY;
+        Vec3 eye = player.getEyePosition(1F);
+        double reach = team.creative.creativecore.common.util.mc.PlayerUtils.getReach(player);
+        Vec3 look = eye.add(player.getViewVector(1F).scale(reach));
+        var ctx = be.getLevel() == null ? null : team.creative.littletiles.common.level.context.ILittleLevelContext.of(be.getLevel(), pos);
+        if (ctx != null) {
+            eye = ctx.toFakeWorld(eye);
+            look = ctx.toFakeWorld(look);
+        }
+        LittleTileContext result = be.getFocusedTile(eye, look);
         if (result.isComplete()) {
-            if (selectEntireBlock((LittleActionSource) player, LittleActionHandlerClient.isUsingSecondMode())) {
+            // Second mode (whole block) is a client key state the server can't see; sneaking stands in for it.
+            boolean secondMode = player.isShiftKeyDown();
+            if (selectEntireBlock((LittleActionSource) player, secondMode)) {
                 ItemStack drop = new ItemStack(LittleTilesRegistry.ITEM_TILES.value());
                 LittleGroup group = new LittleGroup();
                 for (LittleTile tile : result.parent)

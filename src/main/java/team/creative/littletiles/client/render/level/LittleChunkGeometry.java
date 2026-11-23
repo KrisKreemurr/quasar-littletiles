@@ -103,6 +103,16 @@ public final class LittleChunkGeometry {
         private final List<Vec3f[]> polygons = new ArrayList<>();
         private final RandomSource random = RandomSource.create();
         private final BlockPos.MutableBlockPos lightPos = new BlockPos.MutableBlockPos();
+        private final BlockPos.MutableBlockPos samplePos = new BlockPos.MutableBlockPos();
+        private final boolean smooth = Minecraft.getInstance().options.ambientOcclusion().get();
+        /** Per-section cache of (light, occludes) per sampled block, keyed by BlockPos.asLong. */
+        private final it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap samples = new it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap();
+        // per-face state for vertex(): world block of the tile, flat fallback light, whether smoothing applies
+        private BlockPos curPos;
+        private int curFlat;
+        private boolean curSmooth;
+        private int curEmission;
+        private Facing curFacing;
 
         Mesher(AddSectionGeometryEvent.SectionRenderingContext context) {
             this.context = context;
@@ -167,6 +177,9 @@ public final class LittleChunkGeometry {
                     continue;
                 Direction dir = facing.toVanilla();
                 int light = box.emissive ? LightCoordsUtil.FULL_BRIGHT : light(pos, facing, polygons);
+                curPos = pos;
+                curFlat = light;
+                curSmooth = smooth && !box.emissive && state.getLightEmission() == 0;
                 for (BlockStateModelPart part : parts) {
                     quads(consumer, layer, takeAllQuads, part.getQuads(dir), dir, facing, state, pos, boxColor, light, ox, oy, oz);
                     quads(consumer, layer, takeAllQuads, part.getQuads(null), dir, facing, state, pos, boxColor, light, ox, oy, oz);
@@ -234,6 +247,11 @@ public final class LittleChunkGeometry {
             color = shade(color, quad, facing);
             int emission = quad.materialInfo().lightEmission();
             int quadLight = emission > 0 ? LightCoordsUtil.lightCoordsWithEmission(light, emission) : light;
+            curEmission = emission;
+            boolean saveSmooth = curSmooth;
+            if (emission > 0)
+                curSmooth = false;
+            curFacing = facing;
             Direction normal = facing.toVanilla();
             float nx = normal.getStepX(), ny = normal.getStepY(), nz = normal.getStepZ();
 
@@ -252,15 +270,105 @@ public final class LittleChunkGeometry {
                 vertex(consumer, shape[index + 1], one, two, uvMap, color, quadLight, nx, ny, nz, ox, oy, oz);
                 vertex(consumer, shape[index + 1], one, two, uvMap, color, quadLight, nx, ny, nz, ox, oy, oz);
             }
+            curSmooth = saveSmooth;
         }
 
-        private static void vertex(VertexConsumer consumer, Vec3f vec, Axis one, Axis two, float[] uvMap, int color, int light, float nx, float ny, float nz,
+        private void vertex(VertexConsumer consumer, Vec3f vec, Axis one, Axis two, float[] uvMap, int color, int light, float nx, float ny, float nz,
                 float ox, float oy, float oz) {
             float a = vec.get(one);
             float b = vec.get(two);
             float u = uvMap[0] * a + uvMap[1] * b + uvMap[2];
             float v = uvMap[3] * a + uvMap[4] * b + uvMap[5];
+            if (curSmooth) {
+                long lit = smoothLight(vec, one, two);
+                light = (int) lit;
+                float ao = Float.intBitsToFloat((int) (lit >>> 32));
+                if (ao < 0.999F) {
+                    int r = (int) (((color >> 16) & 0xFF) * ao);
+                    int g = (int) (((color >> 8) & 0xFF) * ao);
+                    int bl = (int) ((color & 0xFF) * ao);
+                    color = (color & 0xFF000000) | (r << 16) | (g << 8) | bl;
+                }
+            }
             consumer.addVertex(ox + vec.x, oy + vec.y, oz + vec.z, color, u, v, 0, light, nx, ny, nz);
+        }
+
+        /** Smooth lighting + ambient occlusion for one vertex (vanilla style, but continuous so tile corners inside a block
+         * blend too). The vertex is pushed a hair out of its face; the 2x2 blocks around it on that plane are sampled with
+         * bilinear weights: open blocks contribute light, view-blocking blocks darken (0.2 like vanilla AO). At a block
+         * corner this is exactly vanilla's 4-block average. Returns ao float bits << 32 | packed light. */
+        private long smoothLight(Vec3f vec, Axis one, Axis two) {
+            Facing f = curFacing;
+            Axis n = f.axis;
+            double px = curPos.getX() + vec.x, py = curPos.getY() + vec.y, pz = curPos.getZ() + vec.z;
+            double push = f.positive ? 0.01 : -0.01;
+            double pa = coord(px, py, pz, one) - 0.5, pb = coord(px, py, pz, two) - 0.5;
+            int ca = (int) Math.floor(pa), cb = (int) Math.floor(pb);
+            int cn = (int) Math.floor(coord(px, py, pz, n) + push);
+            float fa = (float) (pa - ca), fb = (float) (pb - cb);
+            float aoSum = 0, wSum = 0, blockSum = 0, skySum = 0;
+            for (int i = 0; i < 2; i++)
+                for (int j = 0; j < 2; j++) {
+                    float w = (i == 0 ? 1 - fa : fa) * (j == 0 ? 1 - fb : fb);
+                    if (w <= 0)
+                        continue;
+                    set(samplePos, one, ca + i, two, cb + j, n, cn);
+                    long sample = sample(samplePos);
+                    boolean occludes = ((sample >>> 32) & 1) != 0;
+                    boolean skip = ((sample >>> 32) & 2) != 0;
+                    aoSum += w * (occludes ? 0.2F : 1F);
+                    if (!occludes && !skip) {
+                        int packed = (int) sample;
+                        blockSum += w * (packed & 0xFFFF);
+                        skySum += w * ((packed >>> 16) & 0xFFFF);
+                        wSum += w;
+                    }
+                }
+            int light;
+            if (wSum <= 0.0001F)
+                light = curFlat;
+            else {
+                int blk = Math.round(blockSum / wSum);
+                int sky = Math.round(skySum / wSum);
+                light = (sky << 16) | blk;
+            }
+            return ((long) Float.floatToIntBits(aoSum) << 32) | (light & 0xFFFFFFFFL);
+        }
+
+        /** (occludes ? 1 : 0) << 32 | packed light for a block, cached for the section build. */
+        private long sample(BlockPos.MutableBlockPos p) {
+            long key = p.asLong();
+            long cached = samples.getOrDefault(key, Long.MIN_VALUE);
+            if (cached != Long.MIN_VALUE)
+                return cached;
+            BlockState state = region.getBlockState(p);
+            boolean occludes = state.isSolidRender() && !(state.getBlock() instanceof team.creative.littletiles.common.block.mc.BlockTile);
+            int light = 0;
+            long flags = occludes ? 1L : 0L;
+            if (!occludes) {
+                light = region instanceof BlockAndLightGetter getter ? LightCoordsUtil.getLightCoords(getter, p) : LightCoordsUtil.FULL_BRIGHT;
+                if (light == 0 && state.getBlock() instanceof team.creative.littletiles.common.block.mc.BlockTile)
+                    flags = 2L; // dark inside a (light-blocking) tile block: no information, ignore for light
+            }
+            long value = (flags << 32) | (light & 0xFFFFFFFFL);
+            samples.put(key, value);
+            return value;
+        }
+
+        private static double coord(double x, double y, double z, Axis axis) {
+            return switch (axis) {
+                case X -> x;
+                case Y -> y;
+                case Z -> z;
+            };
+        }
+
+        private static void set(BlockPos.MutableBlockPos p, Axis a, int va, Axis b, int vb, Axis c, int vc) {
+            int x = 0, y = 0, z = 0;
+            switch (a) { case X -> x = va; case Y -> y = va; case Z -> z = va; }
+            switch (b) { case X -> x = vb; case Y -> y = vb; case Z -> z = vb; }
+            switch (c) { case X -> x = vc; case Y -> y = vc; case Z -> z = vc; }
+            p.set(x, y, z);
         }
 
         /** Solves u = ua*a + ub*b + uc and v = va*a + vb*b + vc from three non-collinear corners of the quad. */

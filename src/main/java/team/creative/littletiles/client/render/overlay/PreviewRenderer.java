@@ -294,9 +294,15 @@ public class PreviewRenderer {
     }
     
     /** Reads a mesh back (position + colour of every vertex) and turns it into gizmos: LINES -> lines, QUADS -> filled rects. */
+    /** Diagnostics: gizmos emitted / meshes drawn since the counters were last reset (PreviewManager logs them once). */
+    public int debugGizmos, debugMeshes, debugEmptyMeshes;
+    
     private void emit(MeshData data, int baseColor, float alpha, boolean onTop, float lineWidth) {
         var state = data.drawState();
         int count = state.vertexCount();
+        debugMeshes++;
+        if (count <= 0)
+            debugEmptyMeshes++;
         if (count <= 0)
             return;
         int stride = state.format().getVertexSize();
@@ -320,6 +326,7 @@ public class PreviewRenderer {
                 gizmo = Gizmos.rect(points[0], points[1], points[2], points[3], GizmoStyle.fill(argb));
             if (onTop)
                 gizmo.setAlwaysOnTop();
+            debugGizmos++;
         }
     }
     
